@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { Button } from "@nextui-org/react"
 import { useAuth } from "../hooks/useAuth"
 import { useNavigate } from "react-router-dom"
 
@@ -11,6 +12,7 @@ export default function Register() {
 		password: "",
 	})
 	const [error, setError] = useState(null)
+	const [loading, setLoading] = useState(false)
 
 	const handleChange = ({ target: { name, value } }) => {
 		setUser({
@@ -22,11 +24,14 @@ export default function Register() {
 	const handleSubmit = async (e) => {
 		e.preventDefault()
 		setError(null)
+		setLoading(true)
 
 		try {
 			await signup(user.email, user.password)
+			setLoading(false)
 			navigate("/")
 		} catch (err) {
+			setLoading(false)
 			switch (err.code) {
 				case "auth/invalid-email":
 					setError("El correo no es válido.")
@@ -62,11 +67,11 @@ export default function Register() {
 					className="register-form flex flex-col gap-4 p-4 ">
 					<div className="relative z-0">
 						<input
-						type="email"
-						name="email"
-						id="floating_email"
-						value={user.email}
-						onChange={handleChange}
+							type="email"
+							name="email"
+							id="floating_email"
+							value={user.email}
+							onChange={handleChange}
 							className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-900 dark:focus:border-gray-100 focus:outline-none focus:ring-0 focus:border-gray-900 peer"
 							placeholder=""
 						/>
@@ -78,11 +83,11 @@ export default function Register() {
 					</div>
 					<div className="relative z-0">
 						<input
-						type="password"
-						name="password"
-						id="floating_password"
-						value={user.password}
-						onChange={handleChange}
+							type="password"
+							name="password"
+							id="floating_password"
+							value={user.password}
+							onChange={handleChange}
 							className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-900 dark:focus:border-gray-100 focus:outline-none focus:ring-0 focus:border-gray-900 peer"
 							placeholder=""
 						/>
@@ -92,8 +97,35 @@ export default function Register() {
 							Contraseña
 						</label>
 					</div>
-					{error && <p className="text-red-500">{error}</p>}
-					<button type="submit" className="bg-gold">Registrarse</button>
+					{error && <p className="text-red-400">{error}</p>}
+					<Button
+						type="submit"
+						className="bg-gold"
+						isLoading={loading}
+						spinner={
+							<svg
+								className="animate-spin h-5 w-5 text-current"
+								fill="none"
+								viewBox="0 0 24 24"
+								xmlns="http://www.w3.org/2000/svg"
+							>
+								<circle
+									className="opacity-25"
+									cx="12"
+									cy="12"
+									r="10"
+									stroke="currentColor"
+									strokeWidth="3"
+								/>
+								<path
+									className="opacity-75"
+									d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+									fill="currentColor"
+								/>
+							</svg>
+						}>
+						Registrarse
+					</Button>
 				</form>
 			</section>
 		</main>
