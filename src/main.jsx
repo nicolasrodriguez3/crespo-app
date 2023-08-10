@@ -8,11 +8,12 @@ import App from "./App.jsx"
 import Login from "./components/Login.jsx"
 import NotFound from "./views/NotFound"
 import Register from "./components/Register"
+import { ProtectedRoute } from "./components/ProtectedRoute"
 
 const router = createBrowserRouter([
 	{
 		path: "/",
-		element: <App />,
+		element: <ProtectedRoute><App /></ProtectedRoute>,
 		errorElement: <NotFound />,
 	},
 	{

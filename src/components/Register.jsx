@@ -2,6 +2,7 @@ import { useState } from "react"
 import { Button } from "@nextui-org/react"
 import { useAuth } from "../hooks/useAuth"
 import { useNavigate } from "react-router-dom"
+import { validateErrorOnAuth } from "../helpers/validateErrorOnAuth"
 
 export default function Register() {
 	const { signup } = useAuth()
@@ -32,23 +33,8 @@ export default function Register() {
 			navigate("/")
 		} catch (err) {
 			setLoading(false)
-			switch (err.code) {
-				case "auth/invalid-email":
-					setError("El correo no es válido.")
-					break
-				case "auth/weak-password":
-					setError("La contraseña debe tener al menos 6 caracteres.")
-					break
-				case "auth/missing-password":
-					setError("Ingrese su contraseña.")
-					break
-				case "auth/email-already-in-use":
-					setError("El email ya se encuentra registrado.")
-					break
-				default:
-					console.log(err.code)
-					setError("Ocurrió un error. Por favor, intente nuevamente más tarde.")
-			}
+			const errorMsg = validateErrorOnAuth(err.code)
+			setError(errorMsg)
 		}
 	}
 
@@ -72,6 +58,7 @@ export default function Register() {
 							id="floating_email"
 							value={user.email}
 							onChange={handleChange}
+							required
 							className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-900 dark:focus:border-gray-100 focus:outline-none focus:ring-0 focus:border-gray-900 peer"
 							placeholder=""
 						/>
@@ -88,6 +75,7 @@ export default function Register() {
 							id="floating_password"
 							value={user.password}
 							onChange={handleChange}
+							required
 							className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-900 dark:focus:border-gray-100 focus:outline-none focus:ring-0 focus:border-gray-900 peer"
 							placeholder=""
 						/>
