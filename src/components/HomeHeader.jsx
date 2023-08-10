@@ -1,21 +1,14 @@
-import { useState } from "react"
+import logo from '../assets/logo-full.png'
 
 export function HomeHeader() {
-	const [category, setCategory] = useState(1)
 	const name = "Nico"
 
 	return (
-		<header className="w-full pb-8">
-			<h1 className="text-xl p-4">Hola, {name}.</h1>
-			<nav className="flex justify-center gap-10 items-center text-xl relative">
-				<button className={category === 1 && "font-bold underline"} onClick={() => setCategory(1)}>
-					Populares
-				</button>
-				<span className="h-10 bg-black w-[1px] absolute left-1/2"></span>
-				<button className={category === 2 && "font-bold underline"} onClick={() => setCategory(2)}>
-					Recientes
-				</button>
-			</nav>
+		<header className="w-full text-center">
+			<h1 className="bg-gold p-2 flex justify-center">
+				<img src={logo} alt='Logo de la ciudad' className='block w-[180px]'/>
+			</h1>
+			<h2 className="bg-gold/80 text-lg p-3">Buen dia, {name}.</h2>
 		</header>
 	)
 }
