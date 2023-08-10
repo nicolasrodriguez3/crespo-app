@@ -1,4 +1,3 @@
-import { NavLink } from "react-router-dom"
 import homeIcon from "../assets/house.svg"
 import addIcon from "../assets/add-square-linear.svg"
 import userIcon from "../assets/user-linear.svg"
