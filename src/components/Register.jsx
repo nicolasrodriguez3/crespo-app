@@ -48,7 +48,7 @@ export default function Register() {
 	}
 
 	return (
-		<main className="w-full min-h-screen bg-gradient-to-b from-[#FFD73A] from-10% to-50% flex flex-col items-center gap-4">
+		<main className="register_form w-full min-h-screen bg-gradient-to-b from-[#FFD73A] from-10% to-50% flex flex-col items-center gap-4">
 			<div className="flex justify-center items-end grow">
 				<img
 					src="/chicken.svg"
@@ -56,7 +56,7 @@ export default function Register() {
 					width={100}
 				/>
 			</div>
-			<section className="pb-28">
+			<section className="min-h-[40vh] w-8/12 max-w-xs">
 				<form
 					onSubmit={handleSubmit}
 					className="register-form flex flex-col gap-4 p-4 ">
@@ -93,7 +93,7 @@ export default function Register() {
 						</label>
 					</div>
 					{error && <p className="text-red-500">{error}</p>}
-					<button type="submit">Registrarse</button>
+					<button type="submit" className="bg-gold">Registrarse</button>
 				</form>
 			</section>
 		</main>

@@ -4,7 +4,7 @@ import email from "../assets/email.svg"
 
 function Login() {
 	return (
-		<main className="w-full min-h-screen bg-gradient-to-b from-[#FFD73A] from-10% to-50% flex flex-col items-center gap-4">
+		<main className="login_form w-full min-h-screen bg-gradient-to-b from-[#FFD73A] from-10% to-50% flex flex-col items-center gap-4">
 			<div className="flex justify-center items-end grow">
 				<img src="/chicken.svg" alt="Logo de la app" width={100}/>
 			</div>
