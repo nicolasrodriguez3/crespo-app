@@ -107,7 +107,7 @@ function Login() {
 							className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-gray-900 peer-focus:dark:text-gray-100 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
 							Contraseña
 						</label>
-						<p className="text-sm text-right mt-1">¿Olvidaste tu contraseña?</p>
+						<Link to="/forgot-password" className="text-sm text-right mt-1 block">¿Olvidaste tu contraseña?</Link>
 					</div>
 
 					{error && <p className="text-red-400">{error}</p>}

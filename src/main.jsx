@@ -9,6 +9,7 @@ import Login from "./components/Login.jsx"
 import NotFound from "./views/NotFound"
 import Register from "./components/Register"
 import { ProtectedRoute } from "./components/ProtectedRoute"
+import { ForgotPassword } from "./components/ForgotPassword"
 
 const router = createBrowserRouter([
 	{
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
 	{
 		path: "/register",
 		element: <Register />,
+	},
+	{
+		path: "/forgot-password",
+		element: <ForgotPassword />,
 	},
 ])
 
