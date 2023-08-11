@@ -13,10 +13,13 @@ export function HomeHeader() {
 
 	return (
 		<header className="w-full text-center">
-			<h1 className="bg-gold p-2 flex justify-center">
+			<div className='bg-gold p-2 flex justify-center relative'>
+
+			<h1 className="">
 				<img src={logo} alt='Logo de la ciudad' className='block w-[180px]'/>
 			</h1>
-			<Button onClick={handleLogout}>Logout</Button>
+			<Button className='absolute right-4 top-1/2 -translate-y-1/2' onClick={handleLogout}>Logout</Button>
+			</div>
 			<h2 className="bg-gold/80 text-lg p-3">Buen dia, {name}.</h2>
 		</header>
 	)

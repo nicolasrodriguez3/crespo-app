@@ -10,6 +10,7 @@ import NotFound from "./views/NotFound"
 import Register from "./components/Register"
 import { ProtectedRoute } from "./components/ProtectedRoute"
 import { ForgotPassword } from "./components/ForgotPassword"
+import AddClaim from "./components/AddClaim"
 
 const router = createBrowserRouter([
 	{
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
 		path: "/forgot-password",
 		element: <ForgotPassword />,
 	},
+	{
+		path: "/add",
+		element: <AddClaim />
+	}
 ])
 
 ReactDOM.createRoot(document.getElementById("root")).render(
