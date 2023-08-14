@@ -1,38 +1,63 @@
 import { useState } from "react"
-import { Button } from "@nextui-org/react"
 import { useAuth } from "../hooks/useAuth"
 import { useNavigate } from "react-router-dom"
 import { validateErrorOnAuth } from "../helpers/validateErrorOnAuth"
+import { Button, ButtonGroup, Input } from "@nextui-org/react"
+import google from "../assets/google.svg"
+import facebook from "../assets/facebook.svg"
+import { EyeFilledIcon } from "../assets/EyeFilledIcon"
+import { EyeSlashFilledIcon } from "../assets/EyeSlashFilledIcon"
+import { useFormik } from "formik"
+import * as Yup from "yup"
+import { Link } from "react-router-dom"
 
 export default function Register() {
-	const { signup } = useAuth()
+	const { signup, loginWithGoogle, loginWithFacebook } = useAuth()
 	const navigate = useNavigate()
+	const [isVisible, setIsVisible] = useState(false)
 
-	const [user, setUser] = useState({
-		email: "",
-		password: "",
-	})
 	const [error, setError] = useState(null)
-	const [loading, setLoading] = useState(false)
 
-	const handleChange = ({ target: { name, value } }) => {
-		setUser({
-			...user,
-			[name]: value,
-		})
-	}
+	const formik = useFormik({
+		initialValues: {
+			email: "",
+			password: ""
+		},
+		validationSchema: Yup.object({
+			email: Yup.string().email("El correo no es válido").required("Ingrese su correo."),
+			password: Yup.string().min(6, "Su contraseña debe tener al menos 6 caracteres").required("Ingrese su contraseña")
+		}),
+		onSubmit: async (values, {setSubmitting}) => {
+			setError(null)
+	
+			try {
+				await signup(values.email, values.password)
+				setSubmitting(false)
+				navigate("/")
+			} catch (err) {
+				setSubmitting(false)
+				const errorMsg = validateErrorOnAuth(err.code)
+				setError(errorMsg)
+			}
+		}
+	})
 
-	const handleSubmit = async (e) => {
-		e.preventDefault()
-		setError(null)
-		setLoading(true)
+	const {values, handleChange, handleSubmit, handleBlur, touched, errors, isSubmitting} = formik
 
+	const handleGoogleSignin = async () => {
 		try {
-			await signup(user.email, user.password)
-			setLoading(false)
+			await loginWithGoogle()
 			navigate("/")
 		} catch (err) {
-			setLoading(false)
+			const errorMsg = validateErrorOnAuth(err.code)
+			setError(errorMsg)
+		}
+	}
+	const handleFacebookSignin = async () => {
+		try {
+			await loginWithFacebook()
+			navigate("/")
+		} catch (err) {
 			const errorMsg = validateErrorOnAuth(err.code)
 			setError(errorMsg)
 		}
@@ -47,49 +72,55 @@ export default function Register() {
 					width={100}
 				/>
 			</div>
-			<section className="min-h-[40vh] w-8/12 max-w-xs">
+			<section className="flex flex-col items-center min-h-[40vh] max-w-xs gap-8 pb-8">
 				<form
 					onSubmit={handleSubmit}
-					className="register-form flex flex-col gap-4 p-4 ">
-					<div className="relative z-0">
-						<input
-							type="email"
-							name="email"
-							id="floating_email"
-							value={user.email}
-							onChange={handleChange}
-							required
-							className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-900 dark:focus:border-gray-100 focus:outline-none focus:ring-0 focus:border-gray-900 peer"
-							placeholder=""
-						/>
-						<label
-							htmlFor="floating_email"
-							className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-gray-900 peer-focus:dark:text-gray-100 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
-							Correo
-						</label>
-					</div>
-					<div className="relative z-0">
-						<input
-							type="password"
-							name="password"
-							id="floating_password"
-							value={user.password}
-							onChange={handleChange}
-							required
-							className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-900 dark:focus:border-gray-100 focus:outline-none focus:ring-0 focus:border-gray-900 peer"
-							placeholder=""
-						/>
-						<label
-							htmlFor="floating_password"
-							className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-gray-900 peer-focus:dark:text-gray-100 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
-							Contraseña
-						</label>
-					</div>
+					className="flex flex-col gap-4 w-full max-w-xs">
+						<Input
+						value={values.email}
+						name="email"
+						id="email"
+						onChange={handleChange}
+						onBlur={handleBlur}
+						type="email"
+						label="Correo"
+						variant="underlined"
+						autoComplete="true"
+						validationState={touched.email && errors.email ? "invalid" : "valid"}
+						errorMessage={touched.email && errors.email ? errors.email : ""}
+					/>
+					
+					<Input
+						label="Contraseña"
+						name="password"
+						value={values.password}
+						onChange={handleChange}
+						onBlur={handleBlur}
+						required
+						labelPlacement="inside"
+						variant="underlined"
+						validationState={touched.password && errors.password ? "invalid" : "valid"}
+						errorMessage={touched.password && errors.password ? errors.password : ""}
+						endContent={
+							<button
+								className="focus:outline-none"
+								type="button"
+								onClick={() => setIsVisible(!isVisible)}>
+								{isVisible ? (
+									<EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+								) : (
+									<EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+								)}
+							</button>
+						}
+						type={isVisible ? "text" : "password"}
+					/>
+					
 					{error && <p className="text-red-400">{error}</p>}
 					<Button
 						type="submit"
 						className="bg-gold"
-						isLoading={loading}
+						isLoading={isSubmitting}
 						spinner={
 							<svg
 								className="animate-spin h-5 w-5 text-current"
@@ -115,6 +146,30 @@ export default function Register() {
 						Registrarse
 					</Button>
 				</form>
+				<section>
+					<p className="text-center mb-2">o regístrate con</p>
+					<ButtonGroup>
+						<Button
+							className="h-12 bg-inherit"
+							onClick={handleGoogleSignin}>
+							<img
+								src={google}
+								width={40}
+							/>
+						</Button>
+						<Button
+							className="h-12 bg-inherit"
+							onClick={handleFacebookSignin}>
+							<img
+								src={facebook}
+								width={40}
+							/>
+						</Button>
+					</ButtonGroup>
+				</section>
+					<p>
+					¿Ya tienes una cuenta? <Link to="/login" className="underline">Iniciar sesión</Link>
+				</p>
 			</section>
 		</main>
 	)

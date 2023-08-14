@@ -16,82 +16,94 @@ export default function AddClaim() {
 			title: "",
 			content: "",
 			category: "",
+			media: null
 		},
-		onSubmit: (values, { setSubmitting }) => {
+		onSubmit: async (values, { setSubmitting }) => {
 			console.log(JSON.stringify(values, null, 2))
 			setSubmitting(false)
+
 		},
 		validationSchema: Yup.object({
 			title: Yup.string().required("Por favor ingrese un título"),
 			category: Yup.string().required("Por favor seleccione una categoria."),
 		}),
 	})
+	const { values, touched, errors, isSubmitting, setFieldValue } = formik
 
 	return (
 		<div>
 			<main className="register_form w-full min-h-screen bg-gradient-to-b from-[#FFD73A] from-10% to-50% flex flex-col items-center gap-4">
 				<div className="flex justify-center items-end grow">
-					<img src="/chicken.svg" alt="Logo de la app" width={50} />
+					<img
+						src="/chicken.svg"
+						alt="Logo de la app"
+						width={50}
+					/>
 				</div>
-				<section className="min-h-[40vh] w-8/12 max-w-xs">
-					<form onSubmit={formik.handleSubmit} className="register-form flex flex-col gap-4 p-4 ">
-						<Dropdown>
-							<DropdownTrigger>
-								<Button variant="bordered">
-									{formik.values.category === ""
-										? "Seleccione una categoria"
-										: formik.values.category}
-								</Button>
-							</DropdownTrigger>
-							<DropdownMenu
-								name="category"
-								aria-label="Categoria"
-								selectionMode="single"
-								disallowEmptySelection
-								selectedKeys={formik.values.category}
-								onAction={(value) => formik.setFieldValue("category", value)}>
-								<DropdownItem key="Reclamos">Reclamos</DropdownItem>
-								<DropdownItem key="Sugerencias">Sugerencias</DropdownItem>
-								<DropdownItem key="Denuncias">Denuncias</DropdownItem>
-							</DropdownMenu>
-						</Dropdown>
-						{formik.touched.category && formik.errors.category ? (
-							<div>{formik.errors.category}</div>
-						) : null}
-
+				<section className="min-h-[40vh] w-8/12 max-w-xs pb-8">
+					<form
+						onSubmit={formik.handleSubmit}
+						className="register-form flex flex-col gap-4 p-4 ">
+						<div className="flex flex-col gap-1">
+							<Dropdown type="listbox">
+								<DropdownTrigger>
+									<Button variant="bordered">
+										{formik.values.category === ""
+											? "Seleccione una categoría"
+											: formik.values.category}
+									</Button>
+								</DropdownTrigger>
+								<DropdownMenu
+									
+									name="category"
+									aria-label="Categoría"
+									selectionMode="single"
+									disallowEmptySelection
+									selectedKeys={formik.values.category}
+									onAction={(value) => formik.setFieldValue("category", value)}>
+									<DropdownItem key="Reclamos">Reclamos</DropdownItem>
+									<DropdownItem key="Sugerencias">Sugerencias</DropdownItem>
+									<DropdownItem key="Denuncias">Denuncias</DropdownItem>
+								</DropdownMenu>
+							</Dropdown>
+							{formik.touched.category && formik.errors.category ? (
+								<div className="text-tiny text-danger">{formik.errors.category}</div>
+							) : null}
+						</div>
+						
 						<Input
 							name="title"
 							label="Título"
 							isRequired
+							variant="underlined"
 							{...formik.getFieldProps("title")}
-							className={
-								formik.touched.title && formik.errors.title
-									? " border rounded-lg border-red-500"
-									: ""
-							}
+							validationState={touched.title && errors.title ? "invalid" : "valid"}
+							errorMessage={touched.title && errors.title ? errors.title : ""}
 						/>
-						{formik.touched.title && formik.errors.title ? <div>{formik.errors.title}</div> : null}
 
 						<Textarea
 							label="Description"
 							labelPlacement="inside"
+							variant="underlined"
 							placeholder="Ingrese una descripción"
 							{...formik.getFieldProps("content")}
 						/>
 
 						<input
 							type="file"
-							name=""
-							id=""
+							name="media"
+							id="media"
+							capture
+							onChange={e => setFieldValue("media", e.target.files[0])}
 							accept="image/*"
-							multiple
-							className="shadow-sm px-3 bg-default-100 rounded-medium transition-background motion-reduce:transition-none outline-none !duration-150 focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-background py-2"
+							className="shadow-sm text-sm px-3 bg-default-100 rounded-medium transition-background motion-reduce:transition-none outline-none !duration-150 focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-background py-2"
 						/>
-
+						{values.media ? <img src={URL.createObjectURL(values.media)} /> : ""}
+						{values.media?.name}
 						<Button
 							type="submit"
 							className="bg-gold"
-							isLoading={formik.isSubmitting}
+							isLoading={isSubmitting}
 							spinner={
 								<svg
 									className="animate-spin h-5 w-5 text-current"

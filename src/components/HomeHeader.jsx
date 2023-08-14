@@ -2,14 +2,17 @@ import logo from '../assets/logo-full.png'
 import logoutIcon from "../assets/logout.svg"
 import {useAuth} from '../hooks/useAuth'
 import { Button } from "@nextui-org/react"
+import { useNavigate } from 'react-router-dom'
 
 export function HomeHeader() {
+	const navigate = useNavigate()
 	const {user, logout} = useAuth()
 
-	const name = user.displayName || user.email || "Nico"
+	const name = user?.displayName || user?.email || "Nico"
 
 	const handleLogout = async () => {
 		await logout()
+		navigate("/login")
 	}
 
 	return (

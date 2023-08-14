@@ -1,63 +1,64 @@
 import google from "../assets/google.svg"
 import facebook from "../assets/facebook.svg"
-
 import { Button, ButtonGroup, Input } from "@nextui-org/react"
 import { useState } from "react"
-import { useAuth } from '../hooks/useAuth'
+import { useAuth } from "../hooks/useAuth"
 import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
 import { validateErrorOnAuth } from "../helpers/validateErrorOnAuth"
-import {EyeFilledIcon} from "../assets/EyeFilledIcon"
-import {EyeSlashFilledIcon} from "../assets/EyeSlashFilledIcon"
+import { EyeFilledIcon } from "../assets/EyeFilledIcon"
+import { EyeSlashFilledIcon } from "../assets/EyeSlashFilledIcon"
+import { useFormik } from "formik"
+import * as Yup from "yup"
+
 
 function Login() {
-	const { login, loginWithGoogle, loginWithFacebook } = useAuth()
 	const navigate = useNavigate()
-	const [isVisible, setIsVisible ] = useState(false)
-	const [user, setUser] = useState({
-		email: "",
-		password: "",
-	})
+	const { login, loginWithGoogle, loginWithFacebook } = useAuth()
+	const [isVisible, setIsVisible] = useState(false)
+	
 	const [error, setError] = useState(null)
-	const [loading, setLoading] = useState(false)
 
-	const handleChange = ({ target: { name, value } }) => {
-		setUser({
-			...user,
-			[name]: value,
-		})
-	}
-
-	const handleSubmit = async (e) => {
-		e.preventDefault()
-		setError(null)
-		setLoading(true)
-
-		try {
-			await login(user.email, user.password)
-			setLoading(false)
-			navigate("/")
-		} catch (err) {
-			setLoading(false)
-			const errorMsg = validateErrorOnAuth(err.code)
-			setError(errorMsg)
+	const formik = useFormik({
+		initialValues: {
+			email: "",
+			password: ""
+		},
+		validationSchema: Yup.object({
+			email: Yup.string().email("El correo no es válido").required("Ingrese su correo."),
+			password: Yup.string().min(6, "Su contraseña debe tener al menos 6 caracteres").required("Ingrese su contraseña")
+		}),
+		onSubmit: async (values, {setSubmitting}) => {
+			setError(null)
+	
+			try {
+				await login(values.email, values.password)
+				setSubmitting(false)
+				navigate("/")
+			} catch (err) {
+				setSubmitting(false)
+				const errorMsg = validateErrorOnAuth(err.code)
+				setError(errorMsg)
+			}
 		}
-	}
+	})
+
+	const {values, handleChange, handleSubmit, handleBlur, touched, errors, isSubmitting } = formik
 
 	const handleGoogleSignin = async () => {
-		try{
+		try {
 			await loginWithGoogle()
 			navigate("/")
-		} catch(err){
+		} catch (err) {
 			const errorMsg = validateErrorOnAuth(err.code)
 			setError(errorMsg)
 		}
 	}
 	const handleFacebookSignin = async () => {
-		try{
+		try {
 			await loginWithFacebook()
 			navigate("/")
-		} catch(err){
+		} catch (err) {
 			const errorMsg = validateErrorOnAuth(err.code)
 			setError(errorMsg)
 		}
@@ -76,66 +77,57 @@ function Login() {
 				<form
 					onSubmit={handleSubmit}
 					className="flex flex-col gap-4 w-full max-w-xs">
-					<div className="relative z-0">
-						<input
-							type="email"
-							name="email"
-							id="floating_email"
-							value={user.email}
-							onChange={handleChange}
-							required
-							className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-900 dark:focus:border-gray-100 focus:outline-none focus:ring-0 focus:border-gray-900 peer"
-							placeholder=""
-						/>
-						<label
-							htmlFor="floating_email"
-							className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-gray-900 peer-focus:dark:text-gray-100 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
-							Correo
-						</label>
-					</div>
 					<Input
-              label="Contraseña"
-							name="password"
-							value={user.password}
-							onValueChange={handleChange}
-							required
-              labelPlacement="inside"
-							variant="underlined"
-							endContent={
-								<button className="focus:outline-none" type="button" onClick={()=>setIsVisible(!isVisible)}>
-									{isVisible ? (
-										<EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
-									) : (
-										<EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
-									)}
-								</button>
-							}
-							type={isVisible ? "text" : "password"}
-            />
-					<div className="relative z-0">
-						<input
-							type="password"
-							name="password"
-							id="floating_password"
-							value={user.password}
-							onChange={handleChange}
-							required
-							className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-900 dark:focus:border-gray-100 focus:outline-none focus:ring-0 focus:border-gray-900 peer"
-							placeholder=""
-						/>
-						<label
-							htmlFor="floating_password"
-							className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-gray-900 peer-focus:dark:text-gray-100 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
-							Contraseña
-						</label>
-						<Link to="/forgot-password" className="text-sm text-right mt-1 block">¿Olvidaste tu contraseña?</Link>
-					</div>
-
+						value={values.email}
+						name="email"
+						id="email"
+						onChange={handleChange}
+						onBlur={handleBlur}
+						type="email"
+						label="Correo"
+						variant="underlined"
+						autoComplete="true"
+						validationState={touched.email && errors.email ? "invalid" : "valid"}
+						errorMessage={touched.email && errors.email ? errors.email : ""}
+					/>
+					
+					<Input
+						label="Contraseña"
+						name="password"
+						value={values.password}
+						onChange={handleChange}
+						onBlur={handleBlur}
+						required
+						labelPlacement="inside"
+						variant="underlined"
+						validationState={touched.password && errors.password ? "invalid" : "valid"}
+						errorMessage={touched.password && errors.password ? errors.password : ""}
+						endContent={
+							<button
+								className="focus:outline-none"
+								type="button"
+								onClick={() => setIsVisible(!isVisible)}>
+								{isVisible ? (
+									<EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+								) : (
+									<EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+								)}
+							</button>
+						}
+						type={isVisible ? "text" : "password"}
+					/>
+					
+						<Link
+							to="/forgot-password"
+							className="text-sm text-right mt-1 block">
+							¿Olvidaste tu contraseña?
+						</Link>
 					{error && <p className="text-red-400">{error}</p>}
+
 					<Button
 						type="submit"
 						className="bg-gold"
-						isLoading={loading}
+						isLoading={isSubmitting}
 						spinner={
 							<svg
 								className="animate-spin h-5 w-5 text-current"
@@ -163,13 +155,17 @@ function Login() {
 				<section>
 					<p className="text-center mb-2">o iniciar sesión con</p>
 					<ButtonGroup>
-						<Button className="h-12 bg-inherit" onClick={handleGoogleSignin}>
+						<Button
+							className="h-12 bg-inherit"
+							onClick={handleGoogleSignin}>
 							<img
 								src={google}
 								width={40}
 							/>
 						</Button>
-						<Button className="h-12 bg-inherit" onClick={handleFacebookSignin}>
+						<Button
+							className="h-12 bg-inherit"
+							onClick={handleFacebookSignin}>
 							<img
 								src={facebook}
 								width={40}
@@ -177,7 +173,9 @@ function Login() {
 						</Button>
 					</ButtonGroup>
 				</section>
-				<p>¿No tienes una cuenta? <Link to="/register">Regístrate</Link></p>
+				<p>
+					¿No tienes una cuenta? <Link to="/register" className="underline">Regístrate</Link>
+				</p>
 			</section>
 		</main>
 	)
