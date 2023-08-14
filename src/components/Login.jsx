@@ -1,17 +1,19 @@
 import google from "../assets/google.svg"
 import facebook from "../assets/facebook.svg"
 
-import { Button, ButtonGroup } from "@nextui-org/react"
+import { Button, ButtonGroup, Input } from "@nextui-org/react"
 import { useState } from "react"
 import { useAuth } from '../hooks/useAuth'
 import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
 import { validateErrorOnAuth } from "../helpers/validateErrorOnAuth"
+import {EyeFilledIcon} from "../assets/EyeFilledIcon"
+import {EyeSlashFilledIcon} from "../assets/EyeSlashFilledIcon"
 
 function Login() {
 	const { login, loginWithGoogle, loginWithFacebook } = useAuth()
 	const navigate = useNavigate()
-
+	const [isVisible, setIsVisible ] = useState(false)
 	const [user, setUser] = useState({
 		email: "",
 		password: "",
@@ -91,6 +93,25 @@ function Login() {
 							Correo
 						</label>
 					</div>
+					<Input
+              label="Contraseña"
+							name="password"
+							value={user.password}
+							onValueChange={handleChange}
+							required
+              labelPlacement="inside"
+							variant="underlined"
+							endContent={
+								<button className="focus:outline-none" type="button" onClick={()=>setIsVisible(!isVisible)}>
+									{isVisible ? (
+										<EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+									) : (
+										<EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+									)}
+								</button>
+							}
+							type={isVisible ? "text" : "password"}
+            />
 					<div className="relative z-0">
 						<input
 							type="password"

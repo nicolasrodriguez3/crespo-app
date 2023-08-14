@@ -2,7 +2,7 @@ import homeIcon from "../assets/house.svg"
 import addIcon from "../assets/add-square-linear.svg"
 import userIcon from "../assets/user-linear.svg"
 import homeIconActive from "../assets/house-bold.svg"
-import addIconActive from "../assets/add-square-linear.svg"
+import addIconActive from "../assets/add-square-bold.svg"
 import userIconActive from "../assets/user-linear.svg"
 import NavbarIcons from "./NavbarIcons"
 
@@ -27,7 +27,7 @@ const sections = [
 },
 ]
 
-function Navbar() {
+export function Navbar() {
 	return (
 		<nav className="fixed bottom-0 left-0 w-full bg-gold">
 			<ul className="flex justify-evenly">
@@ -42,4 +42,3 @@ function Navbar() {
 		</nav>
 	)
 }
-export default Navbar
