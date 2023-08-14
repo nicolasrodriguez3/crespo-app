@@ -6,6 +6,7 @@ import {
 	DropdownMenu,
 	DropdownItem,
 	Textarea,
+	Image
 } from "@nextui-org/react"
 import { useFormik } from "formik"
 import * as Yup from "yup"
@@ -96,10 +97,10 @@ export default function AddClaim() {
 							capture
 							onChange={e => setFieldValue("media", e.target.files[0])}
 							accept="image/*"
-							className="shadow-sm text-sm px-3 bg-default-100 rounded-medium transition-background motion-reduce:transition-none outline-none !duration-150 focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-background py-2"
+							className="shadow-sm text-sm px-3 rounded-medium transition-background motion-reduce:transition-none outline-none !duration-150 focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-background py-2"
 						/>
-						{values.media ? <img src={URL.createObjectURL(values.media)} /> : ""}
-						{values.media?.name}
+						{values.media ? <Image src={URL.createObjectURL(values.media)} /> : ""}
+						
 						<Button
 							type="submit"
 							className="bg-gold"
