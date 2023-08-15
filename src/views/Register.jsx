@@ -1,22 +1,20 @@
-import google from "../assets/google.svg"
-import facebook from "../assets/facebook.svg"
-import { Button, ButtonGroup, Input } from "@nextui-org/react"
 import { useState } from "react"
 import { useAuth } from "../hooks/useAuth"
-import { useNavigate } from "react-router-dom"
-import { Link } from "react-router-dom"
+import { useNavigate, Link} from "react-router-dom"
 import { validateErrorOnAuth } from "../helpers/validateErrorOnAuth"
-import { EyeFilledIcon } from "../assets/EyeFilledIcon"
-import { EyeSlashFilledIcon } from "../assets/EyeSlashFilledIcon"
 import { useFormik } from "formik"
 import * as Yup from "yup"
+import { Button, ButtonGroup, Input } from "@nextui-org/react"
+import google from "../assets/google.svg"
+import facebook from "../assets/facebook.svg"
+import { EyeFilledIcon } from "../assets/EyeFilledIcon"
+import { EyeSlashFilledIcon } from "../assets/EyeSlashFilledIcon"
 
-
-function Login() {
+export default function Register() {
+	const { signup, loginWithGoogle, loginWithFacebook } = useAuth()
 	const navigate = useNavigate()
-	const { login, loginWithGoogle, loginWithFacebook } = useAuth()
 	const [isVisible, setIsVisible] = useState(false)
-	
+
 	const [error, setError] = useState(null)
 
 	const formik = useFormik({
@@ -32,7 +30,7 @@ function Login() {
 			setError(null)
 	
 			try {
-				await login(values.email, values.password)
+				await signup(values.email, values.password)
 				setSubmitting(false)
 				navigate("/")
 			} catch (err) {
@@ -43,7 +41,7 @@ function Login() {
 		}
 	})
 
-	const {values, handleChange, handleSubmit, handleBlur, touched, errors, isSubmitting } = formik
+	const {values, handleChange, handleSubmit, handleBlur, touched, errors, isSubmitting} = formik
 
 	const handleGoogleSignin = async () => {
 		try {
@@ -65,7 +63,7 @@ function Login() {
 	}
 
 	return (
-		<main className="login_form w-full min-h-screen bg-gradient-to-b from-[#FFD73A] from-10% to-50% flex flex-col items-center gap-4">
+		<main className="register_form w-full min-h-screen bg-gradient-to-b from-[#FFD73A] from-10% to-50% flex flex-col items-center gap-4">
 			<div className="flex justify-center items-end grow">
 				<img
 					src="/chicken.svg"
@@ -73,11 +71,11 @@ function Login() {
 					width={100}
 				/>
 			</div>
-			<section className="flex flex-col items-center min-h-[40vh] gap-8 pb-8">
+			<section className="flex flex-col items-center min-h-[40vh] max-w-xs gap-8 pb-8">
 				<form
 					onSubmit={handleSubmit}
 					className="flex flex-col gap-4 w-full max-w-xs">
-					<Input
+						<Input
 						value={values.email}
 						name="email"
 						id="email"
@@ -117,13 +115,7 @@ function Login() {
 						type={isVisible ? "text" : "password"}
 					/>
 					
-						<Link
-							to="/forgot-password"
-							className="text-sm text-right mt-1 block">
-							¿Olvidaste tu contraseña?
-						</Link>
 					{error && <p className="text-red-400">{error}</p>}
-
 					<Button
 						type="submit"
 						className="bg-gold"
@@ -133,7 +125,8 @@ function Login() {
 								className="animate-spin h-5 w-5 text-current"
 								fill="none"
 								viewBox="0 0 24 24"
-								xmlns="http://www.w3.org/2000/svg">
+								xmlns="http://www.w3.org/2000/svg"
+							>
 								<circle
 									className="opacity-25"
 									cx="12"
@@ -149,11 +142,11 @@ function Login() {
 								/>
 							</svg>
 						}>
-						Iniciar sesión
+						Registrarse
 					</Button>
 				</form>
 				<section>
-					<p className="text-center mb-2">o iniciar sesión con</p>
+					<p className="text-center mb-2">o regístrate con</p>
 					<ButtonGroup>
 						<Button
 							className="h-12 bg-inherit"
@@ -173,11 +166,10 @@ function Login() {
 						</Button>
 					</ButtonGroup>
 				</section>
-				<p>
-					¿No tienes una cuenta? <Link to="/register" className="underline">Regístrate</Link>
+					<p>
+					¿Ya tienes una cuenta? <Link to="/login" className="underline">Iniciar sesión</Link>
 				</p>
 			</section>
 		</main>
 	)
 }
-export default Login

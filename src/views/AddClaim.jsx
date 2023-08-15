@@ -14,7 +14,7 @@ import { getStorage, ref, uploadBytes } from "firebase/storage"
 import { v4 as uuidv4 } from "uuid"
 import { db } from "../firebase.config"
 import { useAuth } from "../hooks/useAuth"
-import { Navbar } from "./Navbar"
+import { Navbar } from "../components/Navbar"
 
 export default function AddClaim() {
 	const storage = getStorage()
