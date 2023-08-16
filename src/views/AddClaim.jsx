@@ -16,7 +16,7 @@ import { db } from "../firebase.config"
 import { useAuth } from "../hooks/useAuth"
 import { Navbar } from "../components/Navbar"
 
-export default function AddClaim() {
+export function AddClaim() {
 	const storage = getStorage()
 	const { user } = useAuth()
 	const formik = useFormik({

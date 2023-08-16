@@ -1,7 +1,7 @@
 import { useRouteError } from "react-router-dom"
 import chicken from "../assets/roast-chicken.svg"
 
-function NotFound() {
+export function NotFound() {
 	const { status, statusText } = useRouteError()
 
 	return (
@@ -20,4 +20,3 @@ function NotFound() {
 		</main>
 	)
 }
-export default NotFound

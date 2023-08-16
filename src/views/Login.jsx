@@ -10,8 +10,7 @@ import facebook from "../assets/facebook.svg"
 import { EyeFilledIcon } from "../assets/EyeFilledIcon"
 import { EyeSlashFilledIcon } from "../assets/EyeSlashFilledIcon"
 
-
-function Login() {
+export function Login() {
 	const navigate = useNavigate()
 	const { login, loginWithGoogle, loginWithFacebook } = useAuth()
 	const [isVisible, setIsVisible] = useState(false)
@@ -179,4 +178,3 @@ function Login() {
 		</main>
 	)
 }
-export default Login

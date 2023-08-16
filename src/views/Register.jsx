@@ -10,7 +10,7 @@ import facebook from "../assets/facebook.svg"
 import { EyeFilledIcon } from "../assets/EyeFilledIcon"
 import { EyeSlashFilledIcon } from "../assets/EyeSlashFilledIcon"
 
-export default function Register() {
+export function Register() {
 	const { signup, loginWithGoogle, loginWithFacebook } = useAuth()
 	const navigate = useNavigate()
 	const [isVisible, setIsVisible] = useState(false)

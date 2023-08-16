@@ -2,7 +2,7 @@ import { HomeHeader } from "../components/HomeHeader"
 import Post from "../components/Post"
 import { data } from "../data/posts"
 
-function Home() {
+export function Home() {
 	return (
 		<>
 		<HomeHeader />
@@ -12,4 +12,3 @@ function Home() {
 		</>
 	)
 }
-export default Home

@@ -5,17 +5,21 @@ import { NextUIProvider } from "@nextui-org/react"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { AuthProvider } from "./context/AuthProvider"
 import App from "./App.jsx"
-import Login from "./components/Login.jsx"
-import NotFound from "./views/NotFound"
-import Register from "./components/Register"
+import { Login } from "./views/Login.jsx"
+import { NotFound } from "./views/NotFound"
+import { Register } from "./views/Register"
 import { ProtectedRoute } from "./components/ProtectedRoute"
-import { ForgotPassword } from "./components/ForgotPassword"
-import AddClaim from "./components/AddClaim"
+import { ForgotPassword } from "./views/ForgotPassword"
+import { AddClaim } from "./views/AddClaim"
 
 const router = createBrowserRouter([
 	{
 		path: "/",
-		element: <ProtectedRoute><App /></ProtectedRoute>,
+		element: (
+			<ProtectedRoute>
+				<App />
+			</ProtectedRoute>
+		),
 		errorElement: <NotFound />,
 	},
 	{
@@ -32,8 +36,8 @@ const router = createBrowserRouter([
 	},
 	{
 		path: "/add",
-		element: <AddClaim />
-	}
+		element: <AddClaim />,
+	},
 ])
 
 ReactDOM.createRoot(document.getElementById("root")).render(
