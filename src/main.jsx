@@ -11,6 +11,7 @@ import Register from "./components/Register"
 import { ProtectedRoute } from "./components/ProtectedRoute"
 import { ForgotPassword } from "./components/ForgotPassword"
 import AddClaim from "./components/AddClaim"
+import { Profile } from "./views/Profile"
 
 const router = createBrowserRouter([
 	{
@@ -33,7 +34,11 @@ const router = createBrowserRouter([
 	{
 		path: "/add",
 		element: <AddClaim />
-	}
+	},
+	{
+		path: "/profile",
+		element: <Profile />
+	},
 ])
 
 ReactDOM.createRoot(document.getElementById("root")).render(

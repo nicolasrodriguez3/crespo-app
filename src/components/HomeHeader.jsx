@@ -1,30 +1,23 @@
-import logo from '../assets/logo-full.png'
-import logoutIcon from "../assets/logout.svg"
-import {useAuth} from '../hooks/useAuth'
-import { Button } from "@nextui-org/react"
-import { useNavigate } from 'react-router-dom'
+import logo from "../assets/logo-full.png"
+import { useAuth } from "../hooks/useAuth"
 
 export function HomeHeader() {
-	const navigate = useNavigate()
-	const {user, logout} = useAuth()
+	const { user } = useAuth()
 
 	const name = user?.displayName || user?.email || "Nico"
 
-	const handleLogout = async () => {
-		await logout()
-		navigate("/login")
-	}
-
 	return (
 		<header className="w-full text-center">
-			<div className='bg-gold p-2 flex justify-center relative'>
-
-			<h1 className="">
-				<img src={logo} alt='Logo de la ciudad' className='block w-[180px]'/>
-			</h1>
-			<Button isIconOnly color='warning' variant="light" className='absolute right-4 top-1/2 -translate-y-1/2 bg-transparent' onClick={handleLogout}><img src={logoutIcon} alt="Salir" width={32}/></Button>
+			<div className="bg-gold p-2 flex justify-center relative">
+				<h1 className="">
+					<img
+						src={logo}
+						alt="Logo de la ciudad"
+						className="block w-[180px]"
+					/>
+				</h1>
 			</div>
-			<h2 className="bg-gold/80 text-lg p-3">Buen dia, {name}.</h2>
+			<h2 className="bg-gold/80 text-lg p-3">Bienvenido, {name}.</h2>
 		</header>
 	)
 }
