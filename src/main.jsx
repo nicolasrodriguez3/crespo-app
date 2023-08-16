@@ -11,6 +11,7 @@ import { Register } from "./views/Register"
 import { ProtectedRoute } from "./components/ProtectedRoute"
 import { ForgotPassword } from "./views/ForgotPassword"
 import { AddClaim } from "./views/AddClaim"
+import { Profile } from "./views/Profile"
 
 const router = createBrowserRouter([
 	{
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
 	{
 		path: "/add",
 		element: <AddClaim />,
+	},
+	{
+		path: "/profile",
+		element: <Profile />
 	},
 ])
 
