@@ -6,6 +6,7 @@ import { Navbar } from "../components/Navbar"
 import logoutIcon from "../assets/logout-2-linear.svg"
 import penIcon from "../assets/pen-2-linear.svg"
 import claimsIcon from "../assets/checklist-minimalistic-linear.svg"
+import { Link } from "react-router-dom"
 
 export function Profile() {
 	const navigate = useNavigate()
@@ -23,14 +24,16 @@ export function Profile() {
 			<div className="">
 				<header className="flex items-center flex-col">
 					<img
-						src="chicken.svg"
+						src="/chicken.svg"
 						alt="Imagen de perfil"
 					/>
-					<p>Nico</p>
+					<p>{user?.displayName || user?.email}</p>
 				</header>
-				<ul>
+				<ul className="p-4 flex flex-col gap-2">
 					<li>
 						<Button
+							as={Link}
+							to="/profile/edit"
 							isLoading={loading}
 							variant="light"
 							startContent={

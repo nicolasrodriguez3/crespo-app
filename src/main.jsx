@@ -12,11 +12,16 @@ import { ProtectedRoute } from "./components/ProtectedRoute"
 import { ForgotPassword } from "./components/ForgotPassword"
 import AddClaim from "./components/AddClaim"
 import { Profile } from "./views/Profile"
+import { EditProfile } from "./views/EditProfile"
 
 const router = createBrowserRouter([
 	{
 		path: "/",
-		element: <ProtectedRoute><App /></ProtectedRoute>,
+		element: (
+			<ProtectedRoute>
+				<App />
+			</ProtectedRoute>
+		),
 		errorElement: <NotFound />,
 	},
 	{
@@ -33,11 +38,15 @@ const router = createBrowserRouter([
 	},
 	{
 		path: "/add",
-		element: <AddClaim />
+		element: <AddClaim />,
 	},
 	{
 		path: "/profile",
-		element: <Profile />
+		element: <Profile />,
+	},
+	{
+		path: "/profile/edit",
+		element: <EditProfile />,
 	},
 ])
 
