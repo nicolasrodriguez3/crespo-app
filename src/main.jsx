@@ -12,6 +12,7 @@ import { ProtectedRoute } from "./components/ProtectedRoute"
 import { ForgotPassword } from "./views/ForgotPassword"
 import { AddClaim } from "./views/AddClaim"
 import { Profile } from "./views/Profile"
+import { EditProfile } from "./views/EditProfile"
 
 const router = createBrowserRouter([
 	{
@@ -41,7 +42,11 @@ const router = createBrowserRouter([
 	},
 	{
 		path: "/profile",
-		element: <Profile />
+		element: <Profile />,
+	},
+	{
+		path: "/profile/edit",
+		element: <EditProfile />,
 	},
 ])
 
