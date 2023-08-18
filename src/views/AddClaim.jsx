@@ -39,7 +39,7 @@ export function AddClaim() {
 			}
 
 			try {
-				await addDoc(collection(db, id), {
+				await addDoc(collection(db, "posts"), {
 					title,
 					category,
 					content,
