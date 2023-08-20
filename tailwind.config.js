@@ -19,6 +19,6 @@ export default {
     },
   },
   darkMode: "class",
-  plugins: [nextui()],
+  plugins: [nextui(), 'prettier-plugin-tailwindcss'],
 }
 
