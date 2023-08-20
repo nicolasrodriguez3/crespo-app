@@ -1,55 +1,83 @@
 import { authContext } from "./authContext"
 import {
-	createUserWithEmailAndPassword,
-	signInWithEmailAndPassword,
-	onAuthStateChanged,
-	signOut,
-	GoogleAuthProvider,
-	FacebookAuthProvider,
-	signInWithPopup,
-	sendPasswordResetEmail
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  signInWithPopup,
+  sendPasswordResetEmail,
 } from "firebase/auth"
-import { auth } from "../firebase.config"
+import { doc, setDoc, Timestamp } from "firebase/firestore"
+
+import { auth, db } from "../firebase.config"
 import { useEffect } from "react"
 import { useState } from "react"
 
 export function AuthProvider({ children }) {
-	const [user, setUser] = useState(null)
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
 
-	const signup = (email, password) => createUserWithEmailAndPassword(auth, email, password)
+  const signup = (email, password) =>
+    createUserWithEmailAndPassword(auth, email, password)
 
-	const login = (email, password) => signInWithEmailAndPassword(auth, email, password)
+  const saveUserData = (uid, data = {}) => {
+    setDoc(doc(db, "users", uid), data)
+  }
 
-	const logout = () => signOut(auth)
+  const login = (email, password) =>
+    signInWithEmailAndPassword(auth, email, password)
 
-	const loginWithGoogle = () => {
-		const googleProvider = new GoogleAuthProvider()
-		return signInWithPopup(auth, googleProvider)
-	}
-	const loginWithFacebook = () => {
-		const facebookProvider = new FacebookAuthProvider()
-		return signInWithPopup(auth, facebookProvider);
-	}
+  const logout = () => signOut(auth)
 
-	const resetPassword = (email) => {
-		return sendPasswordResetEmail(auth, email)
-	}
+  const loginWithGoogle = () => {
+    const googleProvider = new GoogleAuthProvider()
+    return signInWithPopup(auth, googleProvider)
+  }
+  const loginWithFacebook = () => {
+    const facebookProvider = new FacebookAuthProvider()
+    return signInWithPopup(auth, facebookProvider)
+  }
 
-	useEffect(() => {
-		const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-			if(currentUser){
-			setUser(currentUser)
-			} else {
-				setUser(null)
-			}
-		})
+  const resetPassword = (email) => {
+    return sendPasswordResetEmail(auth, email)
+  }
 
-		return () => unsubscribe()
-	}, [])
+  const saveUserImg = (avatarUrl) =>
+    setUser((user) => {
+      return { ...user, avatarUrl }
+    })
 
-	return (
-		<authContext.Provider value={{ user, signup, login, logout, loginWithGoogle, loginWithFacebook, resetPassword }}>
-			{children}
-		</authContext.Provider>
-	)
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser)
+      } else {
+        setUser(null)
+      }
+      setLoading(false)
+    })
+
+    return () => unsubscribe()
+  }, [])
+
+  return (
+    <authContext.Provider
+      value={{
+        user,
+        loading,
+        signup,
+        login,
+        logout,
+        loginWithGoogle,
+        loginWithFacebook,
+        resetPassword,
+        saveUserData,
+        saveUserImg,
+      }}
+    >
+      {children}
+    </authContext.Provider>
+  )
 }
