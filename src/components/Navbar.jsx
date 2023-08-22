@@ -29,7 +29,7 @@ const sections = [
 
 export function Navbar() {
 	return (
-		<nav className="fixed bottom-0 left-0 w-full bg-gold">
+		<nav className="fixed bottom-0 left-0 w-full bg-gold z-50">
 			<ul className="flex justify-evenly">
 				{sections.map((section) => {
 					return (
