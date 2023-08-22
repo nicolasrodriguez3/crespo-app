@@ -1,11 +1,10 @@
-import { Home } from "./views/Home"
 import { Navbar } from "./components/Navbar"
-import { useAuth } from "./hooks/useAuth"
+import { Outlet } from "react-router-dom"
 
 function App() {
 	return (
 		<>
-			<Home />
+			<Outlet />
 			<Navbar />
 		</>
 	)
