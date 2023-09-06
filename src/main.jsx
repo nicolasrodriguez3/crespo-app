@@ -25,10 +25,10 @@ const router = createBrowserRouter([
     ),
     errorElement: <NotFound />,
     children: [
-			{
-				path: "/",
-				element: <Home />
-			},
+      {
+        path: "/",
+        element: <Home />,
+      },
       {
         path: "/add",
         element: <AddClaim />,

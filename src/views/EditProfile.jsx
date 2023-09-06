@@ -19,6 +19,10 @@ import editIcon from "../assets/pen-linear.svg"
 import arrowIcon from "../assets/alt-arrow-right-linear.svg"
 import { getStorage, ref, uploadBytes } from "firebase/storage"
 import { getProfileImage } from "../helpers/getProfileImage"
+import { doc, setDoc } from "firebase/firestore"
+
+import { db } from "../firebase.config"
+import useGetUserData from "../hooks/useGetUserData"
 
 const getSex = (sexSelected) => {
   switch (sexSelected) {
@@ -33,18 +37,20 @@ const getSex = (sexSelected) => {
 
 export function EditProfile() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
-  const { user, saveUserImg } = useAuth()
+  const { user, getUserImg } = useAuth()
   const storage = getStorage()
+  const [data, gettingData, errorData] = useGetUserData(user.uid)
 
   const [error, setError] = useState(null)
 
   const formik = useFormik({
-    initialValues: {
+    initialValues: data || {
       name: "",
       surname: "",
       sex: "",
-      birthDate: ""
+      birthDate: "",
     },
+    enableReinitialize: true,
     validationSchema: Yup.object({
       name: Yup.string().required("Ingrese su nombre."),
       surname: Yup.string().required("Ingrese su apellido."),
@@ -52,10 +58,16 @@ export function EditProfile() {
       sex: Yup.string().required("Ingrese su sexo."),
     }),
     onSubmit: async (values, { setSubmitting }) => {
-      setError(null)
-      setSubmitting(false)
-
-      console.log(values)
+      try {
+        await setDoc(doc(db, "users", user.uid), values)
+        setError(null)
+        setSubmitting(false)
+        // TODO: Add toast to notify user
+      } catch (error) {
+        setError(error)
+        setSubmitting(false)
+        throw new Error("Error al actualizar los datos")
+      }
     },
   })
 
@@ -71,7 +83,8 @@ export function EditProfile() {
 
   const handleDownloadAvatar = async () => {
     const imageUrl = await getProfileImage(user.uid)
-    saveUserImg(imageUrl)
+    console.log(imageUrl)
+    getUserImg(imageUrl)
   }
 
   const handleUploadAvatar = (e) => {
@@ -80,12 +93,14 @@ export function EditProfile() {
 
     try {
       uploadBytes(storageRef, file)
-      //setAvatarUrl(URL.createObjectURL(file))
+      // setAvatarUrl(URL.createObjectURL(file))
       handleDownloadAvatar()
     } catch (error) {
       throw new Error("Error actualizando la imagen")
     }
   }
+  if (gettingData) return <p>Loading</p>
+  if (errorData) return <p>Ocurrió un error</p>
 
   return (
     <main className="flex min-h-screen w-full flex-col items-center">
@@ -119,7 +134,7 @@ export function EditProfile() {
           <Avatar
             radius="full"
             className="h-20 w-20 rounded-full text-large"
-            src={user.photoURL || "/chicken.svg"}
+            src={user.userImg || "/chicken.svg"}
             name={user?.name}
           />
         </Badge>
@@ -190,28 +205,32 @@ export function EditProfile() {
               touched.birthDate && errors.birthDate ? errors.birthDate : ""
             }
           />
-          
+
           <div>
-          <Button
-            onPress={onOpen}
-            variant="light"
-            color={errors.sex ? "danger" : "default"}
-            className="p-1 w-full"
-            endContent={
-              <img
-                src={arrowIcon}
-                alt="Salir"
-                width={24}
-              />
-            }
-          >
-            <div className="grow text-left flex flex-col">
-              <span className="text-xs text-foreground-500">{values.sex && "Sexo"}</span>
-              <span className="pl-1">{values.sex ? getSex(values.sex) : "Sexo"}</span>
-            </div>
-          </Button>
-          <div className="text-tiny text-danger">{errors.sex}</div>
-</div>
+            <Button
+              onPress={onOpen}
+              variant="light"
+              color={errors.sex ? "danger" : "default"}
+              className="w-full p-1"
+              endContent={
+                <img
+                  src={arrowIcon}
+                  alt="Salir"
+                  width={24}
+                />
+              }
+            >
+              <div className="flex grow flex-col text-left">
+                <span className="text-xs text-foreground-500">
+                  {values.sex && "Sexo"}
+                </span>
+                <span className="pl-1">
+                  {values.sex ? getSex(values.sex) : "Sexo"}
+                </span>
+              </div>
+            </Button>
+            <div className="text-tiny text-danger">{errors.sex}</div>
+          </div>
           <Modal
             isOpen={isOpen}
             onOpenChange={onOpenChange}

@@ -9,11 +9,12 @@ import {
   signInWithPopup,
   sendPasswordResetEmail,
 } from "firebase/auth"
-import { doc, setDoc, Timestamp } from "firebase/firestore"
+import { doc, getDoc, setDoc, Timestamp } from "firebase/firestore"
 
 import { auth, db } from "../firebase.config"
 import { useEffect } from "react"
 import { useState } from "react"
+import { getProfileImage } from "../helpers/getProfileImage"
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
@@ -44,15 +45,40 @@ export function AuthProvider({ children }) {
     return sendPasswordResetEmail(auth, email)
   }
 
-  const saveUserImg = (avatarUrl) =>
+  const getUserImg = async (id) => {
+    const userImg = await getProfileImage(id)
     setUser((user) => {
-      return { ...user, avatarUrl }
+      return { ...user, userImg }
     })
+  }
 
+  const getUserData = async (uid) => {
+    try {
+      const docRef = doc(db, "users", uid)
+      const docSnap = await getDoc(docRef)
+
+      if (docSnap.exists()) {
+        return docSnap.data()
+      } else {
+        throw new Error("No se encontró el usuario")
+      }
+    } catch (error) {
+      throw new Error(error)
+    }
+  }
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
-        setUser(currentUser)
+        const { uid } = currentUser
+
+        const userData = getUserData(uid)
+        const user = {
+          ...currentUser,
+          ...userData,
+        }
+
+        setUser(user)
+        getUserImg(uid)
       } else {
         setUser(null)
       }
@@ -74,7 +100,7 @@ export function AuthProvider({ children }) {
         loginWithFacebook,
         resetPassword,
         saveUserData,
-        saveUserImg,
+        getUserImg,
       }}
     >
       {children}
