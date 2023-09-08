@@ -27,7 +27,7 @@ export function Profile() {
           <Avatar
             radius="full"
             className="h-24 w-24 rounded-full"
-            src={user.userImg || "/chicken.svg"}
+            src={user.photoURL || "/chicken.svg"}
             name={user?.name}
           />
           <p>{user?.displayName || user?.name || user?.email}</p>

@@ -23,6 +23,7 @@ import { doc, setDoc } from "firebase/firestore"
 
 import { db } from "../firebase.config"
 import useGetUserData from "../hooks/useGetUserData"
+import { useNavigate } from "react-router-dom"
 
 const getSex = (sexSelected) => {
   switch (sexSelected) {
@@ -36,6 +37,7 @@ const getSex = (sexSelected) => {
 }
 
 export function EditProfile() {
+	const navigate = useNavigate()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const { user, getUserImg } = useAuth()
   const storage = getStorage()
@@ -47,6 +49,7 @@ export function EditProfile() {
     initialValues: data || {
       name: "",
       surname: "",
+      email: user.email,
       sex: "",
       birthDate: "",
     },
@@ -63,6 +66,8 @@ export function EditProfile() {
         setError(null)
         setSubmitting(false)
         // TODO: Add toast to notify user
+				navigate("/")
+        
       } catch (error) {
         setError(error)
         setSubmitting(false)
@@ -134,7 +139,7 @@ export function EditProfile() {
           <Avatar
             radius="full"
             className="h-20 w-20 rounded-full text-large"
-            src={user.userImg || "/chicken.svg"}
+            src={user.photoURL || "/chicken.svg"}
             name={user?.name}
           />
         </Badge>

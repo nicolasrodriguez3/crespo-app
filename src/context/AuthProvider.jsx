@@ -46,9 +46,9 @@ export function AuthProvider({ children }) {
   }
 
   const getUserImg = async (id) => {
-    const userImg = await getProfileImage(id)
+    const photoURL = await getProfileImage(id)
     setUser((user) => {
-      return { ...user, userImg }
+      return { ...user, photoURL }
     })
   }
 

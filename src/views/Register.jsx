@@ -32,7 +32,7 @@ export function Register() {
 			try {
 				await signup(values.email, values.password)
 				setSubmitting(false)
-				navigate("/")
+				navigate("/profile/edit")
 			} catch (err) {
 				setSubmitting(false)
 				const errorMsg = validateErrorOnAuth(err.code)
