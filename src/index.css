@@ -3,22 +3,22 @@
 @tailwind utilities;
 
 :root {
-	font-synthesis: none;
-	text-rendering: optimizeLegibility;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	-webkit-text-size-adjust: 100%;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-	margin: 0;
-	display: flex;
-	place-items: center;
-	min-width: 320px;
-	min-height: 100vh;
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
 }
 #root {
-	width: 100%;
+  width: 100%;
 }
 
 /* Para evitar el background-color puesto por el navegador al autocompletar el input */
@@ -26,5 +26,7 @@ body {
 .register_form input:-webkit-autofill:focus,
 .login_form input:-webkit-autofill,
 .login_form input:-webkit-autofill:focus {
-	transition: background-color 0s 600000s, color 0s 600000s;
+  transition:
+    background-color 0s 600000s,
+    color 0s 600000s;
 }

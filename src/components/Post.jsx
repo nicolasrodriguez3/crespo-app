@@ -1,5 +1,5 @@
-import likeIcon from "../assets/star-outline.svg"
-import commentIcon from "../assets/dialog-linear.svg"
+import likeIcon from "../assets/icons/star-outline.svg"
+import commentIcon from "../assets/icons/dialog-linear.svg"
 
 function Post({data}) {
 	const { title, content, owner, status, likes, comments, media } = data

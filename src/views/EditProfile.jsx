@@ -15,8 +15,8 @@ import {
   Radio,
 } from "@nextui-org/react"
 import { useAuth } from "../hooks/useAuth"
-import editIcon from "../assets/pen-linear.svg"
-import arrowIcon from "../assets/alt-arrow-right-linear.svg"
+import editIcon from "../assets/icons/pen-linear.svg"
+import arrowIcon from "../assets/icons/alt-arrow-right-linear.svg"
 import { getStorage, ref, uploadBytes } from "firebase/storage"
 import { getProfileImage } from "../helpers/getProfileImage"
 import { doc, setDoc } from "firebase/firestore"
@@ -37,7 +37,7 @@ const getSex = (sexSelected) => {
 }
 
 export function EditProfile() {
-	const navigate = useNavigate()
+  const navigate = useNavigate()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const { user, getUserImg } = useAuth()
   const storage = getStorage()
@@ -66,8 +66,7 @@ export function EditProfile() {
         setError(null)
         setSubmitting(false)
         // TODO: Add toast to notify user
-				navigate("/")
-        
+        navigate("/")
       } catch (error) {
         setError(error)
         setSubmitting(false)

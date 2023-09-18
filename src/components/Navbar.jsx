@@ -1,48 +1,48 @@
-import homeIcon from "../assets/house.svg"
-import addIcon from "../assets/add-square-linear.svg"
-import userIcon from "../assets/user-linear.svg"
-import homeIconActive from "../assets/house-bold.svg"
-import addIconActive from "../assets/add-square-bold.svg"
-import userIconActive from "../assets/user-bold.svg"
+import homeIcon from "../assets/icons/house.svg"
+import addIcon from "../assets/icons/add-square-linear.svg"
+import userIcon from "../assets/icons/user-linear.svg"
+import homeIconActive from "../assets/icons/house-bold.svg"
+import addIconActive from "../assets/icons/add-square-bold.svg"
+import userIconActive from "../assets/icons/user-bold.svg"
 import NavbarIcons from "./NavbarIcons"
 
 const sections = [
-	{
-		name: "Inicio",
-		icon: homeIcon,
-		iconActive: homeIconActive,
-		href: "/",
-	},
-	{
-		name: "Nuevo",
-		icon: addIcon,
-		iconActive: addIconActive,
-		href: "/add",
-	},
-	{
-		name: "Perfil",
-		icon: userIcon,
-		iconActive: userIconActive,
-		href: "/profile",
-	},
+  {
+    name: "Inicio",
+    icon: homeIcon,
+    iconActive: homeIconActive,
+    href: "/",
+  },
+  {
+    name: "Nuevo",
+    icon: addIcon,
+    iconActive: addIconActive,
+    href: "/add",
+  },
+  {
+    name: "Perfil",
+    icon: userIcon,
+    iconActive: userIconActive,
+    href: "/profile",
+  },
 ]
 
 export function Navbar() {
-	return (
-		<nav className="fixed bottom-0 left-0 w-full bg-gold z-50">
-			<ul className="flex justify-evenly">
-				{sections.map((section) => {
-					return (
-						<li key={section.name}>
-							<NavbarIcons
-								icon={section.icon}
-								iconActive={section.iconActive}
-								href={section.href}
-							/>
-						</li>
-					)
-				})}
-			</ul>
-		</nav>
-	)
+  return (
+    <nav className="fixed bottom-0 left-0 z-50 w-full bg-gold">
+      <ul className="flex justify-evenly">
+        {sections.map((section) => {
+          return (
+            <li key={section.name}>
+              <NavbarIcons
+                icon={section.icon}
+                iconActive={section.iconActive}
+                href={section.href}
+              />
+            </li>
+          )
+        })}
+      </ul>
+    </nav>
+  )
 }
