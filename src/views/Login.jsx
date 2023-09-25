@@ -1,18 +1,16 @@
-import { Button, ButtonGroup, Input } from "@nextui-org/react"
+import { Button, Input } from "@nextui-org/react"
 import { useState } from "react"
 import { useAuth } from "../hooks/useAuth"
 import { useFormik } from "formik"
 import * as Yup from "yup"
 import { Link, useNavigate } from "react-router-dom"
 import { validateErrorOnAuth } from "../helpers/validateErrorOnAuth"
-import google from "../assets/icons/google.svg"
-import facebook from "../assets/icons/facebook.svg"
 import { EyeFilledIcon } from "../assets/icons/EyeFilledIcon"
 import { EyeSlashFilledIcon } from "../assets/icons/EyeSlashFilledIcon"
 
 export function Login() {
   const navigate = useNavigate()
-  const { login, loginWithGoogle, loginWithFacebook } = useAuth()
+  const { login } = useAuth()
   const [isVisible, setIsVisible] = useState(false)
 
   const [error, setError] = useState(null)
@@ -55,35 +53,17 @@ export function Login() {
     isSubmitting,
   } = formik
 
-  const handleGoogleSignin = async () => {
-    try {
-      await loginWithGoogle()
-      navigate("/")
-    } catch (err) {
-      const errorMsg = validateErrorOnAuth(err.code)
-      setError(errorMsg)
-    }
-  }
-  const handleFacebookSignin = async () => {
-    try {
-      await loginWithFacebook()
-      navigate("/")
-    } catch (err) {
-      const errorMsg = validateErrorOnAuth(err.code)
-      setError(errorMsg)
-    }
-  }
-
   return (
-    <main className="login_form flex min-h-screen w-full flex-col items-center gap-4 bg-gradient-to-b from-[#FFD73A] from-10% to-50%">
-      <div className="flex grow items-end justify-center">
+    <main className="login_form flex min-h-screen w-full flex-col items-center ">
+      <div className="flex min-h-[200px]  w-full items-center justify-center bg-gradient-to-t from-[#ffcc00] to-gold py-8">
         <img
           src="/chicken.svg"
           alt="Logo de la app"
           width={100}
         />
       </div>
-      <section className="flex min-h-[40vh] flex-col items-center gap-8 pb-8">
+
+      <section className="-mt-8 flex min-h-[40vh] w-full grow flex-col items-center gap-8 rounded-t-3xl bg-gray-50 py-4 pb-8">
         <form
           onSubmit={handleSubmit}
           className="flex w-full max-w-xs flex-col gap-4"
@@ -105,9 +85,9 @@ export function Login() {
           />
 
           <Input
+            value={values.password}
             label="Contraseña"
             name="password"
-            value={values.password}
             onChange={handleChange}
             onBlur={handleBlur}
             required
@@ -173,29 +153,6 @@ export function Login() {
             Iniciar sesión
           </Button>
         </form>
-        <section>
-          <p className="mb-2 text-center">o iniciar sesión con</p>
-          <ButtonGroup>
-            <Button
-              className="h-12 bg-inherit"
-              onClick={handleGoogleSignin}
-            >
-              <img
-                src={google}
-                width={40}
-              />
-            </Button>
-            <Button
-              className="h-12 bg-inherit"
-              onClick={handleFacebookSignin}
-            >
-              <img
-                src={facebook}
-                width={40}
-              />
-            </Button>
-          </ButtonGroup>
-        </section>
         <p>
           ¿No tienes una cuenta?{" "}
           <Link

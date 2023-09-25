@@ -4,17 +4,15 @@ import { useNavigate, Link } from "react-router-dom"
 import { validateErrorOnAuth } from "../helpers/validateErrorOnAuth"
 import { useFormik } from "formik"
 import * as Yup from "yup"
-import { Button, ButtonGroup, Input } from "@nextui-org/react"
-import google from "../assets/icons/google.svg"
-import facebook from "../assets/icons/facebook.svg"
+import { Button, Input } from "@nextui-org/react"
 import { EyeFilledIcon } from "../assets/icons/EyeFilledIcon"
 import { EyeSlashFilledIcon } from "../assets/icons/EyeSlashFilledIcon"
 
 export function Register() {
-  const { signup, loginWithGoogle, loginWithFacebook } = useAuth()
+  const { signup } = useAuth()
   const navigate = useNavigate()
-  const [isVisible, setIsVisible] = useState(false)
 
+  const [isVisible, setIsVisible] = useState(false)
   const [error, setError] = useState(null)
 
   const formik = useFormik({
@@ -54,25 +52,6 @@ export function Register() {
     errors,
     isSubmitting,
   } = formik
-
-  const handleGoogleSignin = async () => {
-    try {
-      await loginWithGoogle()
-      navigate("/")
-    } catch (err) {
-      const errorMsg = validateErrorOnAuth(err.code)
-      setError(errorMsg)
-    }
-  }
-  const handleFacebookSignin = async () => {
-    try {
-      await loginWithFacebook()
-      navigate("/")
-    } catch (err) {
-      const errorMsg = validateErrorOnAuth(err.code)
-      setError(errorMsg)
-    }
-  }
 
   return (
     <main className="register_form flex min-h-screen w-full flex-col items-center gap-4 bg-gradient-to-b from-[#FFD73A] from-10% to-50%">
@@ -166,29 +145,7 @@ export function Register() {
             Registrarse
           </Button>
         </form>
-        <section>
-          <p className="mb-2 text-center">o regístrate con</p>
-          <ButtonGroup>
-            <Button
-              className="h-12 bg-inherit"
-              onClick={handleGoogleSignin}
-            >
-              <img
-                src={google}
-                width={40}
-              />
-            </Button>
-            <Button
-              className="h-12 bg-inherit"
-              onClick={handleFacebookSignin}
-            >
-              <img
-                src={facebook}
-                width={40}
-              />
-            </Button>
-          </ButtonGroup>
-        </section>
+
         <p>
           ¿Ya tienes una cuenta?{" "}
           <Link
