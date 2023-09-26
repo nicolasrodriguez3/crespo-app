@@ -4,9 +4,9 @@ import { useAuth } from "../hooks/useAuth"
 import { useFormik } from "formik"
 import * as Yup from "yup"
 import { Link, useNavigate } from "react-router-dom"
-import { validateErrorOnAuth } from "../helpers/validateErrorOnAuth"
 import { EyeFilledIcon } from "../assets/icons/EyeFilledIcon"
 import { EyeSlashFilledIcon } from "../assets/icons/EyeSlashFilledIcon"
+import wave from "../assets/imgs/wave-top.svg"
 
 export function Login() {
   const navigate = useNavigate()
@@ -37,8 +37,7 @@ export function Login() {
         navigate("/")
       } catch (err) {
         setSubmitting(false)
-        const errorMsg = validateErrorOnAuth(err.code)
-        setError(errorMsg)
+        setError(err)
       }
     },
   })
@@ -54,19 +53,23 @@ export function Login() {
   } = formik
 
   return (
-    <main className="login_form flex min-h-screen w-full flex-col items-center ">
-      <div className="flex min-h-[200px]  w-full items-center justify-center bg-gradient-to-t from-[#ffcc00] to-gold py-8">
+    <main className="flex min-h-screen w-full flex-col items-center bg-gray-50">
+      <div className="flex min-h-[150px]  w-full items-center justify-center bg-gradient-to-t from-[#ffcc00] to-gold pt-8">
         <img
           src="/chicken.svg"
           alt="Logo de la app"
-          width={100}
+          width={80}
         />
       </div>
-
-      <section className="-mt-8 flex min-h-[40vh] w-full grow flex-col items-center gap-8 rounded-t-3xl bg-gray-50 py-4 pb-8">
+      <section className="relative flex min-h-[40vh] w-full flex-col items-center gap-8 pb-8 pt-20">
+        <img
+          src={wave}
+          width={"100%"}
+          className="absolute top-0 block h-24 w-full"
+        />
         <form
           onSubmit={handleSubmit}
-          className="flex w-full max-w-xs flex-col gap-4"
+          className="flex w-full max-w-xs flex-col gap-4 text-base"
         >
           <Input
             value={values.email}
@@ -76,11 +79,11 @@ export function Login() {
             onBlur={handleBlur}
             type="email"
             label="Correo"
-            variant="underlined"
             autoComplete="true"
-            validationState={
-              touched.email && errors.email ? "invalid" : "valid"
-            }
+            classNames={{
+              input: "text-base",
+            }}
+            isInvalid={touched.email && errors.email}
             errorMessage={touched.email && errors.email ? errors.email : ""}
           />
 
@@ -92,10 +95,7 @@ export function Login() {
             onBlur={handleBlur}
             required
             labelPlacement="inside"
-            variant="underlined"
-            validationState={
-              touched.password && errors.password ? "invalid" : "valid"
-            }
+            isInvalid={touched.password && errors.password}
             errorMessage={
               touched.password && errors.password ? errors.password : ""
             }
@@ -153,6 +153,7 @@ export function Login() {
             Iniciar sesión
           </Button>
         </form>
+
         <p>
           ¿No tienes una cuenta?{" "}
           <Link

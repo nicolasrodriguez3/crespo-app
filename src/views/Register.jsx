@@ -1,15 +1,13 @@
 import { useState } from "react"
-import { useAuth } from "../hooks/useAuth"
 import { useNavigate, Link } from "react-router-dom"
-import { validateErrorOnAuth } from "../helpers/validateErrorOnAuth"
 import { useFormik } from "formik"
 import * as Yup from "yup"
 import { Button, Input } from "@nextui-org/react"
 import { EyeFilledIcon } from "../assets/icons/EyeFilledIcon"
 import { EyeSlashFilledIcon } from "../assets/icons/EyeSlashFilledIcon"
+import wave from "../assets/imgs/wave-top.svg"
 
 export function Register() {
-  const { signup } = useAuth()
   const navigate = useNavigate()
 
   const [isVisible, setIsVisible] = useState(false)
@@ -30,15 +28,13 @@ export function Register() {
     }),
     onSubmit: async (values, { setSubmitting }) => {
       setError(null)
-
+      console.log(values)
       try {
-        await signup(values.email, values.password)
         setSubmitting(false)
-        navigate("/profile/edit")
+        navigate("/")
       } catch (err) {
         setSubmitting(false)
-        const errorMsg = validateErrorOnAuth(err.code)
-        setError(errorMsg)
+        setError(err)
       }
     },
   })
@@ -54,15 +50,20 @@ export function Register() {
   } = formik
 
   return (
-    <main className="register_form flex min-h-screen w-full flex-col items-center gap-4 bg-gradient-to-b from-[#FFD73A] from-10% to-50%">
-      <div className="flex grow items-end justify-center">
+    <main className="flex min-h-screen w-full flex-col items-center bg-gray-50">
+      <div className="flex min-h-[150px]  w-full items-center justify-center bg-gradient-to-t from-[#ffcc00] to-gold pt-8 ">
         <img
           src="/chicken.svg"
           alt="Logo de la app"
-          width={100}
+          width={80}
         />
       </div>
-      <section className="flex min-h-[40vh] max-w-xs flex-col items-center gap-8 pb-8">
+      <section className="relative flex min-h-[40vh] w-full flex-col items-center gap-8 pb-8 pt-20 ">
+        <img
+          src={wave}
+          width={"100%"}
+          className="absolute top-0 block h-24 w-full"
+        />
         <form
           onSubmit={handleSubmit}
           className="flex w-full max-w-xs flex-col gap-4"
@@ -75,11 +76,8 @@ export function Register() {
             onBlur={handleBlur}
             type="email"
             label="Correo"
-            variant="underlined"
             autoComplete="true"
-            validationState={
-              touched.email && errors.email ? "invalid" : "valid"
-            }
+            isInvalid={touched.email && errors.email}
             errorMessage={touched.email && errors.email ? errors.email : ""}
           />
 
@@ -91,10 +89,7 @@ export function Register() {
             onBlur={handleBlur}
             required
             labelPlacement="inside"
-            variant="underlined"
-            validationState={
-              touched.password && errors.password ? "invalid" : "valid"
-            }
+            isInvalid={touched.password && errors.password}
             errorMessage={
               touched.password && errors.password ? errors.password : ""
             }
@@ -117,7 +112,7 @@ export function Register() {
           {error && <p className="text-red-400">{error}</p>}
           <Button
             type="submit"
-            className="bg-gold"
+            className="mt-8 bg-gold"
             isLoading={isSubmitting}
             spinner={
               <svg

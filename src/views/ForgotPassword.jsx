@@ -1,30 +1,22 @@
 import { Button } from "@nextui-org/react"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { Link } from "react-router-dom"
-import { useAuth } from "../hooks/useAuth"
+import wave from "../assets/imgs/wave-top.svg"
+
 
 export function ForgotPassword() {
-	const {resetPassword} = useAuth()
 	const navigate = useNavigate()
 
-	const [user, setUser] = useState({
-		email: "",
-	})
 	const [error, setError] = useState(null)
 	const [loading, setLoading] = useState(false)
 
-	const handleChange = ({ target: { name, value } }) => {
-		setUser({
-			[name]: value,
-		})
-	}
 
 	const handleSubmit = async (e) => {
+		setLoading(true)
 		e.preventDefault()
 		try {
-			resetPassword(user.email)
-			// navigate("/")
+			console.log(e)
+			navigate("/")
 		} catch (err) {
 			const errorMsg = err.code
 			setError(errorMsg)
@@ -32,30 +24,22 @@ export function ForgotPassword() {
 	}
 
 	return (
-		<main className="login_form w-full min-h-screen bg-gradient-to-b from-[#FFD73A] from-10% to-50% flex flex-col items-center gap-4">
-			<div className="flex justify-center items-end grow">
-				<img src="/chicken.svg" alt="Logo de la app" width={100} />
-			</div>
-			<section className="flex flex-col items-center min-h-[40vh] gap-8 pb-8">
+		<main className="flex min-h-screen w-full flex-col items-center bg-gray-50">
+      <div className="flex min-h-[150px]  w-full items-center justify-center bg-gradient-to-t from-[#ffcc00] to-gold pt-8">
+        <img
+          src="/chicken.svg"
+          alt="Logo de la app"
+          width={80}
+        />
+      </div>
+      <section className="relative flex min-h-[40vh] w-full flex-col items-center gap-8 pb-8 pt-20">
+        <img
+          src={wave}
+          width={"100%"}
+          className="absolute top-0 block h-24 w-full"
+        />
 				<form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-xs">
-					<div className="relative z-0">
-						<input
-							type="email"
-							name="email"
-							id="floating_email"
-							value={user.email}
-							onChange={handleChange}
-							required
-							className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-900 dark:focus:border-gray-100 focus:outline-none focus:ring-0 focus:border-gray-900 peer"
-							placeholder=""
-						/>
-						<label
-							htmlFor="floating_email"
-							className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-gray-900 peer-focus:dark:text-gray-100 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
-							Correo
-						</label>
-					</div>
-
+					{/* TODO */}
 					{error && <p className="text-red-400">{error}</p>}
 					<Button
 						type="submit"
