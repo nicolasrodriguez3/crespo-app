@@ -2,14 +2,11 @@ import { Button, Input, Textarea, Select, SelectItem } from "@nextui-org/react"
 import { useFormik } from "formik"
 import * as Yup from "yup"
 import { v4 as uuidv4 } from "uuid"
-import { useAuth } from "../hooks/useAuth"
 import { Navbar } from "../components/Navbar"
 import { CameraIcon } from "../assets/icons/CameraIcon"
-import { useState } from "react"
+import { categories } from "../mocks/categories"
 
 export function AddClaim() {
-  const [value, setValue] = useState(new Set([]))
-
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -42,11 +39,6 @@ export function AddClaim() {
       category: Yup.string().required("Por favor seleccione una categoria."),
     }),
   })
-
-  const handleSelectionChange = (e) => {
-    console.log(e)
-    setValue(e.target.value)
-  }
 
   const {
     values,
@@ -81,38 +73,23 @@ export function AddClaim() {
           >
             <div className="flex flex-col gap-1">
               <Select
-                isRequired
                 label="Tipo de reclamo"
-                variant="underlined"
+                placeholder="Seleccione el tipo de reclamo"
+                items={categories}
                 className="max-w-xs"
-                name="category"
-                selectedKeys={values.category}
-                onChange={handleSelectionChange}
+                onSelectionChange={(val) => setFieldValue("category", val)}
               >
-                <SelectItem value="luminarias">Luminaria</SelectItem>
-                <SelectItem value="calles">Calles</SelectItem>
-                <SelectItem value="limpieza">Limpieza de terreno</SelectItem>
+                {(category) => (
+                  <SelectItem
+                    key={category.id}
+                    value={category.id}
+                  >
+                    {category.tipo}
+                  </SelectItem>
+                )}
               </Select>
-
-              {touched.category && errors.category ? (
-                <div className="text-tiny text-danger">{errors.category}</div>
-              ) : null}
+              <div>Seleccionado {values.category}</div>
             </div>
-            <Select
-              label="Favorite Animal"
-              variant="bordered"
-              placeholder="Select an animal"
-              selectedKeys={value}
-              className="max-w-xs"
-              onSelectionChange={setValue}
-            >
-              <SelectItem value="test">test</SelectItem>
-              <SelectItem value="luminarias">Luminaria</SelectItem>
-              <SelectItem value="calles">Calles</SelectItem>
-              <SelectItem value="limpieza">Limpieza de terreno</SelectItem>
-            </Select>
-            <div>Seleccionado {value}</div>
-
             <Input
               name="title"
               label="Título"

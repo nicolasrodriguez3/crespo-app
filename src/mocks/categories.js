@@ -1,4 +1,4 @@
-export const tipoReclamos = [
+export const categories = [
   {
     id: "1",
     tipo: "luminarias",
