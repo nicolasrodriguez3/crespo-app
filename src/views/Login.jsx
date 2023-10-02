@@ -32,10 +32,14 @@ export function Login() {
       setError(null)
 
       try {
-        await login(values.email, values.password)
+        const user = await login(values.email, values.password)
+
+        if (user.error) throw new Error(user.error)
+        console.log(user)
         setSubmitting(false)
-        navigate("/")
+        // navigate("/")
       } catch (err) {
+        console.error(err)
         setSubmitting(false)
         setError(err)
       }
@@ -121,7 +125,7 @@ export function Login() {
           >
             ¿Olvidaste tu contraseña?
           </Link>
-          {error && <p className="text-red-400">{error}</p>}
+          {error && <p className="text-red-400">{error.message}</p>}
 
           <Button
             type="submit"
