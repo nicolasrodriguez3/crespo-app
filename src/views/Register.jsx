@@ -15,6 +15,9 @@ export function Register() {
 
   const formik = useFormik({
     initialValues: {
+      name: "",
+      address: "",
+      phone: "",
       email: "",
       password: "",
     },
@@ -25,6 +28,13 @@ export function Register() {
       password: Yup.string()
         .min(6, "Su contraseña debe tener al menos 6 caracteres")
         .required("Ingrese su contraseña"),
+      name: Yup.string().required("Ingrese su nombre completo"),
+      address: Yup.string().required("Ingrese su dirección"),
+      phone: Yup.number()
+        .typeError("Ingrese unicamente números")
+        .required("Ingrese su número de teléfono")
+        .positive("El número no puede ser negativo")
+        .integer("Solo valores enteros"),
     }),
     onSubmit: async (values, { setSubmitting }) => {
       setError(null)
@@ -68,6 +78,44 @@ export function Register() {
           onSubmit={handleSubmit}
           className="flex w-full max-w-xs flex-col gap-4"
         >
+          <Input
+            value={values.name}
+            name="name"
+            id="name"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            type="text"
+            label="Nombre y apellido"
+            isInvalid={touched.name && errors.name}
+            errorMessage={touched.name && errors.name ? errors.name : ""}
+          />
+
+          <Input
+            value={values.address}
+            name="address"
+            id="address"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            type="text"
+            label="Dirección"
+            isInvalid={touched.address && errors.address}
+            errorMessage={
+              touched.address && errors.address ? errors.address : ""
+            }
+          />
+
+          <Input
+            value={values.phone}
+            name="phone"
+            id="phone"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            type="text"
+            label="Teléfono"
+            isInvalid={touched.phone && errors.phone}
+            errorMessage={touched.phone && errors.phone ? errors.phone : ""}
+          />
+
           <Input
             value={values.email}
             name="email"
