@@ -11,12 +11,11 @@ import { Link } from "react-router-dom"
 
 export function Profile() {
   const navigate = useNavigate()
-  const { user, logout } = useAuth()
+  const { user } = useAuth()
   const [loading, setLoading] = useState(false)
 
   const handleLogout = async () => {
     setLoading(true)
-    await logout()
     navigate("/login")
   }
 
@@ -27,7 +26,7 @@ export function Profile() {
           <Avatar
             radius="full"
             className="h-24 w-24 rounded-full"
-            src={user.photoURL || "/chicken.svg"}
+            src={user?.photoURL || "/chicken.svg"}
             name={user?.name}
           />
           <p>{user?.displayName || user?.name || user?.email}</p>

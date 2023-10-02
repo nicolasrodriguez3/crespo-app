@@ -6,10 +6,6 @@ import {
   Input,
   Badge,
   Avatar,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
   useDisclosure,
   RadioGroup,
   Radio,
@@ -17,12 +13,6 @@ import {
 import { useAuth } from "../hooks/useAuth"
 import editIcon from "../assets/icons/pen-linear.svg"
 import arrowIcon from "../assets/icons/alt-arrow-right-linear.svg"
-import { getStorage, ref, uploadBytes } from "firebase/storage"
-import { getProfileImage } from "../helpers/getProfileImage"
-import { doc, setDoc } from "firebase/firestore"
-
-import { db } from "../firebase.config"
-import useGetUserData from "../hooks/useGetUserData"
 import { useNavigate } from "react-router-dom"
 
 const getSex = (sexSelected) => {
@@ -39,14 +29,12 @@ const getSex = (sexSelected) => {
 export function EditProfile() {
   const navigate = useNavigate()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
-  const { user, getUserImg } = useAuth()
-  const storage = getStorage()
-  const [data, gettingData, errorData] = useGetUserData(user.uid)
+  const { user } = useAuth()
 
   const [error, setError] = useState(null)
 
   const formik = useFormik({
-    initialValues: data || {
+    initialValues: {
       name: "",
       surname: "",
       email: user.email,
@@ -62,7 +50,6 @@ export function EditProfile() {
     }),
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        await setDoc(doc(db, "users", user.uid), values)
         setError(null)
         setSubmitting(false)
         // TODO: Add toast to notify user
@@ -85,27 +72,6 @@ export function EditProfile() {
     isSubmitting,
   } = formik
 
-  const handleDownloadAvatar = async () => {
-    const imageUrl = await getProfileImage(user.uid)
-    console.log(imageUrl)
-    getUserImg(imageUrl)
-  }
-
-  const handleUploadAvatar = (e) => {
-    const storageRef = ref(storage, `avatars/${user.uid}`)
-    const file = e.target.files[0]
-
-    try {
-      uploadBytes(storageRef, file)
-      // setAvatarUrl(URL.createObjectURL(file))
-      handleDownloadAvatar()
-    } catch (error) {
-      throw new Error("Error actualizando la imagen")
-    }
-  }
-  if (gettingData) return <p>Loading</p>
-  if (errorData) return <p>Ocurrió un error</p>
-
   return (
     <main className="flex min-h-screen w-full flex-col items-center">
       <div className="-mb-10 flex min-h-[200px] w-full items-center justify-center bg-gradient-to-b from-[#f5c400] to-gold p-4 pb-10">
@@ -123,7 +89,6 @@ export function EditProfile() {
                 name="avatar"
                 id="avatar"
                 className="hidden"
-                onChange={handleUploadAvatar}
               />
               <img
                 src={editIcon}
@@ -158,7 +123,7 @@ export function EditProfile() {
             label="Nombre"
             variant="underlined"
             autoComplete="true"
-            validationState={touched.name && errors.name ? "invalid" : "valid"}
+            isInvalid={touched.name && errors.name}
             errorMessage={touched.name && errors.name ? errors.name : ""}
           />
 
@@ -172,9 +137,7 @@ export function EditProfile() {
             required
             labelPlacement="inside"
             variant="underlined"
-            validationState={
-              touched.surname && errors.surname ? "invalid" : "valid"
-            }
+            isInvalid={touched.surname && errors.surname}
             errorMessage={
               touched.surname && errors.surname ? errors.surname : ""
             }
@@ -202,9 +165,7 @@ export function EditProfile() {
             required
             labelPlacement="inside"
             variant="underlined"
-            validationState={
-              touched.birthDate && errors.birthDate ? "invalid" : "valid"
-            }
+            isInvalid={touched.birthDate && errors.birthDate}
             errorMessage={
               touched.birthDate && errors.birthDate ? errors.birthDate : ""
             }
@@ -235,7 +196,7 @@ export function EditProfile() {
             </Button>
             <div className="text-tiny text-danger">{errors.sex}</div>
           </div>
-          <Modal
+          {/* <Modal
             isOpen={isOpen}
             onOpenChange={onOpenChange}
             placement="center"
@@ -259,7 +220,7 @@ export function EditProfile() {
                 </>
               )}
             </ModalContent>
-          </Modal>
+          </Modal> */}
 
           {error && <p className="text-red-400">{error}</p>}
           <Button

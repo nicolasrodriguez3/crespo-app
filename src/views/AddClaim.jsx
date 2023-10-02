@@ -36,7 +36,7 @@ export function AddClaim() {
     },
     validationSchema: Yup.object({
       title: Yup.string().required("Por favor ingrese un título"),
-      category: Yup.string().required("Por favor seleccione una categoria."),
+      category: Yup.string().required("Por favor seleccione una categoría."),
     }),
   })
 

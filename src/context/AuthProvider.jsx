@@ -1,91 +1,28 @@
 import { authContext } from "./authContext"
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  onAuthStateChanged,
-  signOut,
-  GoogleAuthProvider,
-  FacebookAuthProvider,
-  signInWithPopup,
-  sendPasswordResetEmail,
-} from "firebase/auth"
-import { doc, getDoc, setDoc, Timestamp } from "firebase/firestore"
-
-import { auth, db } from "../firebase.config"
-import { useEffect } from "react"
-import { useState } from "react"
-import { getProfileImage } from "../helpers/getProfileImage"
+import { useEffect, useState } from "react"
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  const signup = (email, password) =>
-    createUserWithEmailAndPassword(auth, email, password)
+  const signup = (email, password) => {}
 
-  const saveUserData = (uid, data = {}) => {
-    setDoc(doc(db, "users", uid), data)
-  }
+  const login = (email, password) => {}
 
-  const login = (email, password) =>
-    signInWithEmailAndPassword(auth, email, password)
+  const logout = () => {}
 
-  const logout = () => signOut(auth)
-
-  const loginWithGoogle = () => {
-    const googleProvider = new GoogleAuthProvider()
-    return signInWithPopup(auth, googleProvider)
-  }
-  const loginWithFacebook = () => {
-    const facebookProvider = new FacebookAuthProvider()
-    return signInWithPopup(auth, facebookProvider)
-  }
-
-  const resetPassword = (email) => {
-    return sendPasswordResetEmail(auth, email)
-  }
-
-  const getUserImg = async (id) => {
-    const photoURL = await getProfileImage(id)
-    setUser((user) => {
-      return { ...user, photoURL }
-    })
-  }
+  const resetPassword = (email) => {}
 
   const getUserData = async (uid) => {
     try {
-      const docRef = doc(db, "users", uid)
-      const docSnap = await getDoc(docRef)
-
-      if (docSnap.exists()) {
-        return docSnap.data()
-      } else {
-        throw new Error("No se encontró el usuario")
-      }
+      console.log(uid)
     } catch (error) {
-      throw new Error(error)
+      console.log(error)
     }
   }
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        const { uid } = currentUser
-
-        const userData = getUserData(uid)
-        const user = {
-          ...currentUser,
-          ...userData,
-        }
-
-        setUser(user)
-        getUserImg(uid)
-      } else {
-        setUser(null)
-      }
-      setLoading(false)
-    })
-
-    return () => unsubscribe()
+    setLoading(false)
   }, [])
 
   return (
@@ -96,11 +33,7 @@ export function AuthProvider({ children }) {
         signup,
         login,
         logout,
-        loginWithGoogle,
-        loginWithFacebook,
         resetPassword,
-        saveUserData,
-        getUserImg,
       }}
     >
       {children}
