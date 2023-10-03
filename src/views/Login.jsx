@@ -35,9 +35,8 @@ export function Login() {
         const user = await login(values.email, values.password)
 
         if (user.error) throw new Error(user.error)
-        console.log(user)
         setSubmitting(false)
-        // navigate("/")
+        //navigate("/")
       } catch (err) {
         console.error(err)
         setSubmitting(false)

@@ -4,9 +4,48 @@ import * as Yup from "yup"
 import { v4 as uuidv4 } from "uuid"
 import { Navbar } from "../components/Navbar"
 import { CameraIcon } from "../assets/icons/CameraIcon"
-import { categories } from "../mocks/categories"
+import axios from "axios"
+import { useAuth } from "../hooks/useAuth"
+import { useEffect } from "react"
+import { useState } from "react"
+
+// const useGetClaimTypes = async () => {
+//   const { user } = useAuth()
+
+//   const response = await axios(
+//     "https://vps-3450851-x.dattaweb.com:9088/api/tipo-reclamo/buscar-todas",
+//     {
+//       headers: {
+//         Authorization: `Bearer ${user.token}`,
+//       },
+//     },
+//   )
+//   return response
+// }
 
 export function AddClaim() {
+  // const categories = useGetClaimTypes()
+  // console.log(categories)
+  const [categories, setCategories] = useState([])
+
+  const { user } = useAuth()
+
+  useEffect(() => {
+    const getCategories = async () => {
+      const response = await axios(
+        "https://vps-3450851-x.dattaweb.com:9088/api/tipo-reclamo/buscar-todas",
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        },
+      )
+      return response
+    }
+
+    getCategories().then(res => setCategories(res.data))
+  }, [])
+
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -69,41 +108,36 @@ export function AddClaim() {
         <section className="-mt-8 flex min-h-[40vh] w-full grow flex-col items-center gap-8 rounded-t-3xl bg-gray-50 py-4 pb-12">
           <form
             onSubmit={handleSubmit}
-            className="flex flex-col gap-4 p-4 "
+            className="flex w-full max-w-xs flex-col gap-4 text-base"
           >
-            <div className="flex flex-col gap-1">
-              <Select
-                label="Tipo de reclamo"
-                placeholder="Seleccione el tipo de reclamo"
-                items={categories}
-                className="max-w-xs"
-                onSelectionChange={(val) => setFieldValue("category", val)}
-              >
-                {(category) => (
-                  <SelectItem
-                    key={category.id}
-                    value={category.id}
-                  >
-                    {category.tipo}
-                  </SelectItem>
-                )}
-              </Select>
-              <div>Seleccionado {values.category}</div>
-            </div>
+            <Select
+              label="Tipo de reclamo"
+              placeholder="Seleccione el tipo de reclamo"
+              items={categories}
+              className="max-w-xs"
+              onSelectionChange={(val) => setFieldValue("category", val)}
+            >
+              {(category) => (
+                <SelectItem
+                  key={category.id}
+                  value={category.id}
+                >
+                  {category.tipo}
+                </SelectItem>
+              )}
+            </Select>
             <Input
               name="title"
               label="Título"
               isRequired
-              variant="underlined"
               {...getFieldProps("title")}
               isInvalid={touched.title && errors.title}
               errorMessage={touched.title && errors.title ? errors.title : ""}
             />
 
             <Textarea
-              label="Description"
+              label="Descripción"
               labelPlacement="inside"
-              variant="underlined"
               placeholder="Ingrese una descripción"
               {...getFieldProps("content")}
             />
