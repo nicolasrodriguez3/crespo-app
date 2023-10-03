@@ -33,8 +33,7 @@ export function Login() {
 
       try {
         const user = await login(values.email, values.password)
-
-        if (user.error) throw new Error(user.error)
+        console.log(user)
         setSubmitting(false)
         //navigate("/")
       } catch (err) {

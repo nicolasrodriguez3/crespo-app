@@ -8,6 +8,7 @@ import axios from "axios"
 import { useAuth } from "../hooks/useAuth"
 import { useEffect } from "react"
 import { useState } from "react"
+import { getCategories, getStreets } from "../helpers/getCategories"
 
 // const useGetClaimTypes = async () => {
 //   const { user } = useAuth()
@@ -27,44 +28,37 @@ export function AddClaim() {
   // const categories = useGetClaimTypes()
   // console.log(categories)
   const [categories, setCategories] = useState([])
+  const [streets, setStreets] = useState([])
 
   const { user } = useAuth()
 
   useEffect(() => {
-    const getCategories = async () => {
-      const response = await axios(
-        "https://vps-3450851-x.dattaweb.com:9088/api/tipo-reclamo/buscar-todas",
-        {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        },
-      )
-      return response
-    }
-
-    getCategories().then(res => setCategories(res.data))
+    getCategories(user.token).then((res) => setCategories(res.data))
+    getStreets(user.token).then((res) => {
+      setStreets(res.data)
+    })
   }, [])
 
   const formik = useFormik({
     initialValues: {
       title: "",
       content: "",
-      category: new Set([]),
+      tipoReclamo_id: new Set([]),
+      calle_id: new Set([]),
       media: null,
     },
     onSubmit: async (values, { setSubmitting }) => {
-      const { title, category, content } = values
-      const id = uuidv4()
+      const { title, tipoReclamo_id, content, calle_id } = values
 
       try {
         console.log({
           title,
-          category,
+          tipoReclamo_id,
+          calle_id,
           content,
           owner: "test",
           status: "sin revisar",
-          media: [id],
+          media: "",
         })
       } catch (error) {
         console.error(error)
@@ -75,7 +69,9 @@ export function AddClaim() {
     },
     validationSchema: Yup.object({
       title: Yup.string().required("Por favor ingrese un título"),
-      category: Yup.string().required("Por favor seleccione una categoría."),
+      tipoReclamo_id: Yup.string().required(
+        "Por favor seleccione una categoría.",
+      ),
     }),
   })
 
@@ -115,7 +111,9 @@ export function AddClaim() {
               placeholder="Seleccione el tipo de reclamo"
               items={categories}
               className="max-w-xs"
-              onSelectionChange={(val) => setFieldValue("category", val)}
+              onSelectionChange={(val) =>
+                setFieldValue("tipoReclamo_id", Array.from(val)[0])
+              }
             >
               {(category) => (
                 <SelectItem
@@ -126,6 +124,7 @@ export function AddClaim() {
                 </SelectItem>
               )}
             </Select>
+
             <Input
               name="title"
               label="Título"
@@ -141,6 +140,26 @@ export function AddClaim() {
               placeholder="Ingrese una descripción"
               {...getFieldProps("content")}
             />
+
+            {/* Calle */}
+            <Select
+              label="Calle"
+              placeholder="Seleccione el tipo de reclamo"
+              items={streets}
+              className="max-w-xs"
+              onSelectionChange={(val) =>
+                setFieldValue("calle_id", Array.from(val)[0])
+              }
+            >
+              {(street) => (
+                <SelectItem
+                  key={street.id}
+                  value={street.id}
+                >
+                  {street.calle}
+                </SelectItem>
+              )}
+            </Select>
 
             <input
               type="file"

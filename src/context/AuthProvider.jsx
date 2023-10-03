@@ -1,3 +1,4 @@
+import axios from "axios"
 import { authContext } from "./authContext"
 import { useEffect, useState } from "react"
 
@@ -7,10 +8,10 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() =>{
+  useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"))
 
-    if(user) setUser(user)
+    if (user) setUser(user)
     console.log(user)
   }, [])
 
@@ -22,29 +23,43 @@ export function AuthProvider({ children }) {
       password,
     }
 
-    const res = await fetch(API_LOGIN, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(credentials),
-    })
-    console.log(res)
-    //if (!res.ok) return Promise.reject("Error en la petición HTTP")
+    try {
+      const res = await axios.post(API_LOGIN, credentials)
+      console.log(res.data)
 
-    const data = await res.json()
+      if (res.status === 200) {
+        const dataParsed = {
+          token: res.data.tokenAcceso,
+          roles: res.data.roles,
+        }
 
-    
-    const dataParsed = {
-      token: data.tokenAcceso,
-      roles: data.roles
+        localStorage.setItem("user", JSON.stringify(dataParsed))
+
+        setUser(dataParsed)
+        console.log(dataParsed)
+        return dataParsed
+      } else {
+        console.error(
+          "Inicio de sesión fallido. Código de respuesta:",
+          res.status,
+        )
+      }
+    } catch (error) {
+      if (error.response) {
+        // Si la respuesta contiene un estado HTTP no exitoso (por ejemplo, 404 o 500)
+        console.error(
+          "Error en la respuesta:",
+          error.response.status,
+          error.response.statusText,
+        )
+      } else if (error.request) {
+        // Si la solicitud no pudo ser realizada (por ejemplo, el servidor no respondió)
+        console.error("Error en la solicitud:", error)
+      } else {
+        // Otros errores
+        console.error("Error:", error.message)
+      }
     }
-    
-    localStorage.setItem("user", JSON.stringify(dataParsed))
-    
-    setUser(dataParsed)
-    console.log(dataParsed)
-    return dataParsed
   }
 
   const logout = () => {}
