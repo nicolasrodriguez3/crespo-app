@@ -14,7 +14,7 @@ export function AuthProvider({ children }) {
     if (token) {
       const user = JSON.parse(localStorage.getItem("user"))
       setToken(token)
-      if(user) setUser(user)
+      if (user) setUser(user)
     }
     console.log(token)
   }, [])
@@ -28,8 +28,6 @@ export function AuthProvider({ children }) {
     }
   }, [token])
 
-  
-
   const signup = (email, password) => {}
 
   const login = async (email, password) => {
@@ -38,21 +36,16 @@ export function AuthProvider({ children }) {
       password,
     }
 
-    try {
-      const response = await axios.post(API_LOGIN, credentials)
+    const response = await axios.post(API_LOGIN, credentials)
 
-      if (response.status === 200) {
-        // guardar token en localStorage
-        localStorage.setItem("token", JSON.stringify(response.data.tokenAcceso))
-        setToken(response.data.tokenAcceso)
-
-      } else if (response.status === 401) {
-        throw new Error("Usuario o contraseña incorrectos")
-      } else {
-        throw new Error("Error en el servidor")
-      }
-    } catch (error) {
-      console.error("Error en la solicitud:", error)
+    if (response.status === 200) {
+      // guardar token en localStorage
+      localStorage.setItem("token", JSON.stringify(response.data.tokenAcceso))
+      setToken(response.data.tokenAcceso)
+    } else if (response.status === 401) {
+      throw new Error("Usuario o contraseña incorrectos")
+    } else {
+      throw new Error("Error en el servidor")
     }
   }
 
@@ -64,7 +57,7 @@ export function AuthProvider({ children }) {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       )
       if (response.status === 200) {
         setToken(null)
@@ -89,7 +82,7 @@ export function AuthProvider({ children }) {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       )
       if (response.status === 200) {
         return response.data
@@ -113,7 +106,7 @@ export function AuthProvider({ children }) {
         login,
         logout,
         resetPassword,
-        getUserData
+        getUserData,
       }}
     >
       {children}

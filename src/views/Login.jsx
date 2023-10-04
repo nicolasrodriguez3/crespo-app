@@ -33,7 +33,7 @@ export function Login() {
 
       try {
         // Intenta realizar el inicio de sesión
-        await login(values.email, values.password);
+        await login(values.email, values.password)
       
         // Si el inicio de sesión tiene éxito, obtener los datos del usuario
 

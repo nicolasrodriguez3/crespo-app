@@ -41,7 +41,7 @@ export const getStreets = async (token) => {
   }
 }
 
-export const getnNeighborhoods = async (token) => {
+export const getNeighborhoods = async (token) => {
   try {
     const response = await axios.get(
       "https://vps-3450851-x.dattaweb.com:9088/api/barrio/buscar-todas",

@@ -1,29 +1,52 @@
-import likeIcon from "../assets/icons/star-outline.svg"
-import commentIcon from "../assets/icons/dialog-linear.svg"
+import PropTypes from "prop-types"
 
-function Post({data}) {
-	const { title, content, owner, status, likes, comments, media } = data
+function Post({ data }) {
+  const {
+    altura,
+    barrio,
+    calle,
+    descripcion,
+    id,
+    imagen,
+    seguimiento,
+    tipoReclamo,
+  } = data
 
-	return (
-		<article>
-			{/* <img src={media[0].src} /> */}
-			<section className="p-2 flex flex-col items-start gap-2">
-				<p className="text-sm">Reclamo de {owner}</p>
-				<div className={`${status === "en progreso" ? "bg-yellow-300": "bg-green-300"} text-sm px-1 rounded font-bold`} >{status}</div>
-				<h3 className="text-xl">{title}</h3>
-				<p className="">{content}</p>
-				<div className="flex gap-4 [&>button]:flex [&>button]:gap-1 [&>button]:items-center text-sm">
-					<button>
-						<img src={likeIcon} width={24} />
-						<span>{likes === 0 ? "Apoyar" : likes}</span>
-						</button>
-					<button>
-						<img src={commentIcon} width={24} />
-						<span>{comments === 0 ? "Comentar" : comments}</span>
-						</button>
-				</div>
-			</section>
-		</article>
-	)
+  return (
+    <article>
+      {/* <img src={media[0].src} /> */}
+      <section className="flex flex-col items-start gap-2 p-2">
+        <h3 className="text-xl">{tipoReclamo.tipo}</h3>
+        <p className="">{descripcion}</p>
+      </section>
+    </article>
+  )
 }
+
+Post.propTypes = {
+  data: PropTypes.shape({
+    altura: PropTypes.string,
+    barrio: PropTypes.shape({
+      barrio: PropTypes.string,
+      id: PropTypes.string,
+    }),
+    calle: PropTypes.shape({
+      calle: PropTypes.string,
+      id: PropTypes.string,
+    }),
+    descripcion: PropTypes.string,
+    id: PropTypes.string,
+    imagen: PropTypes.string,
+    seguimiento: PropTypes.shape({
+      fecha: PropTypes.string,
+      id: PropTypes.string,
+      estado: PropTypes.string,
+    }),
+    tipoReclamo: PropTypes.shape({
+      id: PropTypes.string,
+      tipo: PropTypes.string,
+    }),
+  }),
+}
+
 export default Post

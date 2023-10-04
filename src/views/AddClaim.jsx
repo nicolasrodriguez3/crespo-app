@@ -1,19 +1,23 @@
 import { Button, Input, Textarea, Select, SelectItem } from "@nextui-org/react"
 import { useFormik } from "formik"
 import * as Yup from "yup"
-import { v4 as uuidv4 } from "uuid"
 import { Navbar } from "../components/Navbar"
 import { CameraIcon } from "../assets/icons/CameraIcon"
 import axios from "axios"
 import { useAuth } from "../hooks/useAuth"
-import { useEffect } from "react"
-import { useState } from "react"
-import { getCategories, getStreets, getnNeighborhoods } from "../helpers/getCategories"
+import { useState, useEffect, useRef } from "react"
+import {
+  getCategories,
+  getStreets,
+  getNeighborhoods,
+} from "../helpers/getCategories"
 
 export function AddClaim() {
   const [categories, setCategories] = useState([])
   const [streets, setStreets] = useState([])
   const [neighborhoods, setNeighborhoods] = useState([])
+
+  const imgRef = useRef(null)
 
   const { user, token } = useAuth()
 
@@ -33,22 +37,30 @@ export function AddClaim() {
 
       setStreets(res.data)
     })
-    getnNeighborhoods(token).then((res) => setNeighborhoods(res.data))
+    getNeighborhoods(token).then((res) => setNeighborhoods(res.data))
   }, [token])
 
   const formik = useFormik({
     initialValues: {
       persona_id: user.id,
-      content: "",
+      descripcion: "",
       tipoReclamo_id: new Set([]),
       calle_id: new Set([]),
       barrio_id: new Set([]),
-      numberStreet: "",
-      media: null,
+      altura: "",
+      imagen: null,
     },
     enableReinitialize: true,
     onSubmit: async (values, { setSubmitting }) => {
-      const { persona_id, tipoReclamo_id, content, calle_id, barrio_id, media } = values
+      const {
+        persona_id,
+        tipoReclamo_id,
+        descripcion,
+        calle_id,
+        altura,
+        barrio_id,
+        imagen,
+      } = values
 
       try {
         console.log({
@@ -56,9 +68,31 @@ export function AddClaim() {
           tipoReclamo_id,
           calle_id,
           barrio_id,
-          content,
-          media,
+          descripcion,
+          imagen,
         })
+        const response = await axios.put(
+          "https://vps-3450851-x.dattaweb.com:9088/api/reclamo",
+          {
+            persona_id,
+            tipoReclamo_id,
+            descripcion,
+            calle_id,
+            altura,
+            barrio_id,
+            imagen,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        )
+        if (response.status === 201) {
+          console.log("Reclamo cargado con éxito.")
+        } else {
+          console.log("Error cargando el reclamo.", response)
+        }
       } catch (error) {
         console.error(error)
         throw new Error("Error cargando los datos del post.")
@@ -129,38 +163,40 @@ export function AddClaim() {
               labelPlacement="inside"
               isRequired
               placeholder="Ingrese una descripción"
-              {...getFieldProps("content")}
+              {...getFieldProps("descripcion")}
             />
 
             {/* Calle */}
             <div className="grid grid-cols-[1fr_30%] gap-1">
-            <Select
-              label="Calle"
-              placeholder="Seleccione la calle"
-              items={streets}
-              isRequired
-              className="max-w-xs"
-              onSelectionChange={(val) =>
-                setFieldValue("calle_id", Array.from(val)[0])
-              }
-            >
-              {(street) => (
-                <SelectItem
-                  key={street.id}
-                  value={street.id}
-                >
-                  {street.calle}
-                </SelectItem>
-              )}
-            </Select>
-            <Input
-              name="numberStreet"
-              label="Altura"
-              isRequired
-              {...getFieldProps("numberStreet")}
-              isInvalid={touched.numberStreet && errors.numberStreet}
-              errorMessage={touched.numberStreet && errors.numberStreet ? errors.numberStreet : ""}
-            />
+              <Select
+                label="Calle"
+                placeholder="Seleccione la calle"
+                items={streets}
+                isRequired
+                className="max-w-xs"
+                onSelectionChange={(val) =>
+                  setFieldValue("calle_id", Array.from(val)[0])
+                }
+              >
+                {(street) => (
+                  <SelectItem
+                    key={street.id}
+                    value={street.id}
+                  >
+                    {street.calle}
+                  </SelectItem>
+                )}
+              </Select>
+              <Input
+                name="altura"
+                label="Altura"
+                isRequired
+                {...getFieldProps("altura")}
+                isInvalid={touched.altura && errors.altura}
+                errorMessage={
+                  touched.altura && errors.altura ? errors.altura : ""
+                }
+              />
             </div>
 
             <Select
@@ -169,7 +205,7 @@ export function AddClaim() {
               items={neighborhoods}
               className="max-w-xs"
               onSelectionChange={(val) =>
-                setFieldValue("neighborhoods_id", Array.from(val)[0])
+                setFieldValue("barrio_id", Array.from(val)[0])
               }
             >
               {(neighborhood) => (
@@ -182,19 +218,66 @@ export function AddClaim() {
               )}
             </Select>
 
+            <div>
+              <Button
+                color="default"
+                variant="ghost"
+                endContent={<CameraIcon />}
+                onClick={() => imgRef.current.click()}
+              >
+                Adjuntar una foto
+              </Button>
+            </div>
             <input
+              ref={imgRef}
               type="file"
-              name="media"
-              id="media"
-              onChange={(e) => setFieldValue("media", e.target.files[0])}
+              name="imagen"
+              id="imagen"
+              onChange={(e) => setFieldValue("imagen", e.target.files[0])}
               accept="image/*"
-              className="rounded-medium px-3 py-2 text-sm shadow-sm outline-none !duration-150 transition-background focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none"
+              className="hidden"
             />
-            {values.media ? (
-              <img
-                className="block rounded-lg"
-                src={URL.createObjectURL(values.media)}
-              />
+            {values.imagen ? (
+              <div className="relative">
+                <Button
+                  isIconOnly
+                  color="default"
+                  aria-label="Like"
+                  className="absolute right-1 top-1 rounded-full"
+                  onClick={() => setFieldValue("imagen", null)}
+                >
+                  <svg
+                    className="h-6 w-6"
+                    width="64px"
+                    height="64px"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <g
+                      id="SVGRepo_bgCarrier"
+                      strokeWidth="0"
+                    ></g>
+                    <g
+                      id="SVGRepo_tracerCarrier"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    ></g>
+                    <g id="SVGRepo_iconCarrier">
+                      <path
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        d="M19.207 6.207a1 1 0 0 0-1.414-1.414L12 10.586 6.207 4.793a1 1 0 0 0-1.414 1.414L10.586 12l-5.793 5.793a1 1 0 1 0 1.414 1.414L12 13.414l5.793 5.793a1 1 0 0 0 1.414-1.414L13.414 12l5.793-5.793z"
+                        fill="currentColor"
+                      ></path>
+                    </g>
+                  </svg>
+                </Button>
+                <img
+                  className="block rounded-lg"
+                  src={URL.createObjectURL(values.imagen)}
+                />
+              </div>
             ) : (
               ""
             )}

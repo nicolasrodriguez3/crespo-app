@@ -2,19 +2,32 @@ import { useEffect, useState } from "react"
 import { HomeHeader } from "../components/HomeHeader"
 import { CircularProgress } from "@nextui-org/react"
 import Post from "../components/Post"
+import { useAuth } from "../hooks/useAuth"
+import axios from "axios"
 
 export function Home() {
+  const { user, token } = useAuth()
+
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
     const getPosts = async () => {
-      // todo: Fetch posts
-      let data = []
-      setPosts(data)
+      const response = await axios.get(
+        "https://vps-3450851-x.dattaweb.com:9088/api/reclamo/buscar-todos-mis-reclamos",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      )
+      if (response.status === 200) {
+        console.log(response.data)
+        setPosts(response.data)
+        setError(null)
+      }
     }
-    setError(null)
 
     try {
       getPosts()
@@ -44,10 +57,10 @@ export function Home() {
           <p className="p-4 text-center">No hay posts</p>
         ) : (
           // todo agregar imagen
-          posts?.map(({ data, id }) => (
+          posts?.map((post) => (
             <Post
-              key={id}
-              data={data}
+              key={post.id}
+              data={post}
             />
           ))
         )}
