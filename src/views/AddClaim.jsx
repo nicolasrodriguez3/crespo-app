@@ -8,67 +8,65 @@ import axios from "axios"
 import { useAuth } from "../hooks/useAuth"
 import { useEffect } from "react"
 import { useState } from "react"
-import { getCategories, getStreets } from "../helpers/getCategories"
-
-// const useGetClaimTypes = async () => {
-//   const { user } = useAuth()
-
-//   const response = await axios(
-//     "https://vps-3450851-x.dattaweb.com:9088/api/tipo-reclamo/buscar-todas",
-//     {
-//       headers: {
-//         Authorization: `Bearer ${user.token}`,
-//       },
-//     },
-//   )
-//   return response
-// }
+import { getCategories, getStreets, getnNeighborhoods } from "../helpers/getCategories"
 
 export function AddClaim() {
-  // const categories = useGetClaimTypes()
-  // console.log(categories)
   const [categories, setCategories] = useState([])
   const [streets, setStreets] = useState([])
+  const [neighborhoods, setNeighborhoods] = useState([])
 
-  const { user } = useAuth()
+  const { user, token } = useAuth()
 
   useEffect(() => {
-    getCategories(user.token).then((res) => setCategories(res.data))
-    getStreets(user.token).then((res) => {
+    getCategories(token).then((res) => setCategories(res.data))
+    getStreets(token).then((res) => {
+      //ordenar alfabeticamente los resultados
+      res.data.sort((a, b) => {
+        if (a.calle < b.calle) {
+          return -1
+        }
+        if (a.calle > b.calle) {
+          return 1
+        }
+        return 0
+      })
+
       setStreets(res.data)
     })
-  }, [])
+    getnNeighborhoods(token).then((res) => setNeighborhoods(res.data))
+  }, [token])
 
   const formik = useFormik({
     initialValues: {
-      title: "",
+      persona_id: user.id,
       content: "",
       tipoReclamo_id: new Set([]),
       calle_id: new Set([]),
+      barrio_id: new Set([]),
+      numberStreet: "",
       media: null,
     },
+    enableReinitialize: true,
     onSubmit: async (values, { setSubmitting }) => {
-      const { title, tipoReclamo_id, content, calle_id } = values
+      const { persona_id, tipoReclamo_id, content, calle_id, barrio_id, media } = values
 
       try {
         console.log({
-          title,
+          persona_id,
           tipoReclamo_id,
           calle_id,
+          barrio_id,
           content,
-          owner: "test",
-          status: "sin revisar",
-          media: "",
+          media,
         })
       } catch (error) {
         console.error(error)
         throw new Error("Error cargando los datos del post.")
       }
-      resetForm()
+      //resetForm()
       setSubmitting(false)
     },
     validationSchema: Yup.object({
-      title: Yup.string().required("Por favor ingrese un título"),
       tipoReclamo_id: Yup.string().required(
         "Por favor seleccione una categoría.",
       ),
@@ -109,6 +107,7 @@ export function AddClaim() {
             <Select
               label="Tipo de reclamo"
               placeholder="Seleccione el tipo de reclamo"
+              isRequired
               items={categories}
               className="max-w-xs"
               onSelectionChange={(val) =>
@@ -125,27 +124,21 @@ export function AddClaim() {
               )}
             </Select>
 
-            <Input
-              name="title"
-              label="Título"
-              isRequired
-              {...getFieldProps("title")}
-              isInvalid={touched.title && errors.title}
-              errorMessage={touched.title && errors.title ? errors.title : ""}
-            />
-
             <Textarea
               label="Descripción"
               labelPlacement="inside"
+              isRequired
               placeholder="Ingrese una descripción"
               {...getFieldProps("content")}
             />
 
             {/* Calle */}
+            <div className="grid grid-cols-[1fr_30%] gap-1">
             <Select
               label="Calle"
-              placeholder="Seleccione el tipo de reclamo"
+              placeholder="Seleccione la calle"
               items={streets}
+              isRequired
               className="max-w-xs"
               onSelectionChange={(val) =>
                 setFieldValue("calle_id", Array.from(val)[0])
@@ -157,6 +150,34 @@ export function AddClaim() {
                   value={street.id}
                 >
                   {street.calle}
+                </SelectItem>
+              )}
+            </Select>
+            <Input
+              name="numberStreet"
+              label="Altura"
+              isRequired
+              {...getFieldProps("numberStreet")}
+              isInvalid={touched.numberStreet && errors.numberStreet}
+              errorMessage={touched.numberStreet && errors.numberStreet ? errors.numberStreet : ""}
+            />
+            </div>
+
+            <Select
+              label="Barrio"
+              placeholder="Seleccione el barrio"
+              items={neighborhoods}
+              className="max-w-xs"
+              onSelectionChange={(val) =>
+                setFieldValue("neighborhoods_id", Array.from(val)[0])
+              }
+            >
+              {(neighborhood) => (
+                <SelectItem
+                  key={neighborhood.id}
+                  value={neighborhood.id}
+                >
+                  {neighborhood.barrio}
                 </SelectItem>
               )}
             </Select>

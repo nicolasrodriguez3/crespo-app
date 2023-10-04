@@ -11,12 +11,22 @@ import { Link } from "react-router-dom"
 
 export function Profile() {
   const navigate = useNavigate()
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
   const [loading, setLoading] = useState(false)
 
   const handleLogout = async () => {
     setLoading(true)
-    navigate("/login")
+    try{
+      const userLoguot = await logout()
+      if(userLoguot){
+        setLoading(false)
+        navigate("/login")
+      }
+    }
+    catch(error){
+      console.error("Error durante el cierre de sesión:", error)
+      setLoading(false)
+    }
   }
 
   return (

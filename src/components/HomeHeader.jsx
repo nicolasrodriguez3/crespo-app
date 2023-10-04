@@ -4,7 +4,7 @@ import { useAuth } from "../hooks/useAuth"
 export function HomeHeader() {
   const { user } = useAuth()
   console.log(user)
-  const name = user?.displayName || user?.name || "Pollito"
+  const name = user?.nombre || "Pollito"
 
   return (
     <header className="w-full text-center">

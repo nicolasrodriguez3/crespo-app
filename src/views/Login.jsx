@@ -10,7 +10,7 @@ import wave from "../assets/imgs/wave-top.svg"
 
 export function Login() {
   const navigate = useNavigate()
-  const { login } = useAuth()
+  const { login, getUserData } = useAuth()
   const [isVisible, setIsVisible] = useState(false)
 
   const [error, setError] = useState(null)
@@ -32,14 +32,21 @@ export function Login() {
       setError(null)
 
       try {
-        const user = await login(values.email, values.password)
-        console.log(user)
-        setSubmitting(false)
-        //navigate("/")
-      } catch (err) {
-        console.error(err)
-        setSubmitting(false)
-        setError(err)
+        // Intenta realizar el inicio de sesión
+        await login(values.email, values.password);
+      
+        // Si el inicio de sesión tiene éxito, obtener los datos del usuario
+
+        getUserData()
+
+        // Redirigir al usuario a la página de inicio
+        setSubmitting(false);
+        navigate("/");
+      } catch (error) {
+        // En caso de error durante el inicio de sesión
+        console.error("Error durante el inicio de sesión:", error);
+        setSubmitting(false);
+        setError(error);
       }
     },
   })

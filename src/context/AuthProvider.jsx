@@ -6,14 +6,29 @@ const API_LOGIN = import.meta.env.VITE_API_URL_LOGIN
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
+  const [token, setToken] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"))
-
-    if (user) setUser(user)
-    console.log(user)
+    const token = JSON.parse(localStorage.getItem("token"))
+    if (token) {
+      const user = JSON.parse(localStorage.getItem("user"))
+      setToken(token)
+      if(user) setUser(user)
+    }
+    console.log(token)
   }, [])
+
+  useEffect(() => {
+    if (token) {
+      getUserData(token).then((res) => {
+        setUser(res)
+        localStorage.setItem("user", JSON.stringify(res))
+      })
+    }
+  }, [token])
+
+  
 
   const signup = (email, password) => {}
 
@@ -24,51 +39,61 @@ export function AuthProvider({ children }) {
     }
 
     try {
-      const res = await axios.post(API_LOGIN, credentials)
-      console.log(res.data)
+      const response = await axios.post(API_LOGIN, credentials)
 
-      if (res.status === 200) {
-        const dataParsed = {
-          token: res.data.tokenAcceso,
-          roles: res.data.roles,
-        }
+      if (response.status === 200) {
+        // guardar token en localStorage
+        localStorage.setItem("token", JSON.stringify(response.data.tokenAcceso))
+        setToken(response.data.tokenAcceso)
 
-        localStorage.setItem("user", JSON.stringify(dataParsed))
-
-        setUser(dataParsed)
-        console.log(dataParsed)
-        return dataParsed
+      } else if (response.status === 401) {
+        throw new Error("Usuario o contraseña incorrectos")
       } else {
-        console.error(
-          "Inicio de sesión fallido. Código de respuesta:",
-          res.status,
-        )
+        throw new Error("Error en el servidor")
       }
     } catch (error) {
-      if (error.response) {
-        // Si la respuesta contiene un estado HTTP no exitoso (por ejemplo, 404 o 500)
-        console.error(
-          "Error en la respuesta:",
-          error.response.status,
-          error.response.statusText,
-        )
-      } else if (error.request) {
-        // Si la solicitud no pudo ser realizada (por ejemplo, el servidor no respondió)
-        console.error("Error en la solicitud:", error)
-      } else {
-        // Otros errores
-        console.error("Error:", error.message)
-      }
+      console.error("Error en la solicitud:", error)
     }
   }
 
-  const logout = () => {}
+  const logout = async () => {
+    try {
+      const response = await axios.get(
+        "https://vps-3450851-x.dattaweb.com:9088/api/autenticacion/salir",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      if (response.status === 200) {
+        setToken(null)
+        // borrar token de localStorage
+        localStorage.removeItem("token")
+        localStorage.removeItem("user")
+        return true
+      }
+    } catch (error) {
+      console.log(error)
+      return false
+    }
+  }
 
   const resetPassword = (email) => {}
 
-  const getUserData = async (uid) => {
+  const getUserData = async (token) => {
     try {
-      console.log(uid)
+      const response = await axios.get(
+        "https://vps-3450851-x.dattaweb.com:9088/api/usuario/mis-datos",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      if (response.status === 200) {
+        return response.data
+      }
     } catch (error) {
       console.log(error)
     }
@@ -82,11 +107,13 @@ export function AuthProvider({ children }) {
     <authContext.Provider
       value={{
         user,
+        token,
         loading,
         signup,
         login,
         logout,
         resetPassword,
+        getUserData
       }}
     >
       {children}
