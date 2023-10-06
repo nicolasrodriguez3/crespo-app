@@ -73,12 +73,6 @@ export function Home() {
             <p className="text-center">
               Ha ocurrido un error obteniendo los posts.
             </p>
-            <button
-              className="rounded-md bg-gold px-4 py-2 text-white"
-              onClick={() => navigate("/admin")}
-            >
-              Ir a la sección de administración
-            </button>
           </div>
         </div>
       </>
@@ -161,7 +155,6 @@ export function Home() {
             isPressable
             onPress={() => console.log("item pressed")}
           >
-            <CardBody className="overflow-visible p-0">
               <Image
                 shadow="sm"
                 radius="lg"
@@ -170,11 +163,9 @@ export function Home() {
                 className="h-[140px] w-full object-cover"
                 src="/chicken.svg"
               />
-            </CardBody>
-            <CardFooter className="justify-between text-small">
-              <b>prueba</b>
-              <p className="text-default-500">1234</p>
-            </CardFooter>
+            <CardFooter className="justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
+        <p className="text-tiny text-white/80">Available soon.</p>
+      </CardFooter>
           </Card>
         </div>
         {posts.length === 0 ? (

@@ -33,11 +33,10 @@ export function Login() {
 
       try {
         // Intenta realizar el inicio de sesión
-        await login(values.email, values.password)
+        const token = await login(values.email, values.password)
       
         // Si el inicio de sesión tiene éxito, obtener los datos del usuario
-
-        getUserData()
+        await getUserData(token)
 
         // Redirigir al usuario a la página de inicio
         setSubmitting(false);
@@ -104,6 +103,9 @@ export function Login() {
             onBlur={handleBlur}
             required
             labelPlacement="inside"
+            classNames={{
+              input: "text-base",
+            }}
             isInvalid={touched.password && errors.password}
             errorMessage={
               touched.password && errors.password ? errors.password : ""

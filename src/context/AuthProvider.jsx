@@ -28,7 +28,9 @@ export function AuthProvider({ children }) {
     }
   }, [token])
 
-  const signup = (email, password) => {}
+  const signup = (email, password) => {
+
+  }
 
   const login = async (email, password) => {
     setLoading(true)
@@ -37,16 +39,22 @@ export function AuthProvider({ children }) {
       password,
     }
 
-    const response = await axios.post(API_LOGIN, credentials)
-
-    if (response.status === 200) {
-      // guardar token en localStorage
-      localStorage.setItem("token", JSON.stringify(response.data.tokenAcceso))
-      setToken(response.data.tokenAcceso)
-    } else if (response.status === 401) {
-      throw new Error("Usuario o contraseña incorrectos")
-    } else {
-      throw new Error("Error en el servidor")
+    try {
+      const response = await axios.post(API_LOGIN, credentials)
+      console.log(response)
+      if (response.status === 200) {
+        // guardar token en localStorage
+        localStorage.setItem("token", JSON.stringify(response.data.tokenAcceso))
+        setToken(response.data.tokenAcceso)
+        return response.data.tokenAcceso
+      }
+    } catch (error) {
+      if (error?.response?.data?.error === "Bad credentials") {
+        throw new Error("Usuario o contraseña incorrectos.")
+      } else if (error.message === "Network Error") {
+        throw new Error("Error de conexión. Verifique su conexión a internet.")
+      }
+      throw new Error("Error en el servidor. Intente más tarde.")
     }
     setLoading(false)
   }
