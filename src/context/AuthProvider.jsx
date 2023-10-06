@@ -31,6 +31,7 @@ export function AuthProvider({ children }) {
   const signup = (email, password) => {}
 
   const login = async (email, password) => {
+    setLoading(true)
     const credentials = {
       username: email,
       password,
@@ -47,6 +48,7 @@ export function AuthProvider({ children }) {
     } else {
       throw new Error("Error en el servidor")
     }
+    setLoading(false)
   }
 
   const logout = async () => {

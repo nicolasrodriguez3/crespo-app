@@ -3,7 +3,6 @@ import { useAuth } from "../hooks/useAuth"
 
 export function HomeHeader() {
   const { user } = useAuth()
-  console.log(user)
   const name = user?.nombre || "Pollito"
 
   return (

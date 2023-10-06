@@ -1,6 +1,7 @@
 import { Navigate } from "react-router-dom"
 import { useAuth } from "../hooks/useAuth"
 import { CircularProgress } from "@nextui-org/react"
+import PropTypes from "prop-types"
 
 export function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
@@ -15,6 +16,10 @@ export function ProtectedRoute({ children }) {
       </div>
     )
 
-  //if (!user) return <Navigate to="/login" />
+  if (!user) return <Navigate to="/login" />
   return <>{children}</>
+}
+
+ProtectedRoute.propTypes = {
+  children: PropTypes.node.isRequired,
 }

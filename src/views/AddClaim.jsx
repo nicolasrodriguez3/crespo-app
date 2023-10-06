@@ -10,7 +10,7 @@ import {
   getCategories,
   getStreets,
   getNeighborhoods,
-} from "../helpers/getCategories"
+} from "../helpers/CallsAPI"
 
 export function AddClaim() {
   const [categories, setCategories] = useState([])
