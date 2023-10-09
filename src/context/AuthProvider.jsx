@@ -10,27 +10,19 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    console.log("Auth provider...")
     const token = JSON.parse(localStorage.getItem("token"))
     if (token) {
-      const user = JSON.parse(localStorage.getItem("user"))
       setToken(token)
-      if (user) setUser(user)
-    }
-    console.log(token)
-  }, [])
-
-  useEffect(() => {
-    if (token) {
       getUserData(token).then((res) => {
         setUser(res)
         localStorage.setItem("user", JSON.stringify(res))
       })
     }
-  }, [token])
+    setLoading(false)
+  }, [])
 
-  const signup = (email, password) => {
-
-  }
+  const signup = (email, password) => {}
 
   const login = async (email, password) => {
     setLoading(true)
@@ -41,14 +33,16 @@ export function AuthProvider({ children }) {
 
     try {
       const response = await axios.post(API_LOGIN, credentials)
-      console.log(response)
+
       if (response.status === 200) {
         // guardar token en localStorage
+        setLoading(false)
         localStorage.setItem("token", JSON.stringify(response.data.tokenAcceso))
         setToken(response.data.tokenAcceso)
         return response.data.tokenAcceso
       }
     } catch (error) {
+      setLoading(false)
       if (error?.response?.data?.error === "Bad credentials") {
         throw new Error("Usuario o contraseña incorrectos.")
       } else if (error.message === "Network Error") {
@@ -56,7 +50,6 @@ export function AuthProvider({ children }) {
       }
       throw new Error("Error en el servidor. Intente más tarde.")
     }
-    setLoading(false)
   }
 
   const logout = async () => {
@@ -85,6 +78,7 @@ export function AuthProvider({ children }) {
   const resetPassword = (email) => {}
 
   const getUserData = async (token) => {
+    console.log("Getting user data...", token)
     try {
       const response = await axios.get(
         "https://vps-3450851-x.dattaweb.com:9088/api/usuario/mis-datos",

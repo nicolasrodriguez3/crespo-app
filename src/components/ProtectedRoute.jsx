@@ -4,9 +4,9 @@ import { CircularProgress } from "@nextui-org/react"
 import PropTypes from "prop-types"
 
 export function ProtectedRoute({ children }) {
-  const { user, loading } = useAuth()
+  const { token, loading } = useAuth()
 
-  if (loading)
+  if (loading) {
     return (
       <div className="flex w-full justify-center">
         <CircularProgress
@@ -15,8 +15,9 @@ export function ProtectedRoute({ children }) {
         />
       </div>
     )
+  }
 
-  if (!user) return <Navigate to="/login" />
+  if (!token) return <Navigate to="/login" />
   return <>{children}</>
 }
 

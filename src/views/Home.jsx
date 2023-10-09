@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { HomeHeader } from "../components/HomeHeader"
 import {
   CircularProgress,
+  Button,
   Card,
   CardBody,
   CardFooter,
@@ -11,6 +12,20 @@ import Post from "../components/Post"
 import { useAuth } from "../hooks/useAuth"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
+
+const getPosts = async (token) => {
+  const response = await axios.get(
+    "https://vps-3450851-x.dattaweb.com:9088/api/reclamo/buscar-todos-mis-reclamos",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  )
+
+  return { data: response.data, status: response.status }
+}
 
 export function Home() {
   const navigate = useNavigate()
@@ -21,30 +36,19 @@ export function Home() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    // obtener los posts
-    const getPosts = async () => {
-      const response = await axios.get(
-        "https://vps-3450851-x.dattaweb.com:9088/api/reclamo/buscar-todos-mis-reclamos",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      )
-      if (response.status === 200) {
-        console.log(response.data)
-        setPosts(response.data)
-        setError(null)
-      } else if (response.status === 404) {
-        setPosts([])
-        setError(null)
-      } else {
-        setError("Error obteniendo los posts")
-      }
-    }
+    setError(null)
+    setLoading(true)
 
+    // obtener los posts
     try {
-      getPosts()
+      getPosts(token).then((response) => {
+        if (response.status === 200) {
+          console.log(response.data)
+          setPosts(response.data)
+        } else {
+          setError("Error obteniendo los posts")
+        }
+      })
     } catch (error) {
       setError(error)
       console.log(error)
@@ -148,37 +152,30 @@ export function Home() {
   return (
     <>
       <HomeHeader />
-      <div className="flex min-h-screen w-full flex-col gap-4 bg-gray-50 pb-12">
-        <div>
-          <Card
-            shadow="sm"
-            isPressable
-            onPress={() => console.log("item pressed")}
+      <div className="mx-auto flex min-h-screen w-full max-w-sm flex-col gap-4 bg-gray-50 pb-12 pt-4">
+        <div className="flex flex-col">
+          <Button
+            as={Link}
+            to="/add"
+            className="rounded-md bg-gold text-left font-bold"
           >
-              <Image
-                shadow="sm"
-                radius="lg"
-                width="100%"
-                alt="test"
-                className="h-[140px] w-full object-cover"
-                src="/chicken.svg"
-              />
-            <CardFooter className="justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
-        <p className="text-tiny text-white/80">Available soon.</p>
-      </CardFooter>
-          </Card>
+            Agregar reclamo
+          </Button>
         </div>
-        {posts.length === 0 ? (
-          <p className="p-4 text-center">No hay posts</p>
-        ) : (
-          // todo agregar imagen
-          posts?.map((post) => (
-            <Post
-              key={post.id}
-              data={post}
-            />
-          ))
-        )}
+        <section>
+          Mis reclamos
+          {posts.length === 0 ? (
+            <p className="py-4 text-center">No hay posts</p>
+          ) : (
+            // todo agregar imagen
+            posts?.map((post) => (
+              <Post
+                key={post.id}
+                data={post}
+              />
+            ))
+          )}
+        </section>
       </div>
     </>
   )
