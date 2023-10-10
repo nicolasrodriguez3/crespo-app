@@ -1,0 +1,12 @@
+{
+  "name": "Crespo App",
+  "version": "1.0.0",
+  "manifest_version": 2,
+  "description": "Aplicación para cargar y dar seguimiento a reclamos de los ciudadanos",
+  "icons": {
+    "128": "icon-128.png"
+  },
+  "background_color": "#FFFFFF",
+  "display": "standalone",
+  "lang": "es-AR"
+}
