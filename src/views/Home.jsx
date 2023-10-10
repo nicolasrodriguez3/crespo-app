@@ -153,13 +153,21 @@ export function Home() {
     <>
       <HomeHeader />
       <div className="mx-auto flex min-h-screen w-full max-w-sm flex-col gap-4 bg-gray-50 pb-12 pt-4">
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-4">
           <Button
             as={Link}
             to="/add"
-            className="rounded-md bg-gold text-left font-bold"
+            className="rounded-md bg-gold font-bold"
           >
             Agregar reclamo
+          </Button>
+          <Button
+            as={Link}
+            to="/"
+            variant="bordered"
+            className="rounded-md border-gold"
+          >
+            Ver mis reclamos
           </Button>
         </div>
         <section>

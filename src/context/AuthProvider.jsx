@@ -3,6 +3,7 @@ import { authContext } from "./authContext"
 import { useEffect, useState } from "react"
 
 const API_LOGIN = import.meta.env.VITE_API_URL_LOGIN
+const API_URL = import.meta.env.VITE_API_URL
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
@@ -22,7 +23,28 @@ export function AuthProvider({ children }) {
     setLoading(false)
   }, [])
 
-  const signup = (email, password) => {}
+  const signup = async ({values}) => {
+    setLoading(true)
+
+    try {
+      const response = await axios.post(`${API_URL}/api/autenticacion/registrarse`, values)
+
+      if (response.status === 201) {
+        setLoading(false)
+        return response.data
+      }
+    } catch (error) {
+      setLoading(false)
+      console.log(error)
+      if (error?.response?.data?.error === "Bad credentials") {
+        throw new Error("Usuario o contraseña incorrectos.")
+      } else if (error.message === "Network Error") {
+        throw new Error("Error de conexión. Verifique su conexión a internet.")
+      }
+      throw new Error("Error en el servidor. Intente más tarde.")
+    }
+
+  }
 
   const login = async (email, password) => {
     setLoading(true)

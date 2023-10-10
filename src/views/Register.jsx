@@ -6,8 +6,10 @@ import { Button, Input } from "@nextui-org/react"
 import { EyeFilledIcon } from "../assets/icons/EyeFilledIcon"
 import { EyeSlashFilledIcon } from "../assets/icons/EyeSlashFilledIcon"
 import wave from "../assets/imgs/wave-top.svg"
+import { useAuth } from "../hooks/useAuth"
 
 export function Register() {
+  const { signup } = useAuth()
   const navigate = useNavigate()
 
   const [isVisible, setIsVisible] = useState(false)
@@ -15,22 +17,28 @@ export function Register() {
 
   const formik = useFormik({
     initialValues: {
-      name: "",
-      address: "",
-      phone: "",
-      email: "",
+      nombre: "",
+      dni: "",
+      direccion: "",
+      telefono: "",
+      username: "",
       password: "",
     },
     validationSchema: Yup.object({
-      email: Yup.string()
+      username: Yup.string()
         .email("El correo no es válido")
         .required("Ingrese su correo."),
+      dni: Yup.number()
+        .typeError("Ingrese unicamente números")
+        .required("Ingrese su número de DNI")
+        .positive("El número no puede ser negativo")
+        .integer("Solo valores enteros"),
       password: Yup.string()
-        .min(6, "Su contraseña debe tener al menos 6 caracteres")
+        .min(8, "Su contraseña debe tener al menos 8 caracteres")
         .required("Ingrese su contraseña"),
-      name: Yup.string().required("Ingrese su nombre completo"),
-      address: Yup.string().required("Ingrese su dirección"),
-      phone: Yup.number()
+      nombre: Yup.string().required("Ingrese su nombre completo"),
+      direccion: Yup.string().required("Ingrese su dirección"),
+      telefono: Yup.number()
         .typeError("Ingrese unicamente números")
         .required("Ingrese su número de teléfono")
         .positive("El número no puede ser negativo")
@@ -38,6 +46,7 @@ export function Register() {
     }),
     onSubmit: async (values, { setSubmitting }) => {
       setError(null)
+      signup({ values })
       console.log(values)
       try {
         setSubmitting(false)
@@ -79,54 +88,66 @@ export function Register() {
           className="flex w-full max-w-xs flex-col gap-4"
         >
           <Input
-            value={values.name}
-            name="name"
-            id="name"
+            value={values.nombre}
+            name="nombre"
+            id="nombre"
             onChange={handleChange}
             onBlur={handleBlur}
             type="text"
             label="Nombre y apellido"
-            isInvalid={touched.name && errors.name}
-            errorMessage={touched.name && errors.name ? errors.name : ""}
+            isInvalid={touched.nombre && errors.nombre}
+            errorMessage={touched.nombre && errors.nombre ? errors.nombre : ""}
           />
 
           <Input
-            value={values.address}
-            name="address"
-            id="address"
+            value={values.dni}
+            name="dni"
+            id="dni"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            type="text"
+            label="Número de DNI"
+            isInvalid={touched.dni && errors.dni}
+            errorMessage={touched.dni && errors.dni ? errors.dni : ""}
+          />
+
+          <Input
+            value={values.direccion}
+            name="direccion"
+            id="direccion"
             onChange={handleChange}
             onBlur={handleBlur}
             type="text"
             label="Dirección"
-            isInvalid={touched.address && errors.address}
+            isInvalid={touched.direccion && errors.direccion}
             errorMessage={
-              touched.address && errors.address ? errors.address : ""
+              touched.direccion && errors.direccion ? errors.direccion : ""
             }
           />
 
           <Input
-            value={values.phone}
-            name="phone"
-            id="phone"
+            value={values.telefono}
+            name="telefono"
+            id="telefono"
             onChange={handleChange}
             onBlur={handleBlur}
             type="text"
             label="Teléfono"
-            isInvalid={touched.phone && errors.phone}
-            errorMessage={touched.phone && errors.phone ? errors.phone : ""}
+            isInvalid={touched.telefono && errors.telefono}
+            errorMessage={touched.telefono && errors.telefono ? errors.telefono : ""}
           />
 
           <Input
-            value={values.email}
-            name="email"
-            id="email"
+            value={values.username}
+            name="username"
+            id="username"
             onChange={handleChange}
             onBlur={handleBlur}
             type="email"
             label="Correo"
             autoComplete="true"
-            isInvalid={touched.email && errors.email}
-            errorMessage={touched.email && errors.email ? errors.email : ""}
+            isInvalid={touched.username && errors.username}
+            errorMessage={touched.username && errors.username ? errors.username : ""}
           />
 
           <Input
