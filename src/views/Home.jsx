@@ -172,7 +172,7 @@ export function Home() {
         </div>
         <section>
           Mis reclamos
-          {posts.length === 0 ? (
+          {posts?.length === 0 ? (
             <p className="py-4 text-center">No hay posts</p>
           ) : (
             // todo agregar imagen

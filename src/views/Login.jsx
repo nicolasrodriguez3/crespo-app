@@ -7,10 +7,16 @@ import { Link, useNavigate } from "react-router-dom"
 import { EyeFilledIcon } from "../assets/icons/EyeFilledIcon"
 import { EyeSlashFilledIcon } from "../assets/icons/EyeSlashFilledIcon"
 import wave from "../assets/imgs/wave-top.svg"
+import { getUserData } from "../services/getUserData"
 
 export function Login() {
+  // si el usuario ya está autenticado, redirigirlo a la página de inicio
+  const { token } = useAuth()
   const navigate = useNavigate()
-  const { login, getUserData } = useAuth()
+  if (token) {
+    navigate("/")
+  }
+  const { login } = useAuth()
   const [isVisible, setIsVisible] = useState(false)
 
   const [error, setError] = useState(null)
@@ -25,7 +31,7 @@ export function Login() {
         .email("El correo no es válido")
         .required("Ingrese su correo."),
       password: Yup.string()
-        .min(6, "Su contraseña debe tener al menos 6 caracteres")
+        .min(8, "Su contraseña debe tener al menos 8 caracteres")
         .required("Ingrese su contraseña"),
     }),
     onSubmit: async (values, { setSubmitting }) => {
@@ -34,18 +40,18 @@ export function Login() {
       try {
         // Intenta realizar el inicio de sesión
         const token = await login(values.email, values.password)
-      
+
         // Si el inicio de sesión tiene éxito, obtener los datos del usuario
         await getUserData(token)
 
         // Redirigir al usuario a la página de inicio
-        setSubmitting(false);
-        navigate("/");
+        setSubmitting(false)
+        navigate("/")
       } catch (error) {
         // En caso de error durante el inicio de sesión
-        console.error("Error durante el inicio de sesión:", error);
-        setSubmitting(false);
-        setError(error);
+        console.error("Error durante el inicio de sesión:", error)
+        setSubmitting(false)
+        setError(error)
       }
     },
   })

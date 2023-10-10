@@ -1,8 +1,8 @@
 import axios from "axios"
 import { authContext } from "./authContext"
 import { useEffect, useState } from "react"
+import { getUserData } from "../services/getUserData"
 
-const API_LOGIN = import.meta.env.VITE_API_URL_LOGIN
 const API_URL = import.meta.env.VITE_API_URL
 
 export function AuthProvider({ children }) {
@@ -11,16 +11,18 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    console.log("Auth provider...")
     const token = JSON.parse(localStorage.getItem("token"))
     if (token) {
       setToken(token)
+
       getUserData(token).then((res) => {
-        if (res.status === 403) {
+        if (res.status) {
+          // si res.status es true, el token es inválido
+          console.warn("Token inválido")
+
           setToken(null)
           localStorage.removeItem("token")
           localStorage.removeItem("user")
-          console.warn("Token inválido")
           return false
         }
 
@@ -31,11 +33,14 @@ export function AuthProvider({ children }) {
     setLoading(false)
   }, [])
 
-  const signup = async ({values}) => {
+  const signup = async ({ values }) => {
     setLoading(true)
 
     try {
-      const response = await axios.post(`${API_URL}/api/autenticacion/registrarse`, values)
+      const response = await axios.post(
+        `${API_URL}/api/autenticacion/registrarse`,
+        values,
+      )
 
       if (response.status === 201) {
         setLoading(false)
@@ -51,7 +56,6 @@ export function AuthProvider({ children }) {
       }
       throw new Error("Error en el servidor. Intente más tarde.")
     }
-
   }
 
   const login = async (email, password) => {
@@ -62,7 +66,10 @@ export function AuthProvider({ children }) {
     }
 
     try {
-      const response = await axios.post(API_LOGIN, credentials)
+      const response = await axios.post(
+        `${API_URL}/api/autenticacion/ingresar`,
+        credentials,
+      )
 
       if (response.status === 200) {
         // guardar token en localStorage
@@ -105,29 +112,7 @@ export function AuthProvider({ children }) {
     }
   }
 
-  const resetPassword = (email) => {}
-
-  const getUserData = async (token) => {
-    console.log("Getting user data...", token)
-    try {
-      const response = await axios.get(
-        "https://vps-3450851-x.dattaweb.com:9088/api/usuario/mis-datos",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      )
-      return response.data
-    } catch ({ response }) {
-      console.log(response)
-      return response
-    }
-  }
-
-  useEffect(() => {
-    setLoading(false)
-  }, [])
+  // todo: const resetPassword = (email) => {}
 
   return (
     <authContext.Provider
@@ -138,8 +123,6 @@ export function AuthProvider({ children }) {
         signup,
         login,
         logout,
-        resetPassword,
-        getUserData,
       }}
     >
       {children}
