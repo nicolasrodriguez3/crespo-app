@@ -15,6 +15,14 @@ export function AuthProvider({ children }) {
     if (token) {
       setToken(token)
       getUserData(token).then((res) => {
+        if (res.status === 403) {
+          setToken(null)
+          localStorage.removeItem("token")
+          localStorage.removeItem("user")
+          console.warn("Token inválido")
+          return false
+        }
+
         setUser(res)
         localStorage.setItem("user", JSON.stringify(res))
       })
@@ -43,7 +51,7 @@ export function AuthProvider({ children }) {
       }
     } catch (error) {
       setLoading(false)
-      if (error?.response?.data?.error === "Bad credentials") {
+      if (error.response?.data?.error === "Bad credentials") {
         throw new Error("Usuario o contraseña incorrectos.")
       } else if (error.message === "Network Error") {
         throw new Error("Error de conexión. Verifique su conexión a internet.")
@@ -88,11 +96,10 @@ export function AuthProvider({ children }) {
           },
         },
       )
-      if (response.status === 200) {
-        return response.data
-      }
-    } catch (error) {
-      console.log(error)
+      return response.data
+    } catch ({ response }) {
+      console.log(response)
+      return response
     }
   }
 
