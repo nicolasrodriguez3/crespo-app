@@ -15,20 +15,24 @@ export function AuthProvider({ children }) {
     if (token) {
       setToken(token)
 
-      getUserData(token).then((res) => {
-        if (res.status) {
-          // si res.status es true, el token es inválido
-          console.warn("Token inválido")
+      getUserData(token)
+        .then((res) => {
+          if (res.status) {
+            // si res.status es true, el token es inválido
+            console.warn("Token inválido")
 
-          setToken(null)
-          localStorage.removeItem("token")
-          localStorage.removeItem("user")
-          return false
-        }
+            setToken(null)
+            localStorage.removeItem("token")
+            localStorage.removeItem("user")
+            return false
+          }
 
-        setUser(res)
-        localStorage.setItem("user", JSON.stringify(res))
-      })
+          setUser(res)
+          localStorage.setItem("user", JSON.stringify(res))
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     }
     setLoading(false)
   }, [])
@@ -90,6 +94,10 @@ export function AuthProvider({ children }) {
   }
 
   const logout = async () => {
+    setToken(null)
+    // borrar token de localStorage
+    localStorage.removeItem("token")
+    localStorage.removeItem("user")
     try {
       const response = await axios.get(
         "https://vps-3450851-x.dattaweb.com:9088/api/autenticacion/salir",
@@ -100,10 +108,6 @@ export function AuthProvider({ children }) {
         },
       )
       if (response.status === 200) {
-        setToken(null)
-        // borrar token de localStorage
-        localStorage.removeItem("token")
-        localStorage.removeItem("user")
         return true
       }
     } catch (error) {

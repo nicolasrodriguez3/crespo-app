@@ -1,25 +1,40 @@
 import PropTypes from "prop-types"
+import { Card, CardHeader, CardBody, Image } from "@nextui-org/react"
+import { useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 
 function Post({ data }) {
-  const {
-    altura,
-    barrio,
-    calle,
-    descripcion,
-    id,
-    imagen,
-    seguimiento,
-    tipoReclamo,
-  } = data
+  const { id, imagen, seguimiento, descripcion, tipoReclamo } = data
+  console.log(data)
+  const navigate = useNavigate()
 
   return (
-    <article>
-      {/* <img src={media[0].src} /> */}
-      <section className="flex flex-col items-start gap-2 p-2">
-        <h3 className="text-xl">{tipoReclamo.tipo}</h3>
-        <p className="">{descripcion}</p>
-      </section>
-    </article>
+    <Card
+      className="w-full py-4"
+      isPressable
+      as={Link}
+      to={`/reclamos/${id}`}
+    >
+      <CardHeader className="flex-col items-start px-4 pb-0 pt-2">
+        <p className="text-tiny font-bold">Reclamo nro. {id}</p>
+        <small className="text-default-500">
+          Estado: {seguimiento.estados[0].estado}
+        </small>
+        <h4 className="text-large font-bold">{tipoReclamo.tipo}</h4>
+      </CardHeader>
+      <CardBody className="overflow-visible py-2">
+        {imagen ? (
+          <Image
+            alt="Card background"
+            className="rounded-xl object-cover"
+            src="/images/hero-card-complete.jpeg"
+            width="100%"
+          />
+        ) : (
+          <p className="text-default-500">{descripcion}</p>
+        )}
+      </CardBody>
+    </Card>
   )
 }
 
@@ -38,9 +53,13 @@ Post.propTypes = {
     id: PropTypes.string,
     imagen: PropTypes.string,
     seguimiento: PropTypes.shape({
-      fecha: PropTypes.string,
-      id: PropTypes.string,
-      estado: PropTypes.string,
+      estados: PropTypes.arrayOf(
+        PropTypes.shape({
+          estado: PropTypes.string,
+          descripcion: PropTypes.string,
+          id: PropTypes.string,
+        }),
+      ),
     }),
     tipoReclamo: PropTypes.shape({
       id: PropTypes.string,
