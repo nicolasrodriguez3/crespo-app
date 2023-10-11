@@ -28,33 +28,36 @@ export function Register() {
       username: Yup.string()
         .email("El correo no es válido")
         .required("Ingrese su correo."),
-      dni: Yup.number()
-        .typeError("Ingrese unicamente números")
-        .required("Ingrese su número de DNI")
-        .positive("El número no puede ser negativo")
-        .integer("Solo valores enteros"),
+      dni: Yup.string()
+        .matches(/^\d+$/, "Ingrese unicamente números")
+        .min(7, "El número de DNI debe tener al menos 7 dígitos")
+        .max(8, "El número de DNI no puede tener más de 8 dígitos")
+        .required("Ingrese su número de DNI"),
       password: Yup.string()
         .min(8, "Su contraseña debe tener al menos 8 caracteres")
         .required("Ingrese su contraseña"),
-      nombre: Yup.string().required("Ingrese su nombre completo"),
-      direccion: Yup.string().required("Ingrese su dirección"),
-      telefono: Yup.number()
-        .typeError("Ingrese unicamente números")
-        .required("Ingrese su número de teléfono")
-        .positive("El número no puede ser negativo")
-        .integer("Solo valores enteros"),
+      nombre: Yup.string().required("Ingrese su nombre completo").min(3, "El nombre debe tener al menos 3 caracteres").max(100, "El nombre no puede tener más de 100 caracteres"),
+      direccion: Yup.string()
+        .required("Ingrese su dirección")
+        .min(8, "La dirección debe tener al menos 8 caracteres")
+        .max(100, "La dirección no puede tener más de 100 caracteres"),
+      telefono: Yup.string()
+        .matches(/^\d+$/, "Ingrese unicamente números")
+        .min(7, "El número de teléfono debe tener al menos 7 dígitos")
+        .max(20, "El número de teléfono no puede tener más de 20 dígitos")
+        .required("Ingrese su número de teléfono"),
     }),
     onSubmit: async (values, { setSubmitting }) => {
       setError(null)
-      signup({ values })
       console.log(values)
       try {
-        setSubmitting(false)
-        navigate("/")
-      } catch (err) {
-        setSubmitting(false)
-        setError(err)
+        await signup({ values })
+      } catch (error) {
+        console.log(error)
+        setError(error.message)
       }
+      setSubmitting(false)
+      // navigate("/")
     },
   })
 
@@ -134,7 +137,9 @@ export function Register() {
             type="text"
             label="Teléfono"
             isInvalid={touched.telefono && errors.telefono}
-            errorMessage={touched.telefono && errors.telefono ? errors.telefono : ""}
+            errorMessage={
+              touched.telefono && errors.telefono ? errors.telefono : ""
+            }
           />
 
           <Input
@@ -147,7 +152,9 @@ export function Register() {
             label="Correo"
             autoComplete="true"
             isInvalid={touched.username && errors.username}
-            errorMessage={touched.username && errors.username ? errors.username : ""}
+            errorMessage={
+              touched.username && errors.username ? errors.username : ""
+            }
           />
 
           <Input
