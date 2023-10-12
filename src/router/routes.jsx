@@ -9,6 +9,7 @@ import { EditProfile } from "../views/EditProfile"
 import { Login } from "../views/Login"
 import { Register } from "../views/Register"
 import { ForgotPassword } from "../views/ForgotPassword"
+import { PostView } from "../views/PostView"
 
 export const routes = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ export const routes = createBrowserRouter([
       {
         path: "/",
         element: <Home />,
+      },
+      {
+        path: "/reclamos/:id",
+        element: <PostView />,
       },
       {
         path: "/add",

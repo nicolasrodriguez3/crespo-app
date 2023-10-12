@@ -152,7 +152,7 @@ export function Home() {
   return (
     <>
       <HomeHeader />
-      <div className="mx-auto flex min-h-screen w-full max-w-sm flex-col gap-4 bg-gray-50 pb-12 pt-4">
+      <div className="mx-auto flex min-h-screen w-full max-w-sm flex-col gap-4 pb-16 pt-4">
         <div className="flex flex-col gap-4">
           <Button
             as={Link}
@@ -170,12 +170,11 @@ export function Home() {
             Ver mis reclamos
           </Button>
         </div>
-        <section>
+        <section className="flex flex-col gap-4">
           Mis reclamos
           {posts?.length === 0 ? (
             <p className="py-4 text-center">No hay posts</p>
           ) : (
-            // todo agregar imagen
             posts?.map((post) => (
               <Post
                 key={post.id}

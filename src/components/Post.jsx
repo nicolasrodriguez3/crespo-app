@@ -16,7 +16,7 @@ function Post({ data }) {
       to={`/reclamos/${id}`}
     >
       <CardHeader className="flex-col items-start px-4 pb-0 pt-2">
-        <p className="text-tiny font-bold">Reclamo nro. {id}</p>
+        <p className="text-tiny font-bold">Reclamo #{id}</p>
         <small className="text-default-500">
           Estado: {seguimiento.estados[0].estado}
         </small>

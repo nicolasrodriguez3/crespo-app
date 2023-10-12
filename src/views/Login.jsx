@@ -11,14 +11,10 @@ import { getUserData } from "../services/getUserData"
 
 export function Login() {
   // si el usuario ya está autenticado, redirigirlo a la página de inicio
-  const { token } = useAuth()
+  const { token, login } = useAuth()
   const navigate = useNavigate()
-  if (token) {
-    navigate("/")
-  }
-  const { login } = useAuth()
-  const [isVisible, setIsVisible] = useState(false)
 
+  const [isVisible, setIsVisible] = useState(false)
   const [error, setError] = useState(null)
 
   const formik = useFormik({
@@ -39,12 +35,9 @@ export function Login() {
 
       try {
         // Intenta realizar el inicio de sesión
-        const token = await login(values.email, values.password)
+        await login(values.email, values.password)
 
-        // Si el inicio de sesión tiene éxito, obtener los datos del usuario
-        await getUserData(token)
-
-        // Redirigir al usuario a la página de inicio
+        // Si el inicio de sesión tiene éxito redirigir al usuario a la página de inicio
         setSubmitting(false)
         navigate("/")
       } catch (error) {
@@ -65,6 +58,11 @@ export function Login() {
     errors,
     isSubmitting,
   } = formik
+
+  if (token) {
+    navigate("/")
+    return null
+  }
 
   return (
     <main className="flex min-h-screen w-full flex-col items-center bg-gray-50">

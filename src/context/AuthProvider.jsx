@@ -35,7 +35,7 @@ export function AuthProvider({ children }) {
         })
     }
     setLoading(false)
-  }, [])
+  }, [token])
 
   const signup = async ({ values }) => {
     try {
@@ -75,11 +75,13 @@ export function AuthProvider({ children }) {
       )
 
       if (response.status === 200) {
-        // guardar token en localStorage
         setLoading(false)
-        localStorage.setItem("token", JSON.stringify(response.data.tokenAcceso))
-        setToken(response.data.tokenAcceso)
-        return response.data.tokenAcceso
+        const token = response.data.tokenAcceso
+
+        // guardar token en localStorage
+        localStorage.setItem("token", JSON.stringify(token))
+        setToken(token)
+        return token
       }
     } catch (error) {
       setLoading(false)
