@@ -17,6 +17,24 @@ function validateResponse(error) {
   }
 }
 
+// obtener mis reclamos
+export const getMyClaims = async (token) => {
+  try {
+    const response = await axios.get(
+      "https://vps-3450851-x.dattaweb.com:9088/api/reclamo/buscar-todos-mis-reclamos",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    )
+  
+    return response
+  } catch (error) {
+    validateResponse(error)
+  }
+}
+
 // obtener todos los reclamos
 export const getClaims = async (token) => {
   try {
@@ -56,23 +74,6 @@ export const getClaimsByStatus = async (token) => {
   try {
     const response = await axios.get(
       "https://vps-3450851-x.dattaweb.com:9088/api/reclamo/buscar-por-estado",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    )
-    return response
-  } catch (error) {
-    validateResponse(error)
-  }
-}
-
-// obtener todos MIS reclamos
-export const getMyClaims = async (token) => {
-  try {
-    const response = await axios.get(
-      "https://vps-3450851-x.dattaweb.com:9088/api/reclamo/buscar-por-usuario",
       {
         headers: {
           Authorization: `Bearer ${token}`,

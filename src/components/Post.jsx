@@ -5,8 +5,6 @@ import { Link } from "react-router-dom"
 
 function Post({ data }) {
   const { id, imagen, seguimiento, descripcion, tipoReclamo } = data
-  console.log(data)
-  const navigate = useNavigate()
 
   return (
     <Card
