@@ -11,11 +11,15 @@ import {
   getStreets,
   getNeighborhoods,
 } from "../helpers/CallsAPI"
+import { validateFilename } from "../services/validateFilename"
+
+const API_URL = import.meta.env.VITE_API_URL
 
 export function AddClaim() {
   const [categories, setCategories] = useState([])
   const [streets, setStreets] = useState([])
   const [neighborhoods, setNeighborhoods] = useState([])
+  const [fileError, setFileError] = useState(false)
 
   const imgRef = useRef(null)
 
@@ -42,7 +46,7 @@ export function AddClaim() {
 
   const formik = useFormik({
     initialValues: {
-      persona_id: user.id,
+      persona_id: user?.id,
       descripcion: "",
       tipoReclamo_id: new Set([]),
       calle_id: new Set([]),
@@ -63,31 +67,42 @@ export function AddClaim() {
       } = values
 
       try {
-        console.log({
+        const claimData = {
           persona_id,
           tipoReclamo_id,
-          calle_id,
-          barrio_id,
           descripcion,
+          calle_id,
+          altura,
+          barrio_id,
           imagen,
-        })
+        }
+        console.log(claimData)
+
         const response = await axios.put(
-          "https://vps-3450851-x.dattaweb.com:9088/api/reclamo",
-          {
-            persona_id,
-            tipoReclamo_id,
-            descripcion,
-            calle_id,
-            altura,
-            barrio_id,
-            imagen,
-          },
+          `${API_URL}/reclamo`,
+          claimData,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           },
         )
+
+        // upload file
+        const formData = new FormData()
+        formData.append("file", imagen)
+
+        const responseFile = await axios.put(
+          `${API_URL}/archivo/guardar`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          },
+        )
+        console.log(responseFile)
         if (response.status === 201) {
           console.log("Reclamo cargado con éxito.")
         } else {
@@ -113,27 +128,33 @@ export function AddClaim() {
     errors,
     isSubmitting,
     setFieldValue,
-    resetForm,
     handleSubmit,
     getFieldProps,
   } = formik
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+
+    if(validateFilename(file.name)) {
+      setFieldValue("imagen", file)
+      setFileError(false)
+    } else {
+      setFileError("Extensión del archivo no permitida")
+
+      //* ¿borrar la imagen del input?
+      //setFieldValue("imagen", null)
+    }
+  }
+
   return (
     <>
       <main className="flex min-h-screen w-full flex-col items-center">
-        <div className="flex min-h-[200px]  w-full items-center justify-center bg-gradient-to-t from-[#ffcc00] to-gold py-8">
-          <Button
-            isIconOnly
-            color="warning"
-            variant="faded"
-            aria-label="Take a photo"
-            className="h-16 w-16 rounded-full"
-          >
-            <CameraIcon fill="#777" />
-          </Button>
+        <div className="flex min-h-[200px]  w-full items-end justify-center bg-gradient-to-t from-[#ffcc00] to-gold py-12 text-2xl">
+          Agregar reclamo
         </div>
 
-        <section className="-mt-8 flex min-h-[40vh] w-full grow flex-col items-center gap-8 rounded-t-3xl bg-gray-50 py-4 pb-12">
+        <section className="-mt-8 flex min-h-[40vh] w-full grow flex-col items-center gap-8 rounded-t-3xl bg-gray-50 py-4 pb-16">
           <form
             onSubmit={handleSubmit}
             className="flex w-full max-w-xs flex-col gap-4 text-base"
@@ -143,7 +164,6 @@ export function AddClaim() {
               placeholder="Seleccione el tipo de reclamo"
               isRequired
               items={categories}
-              className="max-w-xs"
               onSelectionChange={(val) =>
                 setFieldValue("tipoReclamo_id", Array.from(val)[0])
               }
@@ -168,25 +188,21 @@ export function AddClaim() {
 
             {/* Calle */}
             <div className="grid grid-cols-[1fr_30%] gap-1">
-              <Select
-                label="Calle"
-                placeholder="Seleccione la calle"
-                items={streets}
-                isRequired
-                className="max-w-xs"
+            <Input list="calles" label="Calle"
+                placeholder="Seleccione la calle" isRequired
                 onSelectionChange={(val) =>
                   setFieldValue("calle_id", Array.from(val)[0])
                 }
-              >
-                {(street) => (
-                  <SelectItem
-                    key={street.id}
-                    value={street.id}
-                  >
-                    {street.calle}
-                  </SelectItem>
-                )}
-              </Select>
+                isInvalid={touched.calle_id && errors.calle_id}
+                errorMessage={
+                  touched.calle_id && errors.calle_id ? errors.calle_id : ""
+                }
+                />
+              <datalist id="calles">
+                {streets.map((street) => (
+                  <option key={street.id} value={street.calle} />
+                ))}
+              </datalist>
               <Input
                 name="altura"
                 label="Altura"
@@ -203,7 +219,6 @@ export function AddClaim() {
               label="Barrio"
               placeholder="Seleccione el barrio"
               items={neighborhoods}
-              className="max-w-xs"
               onSelectionChange={(val) =>
                 setFieldValue("barrio_id", Array.from(val)[0])
               }
@@ -220,7 +235,7 @@ export function AddClaim() {
 
             <div>
               <Button
-                color="default"
+                color={fileError? "danger" : "default"}
                 variant="ghost"
                 endContent={<CameraIcon />}
                 onClick={() => imgRef.current.click()}
@@ -233,12 +248,17 @@ export function AddClaim() {
               type="file"
               name="imagen"
               id="imagen"
-              onChange={(e) => setFieldValue("imagen", e.target.files[0])}
+              onChange={handleFileChange}
               accept="image/*"
               className="hidden"
             />
+            {fileError && (
+              <p className="text-red-500 text-sm">{fileError}</p>
+            )}
+            
             {values.imagen ? (
               <div className="relative">
+                {/* Delete image button */}
                 <Button
                   isIconOnly
                   color="default"
@@ -273,6 +293,8 @@ export function AddClaim() {
                     </g>
                   </svg>
                 </Button>
+
+                {/* Image preview */}
                 <img
                   className="block rounded-lg"
                   src={URL.createObjectURL(values.imagen)}
