@@ -10,6 +10,7 @@ import { Login } from "../views/Login"
 import { Register } from "../views/Register"
 import { ForgotPassword } from "../views/ForgotPassword"
 import { PostView } from "../views/PostView"
+import ClaimsList from "../views/ClaimsList"
 
 export const routes = createBrowserRouter([
   {
@@ -32,6 +33,10 @@ export const routes = createBrowserRouter([
       {
         path: "/add",
         element: <AddClaim />,
+      },
+      {
+        path: "/claims",
+        element: <ClaimsList />,
       },
       {
         path: "/profile",

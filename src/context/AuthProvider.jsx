@@ -40,7 +40,7 @@ export function AuthProvider({ children }) {
   const signup = async ({ values }) => {
     try {
       const response = await axios.post(
-        `${API_URL}/api/autenticacion/registrarse`,
+        `${API_URL}/autenticacion/registrarse`,
         values,
       )
 
@@ -70,7 +70,7 @@ export function AuthProvider({ children }) {
 
     try {
       const response = await axios.post(
-        `${API_URL}/api/autenticacion/ingresar`,
+        `${API_URL}/autenticacion/ingresar`,
         credentials,
       )
 
@@ -101,7 +101,7 @@ export function AuthProvider({ children }) {
     localStorage.removeItem("user")
     try {
       const response = await axios.get(
-        "https://vps-3450851-x.dattaweb.com:9088/api/autenticacion/salir",
+        `${API_URL}/autenticacion/salir`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
