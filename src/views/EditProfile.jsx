@@ -6,9 +6,7 @@ import {
   Input,
   Badge,
   Avatar,
-  useDisclosure,
-  RadioGroup,
-  Radio,
+  Select
 } from "@nextui-org/react"
 import { useAuth } from "../hooks/useAuth"
 import editIcon from "../assets/icons/pen-linear.svg"
@@ -28,23 +26,19 @@ const getSex = (sexSelected) => {
 
 export function EditProfile() {
   const navigate = useNavigate()
-  const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const { user } = useAuth()
 
   const [error, setError] = useState(null)
 
   const formik = useFormik({
     initialValues: {
-      name: "",
-      surname: "",
-      email: user.email,
-      sex: "",
+      nombre: user?.nombre,
+      username: user?.username,
       birthDate: "",
     },
     enableReinitialize: true,
     validationSchema: Yup.object({
       name: Yup.string().required("Ingrese su nombre."),
-      surname: Yup.string().required("Ingrese su apellido."),
       birthDate: Yup.string().required("Ingrese su fecha de nacimiento."),
       sex: Yup.string().required("Ingrese su sexo."),
     }),
@@ -103,8 +97,8 @@ export function EditProfile() {
           <Avatar
             radius="full"
             className="h-20 w-20 rounded-full text-large"
-            src={user.photoURL || "/chicken.svg"}
-            name={user?.name}
+            src={user?.photoURL || "/chicken.svg"}
+            name={user?.nombre}
           />
         </Badge>
       </div>
@@ -114,113 +108,28 @@ export function EditProfile() {
           className="flex w-full max-w-xs flex-col gap-4"
         >
           <Input
-            name="name"
-            value={values.name}
-            id="name"
+            name="nombre"
+            value={values.nombre}
             onChange={handleChange}
             onBlur={handleBlur}
             type="text"
             label="Nombre"
             variant="underlined"
             autoComplete="true"
-            isInvalid={touched.name && errors.name}
-            errorMessage={touched.name && errors.name ? errors.name : ""}
-          />
-
-          <Input
-            type="text"
-            label="Apellido"
-            name="surname"
-            value={values.surname}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            required
-            labelPlacement="inside"
-            variant="underlined"
-            isInvalid={touched.surname && errors.surname}
-            errorMessage={
-              touched.surname && errors.surname ? errors.surname : ""
-            }
+            isInvalid={touched.nombre && errors.nombre}
+            errorMessage={touched.nombre && errors.nombre ? errors.nombre : ""}
           />
 
           <Input
             type="email"
             label="Correo"
-            name="email"
-            value={values.email}
+            name="username"
+            value={values.username}
             onChange={handleChange}
             isDisabled
             labelPlacement="inside"
             variant="underlined"
           />
-
-          <Input
-            type="date"
-            label="Fecha de nacimiento"
-            name="birthDate"
-            placeholder="dd/mm/aaaa"
-            value={values.birthDate}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            required
-            labelPlacement="inside"
-            variant="underlined"
-            isInvalid={touched.birthDate && errors.birthDate}
-            errorMessage={
-              touched.birthDate && errors.birthDate ? errors.birthDate : ""
-            }
-          />
-
-          <div>
-            <Button
-              onPress={onOpen}
-              variant="light"
-              color={errors.sex ? "danger" : "default"}
-              className="w-full p-1"
-              endContent={
-                <img
-                  src={arrowIcon}
-                  alt="Salir"
-                  width={24}
-                />
-              }
-            >
-              <div className="flex grow flex-col text-left">
-                <span className="text-xs text-foreground-500">
-                  {values.sex && "Sexo"}
-                </span>
-                <span className="pl-1">
-                  {values.sex ? getSex(values.sex) : "Sexo"}
-                </span>
-              </div>
-            </Button>
-            <div className="text-tiny text-danger">{errors.sex}</div>
-          </div>
-          {/* <Modal
-            isOpen={isOpen}
-            onOpenChange={onOpenChange}
-            placement="center"
-          >
-            <ModalContent className="pb-4">
-              {(onClose) => (
-                <>
-                  <ModalHeader>Sexo</ModalHeader>
-                  <ModalBody>
-                    <RadioGroup
-                      value={values.sex}
-                      name="sex"
-                      onChange={handleChange}
-                      onValueChange={onClose}
-                    >
-                      <Radio value="male">Masculino</Radio>
-                      <Radio value="female">Femenino</Radio>
-                      <Radio value="other">Otro</Radio>
-                    </RadioGroup>
-                  </ModalBody>
-                </>
-              )}
-            </ModalContent>
-          </Modal> */}
 
           {error && <p className="text-red-400">{error}</p>}
           <Button

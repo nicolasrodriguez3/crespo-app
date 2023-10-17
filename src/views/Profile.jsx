@@ -1,13 +1,12 @@
 import { useState } from "react"
 import { useAuth } from "../hooks/useAuth"
 import { Button, Avatar } from "@nextui-org/react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 import { Navbar } from "../components/Navbar"
 import logoutIcon from "../assets/icons/logout-2-linear.svg"
 import penIcon from "../assets/icons/pen-2-linear.svg"
 import claimsIcon from "../assets/icons/checklist-minimalistic-linear.svg"
 import arrowIcon from "../assets/icons/alt-arrow-right-linear.svg"
-import { Link } from "react-router-dom"
 
 export function Profile() {
   const navigate = useNavigate()
@@ -37,11 +36,11 @@ export function Profile() {
             radius="full"
             className="h-24 w-24 rounded-full"
             src={user?.photoURL || "/chicken.svg"}
-            name={user?.name}
+            name={user?.nombre}
           />
-          <p>{user?.displayName || user?.name || user?.email}</p>
+          <p>{user?.nombre || "Usuario" }</p>
         </header>
-        <ul className="flex flex-col gap-2 p-4">
+        <ul className="flex flex-col gap-2 p-4 max-w-xs mx-auto">
           <li>
             <Button
               as={Link}
@@ -65,22 +64,6 @@ export function Profile() {
               }
             >
               <span className="grow">Editar perfil</span>
-            </Button>
-          </li>
-          <li>
-            <Button
-              onClick={handleLogout}
-              isLoading={loading}
-              variant="light"
-              startContent={
-                <img
-                  src={claimsIcon}
-                  alt="Salir"
-                  width={24}
-                />
-              }
-            >
-              Mis reclamos
             </Button>
           </li>
           <li>
