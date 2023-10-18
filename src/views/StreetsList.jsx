@@ -10,7 +10,6 @@ import {
   Modal,
   ModalContent,
   ModalHeader,
-  ModalBody,
   ModalFooter,
   useDisclosure,
 } from "@nextui-org/react"
@@ -35,7 +34,7 @@ export function StreetsList() {
   }, [token])
 
   return (
-    <div>
+    <>
       <h2 className="font-bold">Streets List</h2>
       <Modal
         isOpen={isOpen}
@@ -67,10 +66,10 @@ export function StreetsList() {
           )}
         </ModalContent>
       </Modal>
-      <ul>
+      <ul className="w-full px-2">
         {streets.map((street) => (
-          <li key={street.id}>
-            {street.calle}
+          <li key={street.id} className="flex items-center justify-between">
+            <span>{street.calle}</span>
             {user?.roles.includes("JEFE") && (
               <Dropdown>
                 <DropdownTrigger>
@@ -98,6 +97,6 @@ export function StreetsList() {
           </li>
         ))}
       </ul>
-    </div>
+    </>
   )
 }

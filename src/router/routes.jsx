@@ -11,6 +11,7 @@ import { Register } from "../views/Register"
 import { ForgotPassword } from "../views/ForgotPassword"
 import { PostView } from "../views/PostView"
 import ClaimsList from "../views/ClaimsList"
+import { MyTable } from "../views/MyTable"
 
 export const routes = createBrowserRouter([
   {
@@ -60,4 +61,9 @@ export const routes = createBrowserRouter([
     path: "/forgot-password",
     element: <ForgotPassword />,
   },
+  {
+    path: "/test",
+    element: <MyTable />,
+  },
+
 ])
