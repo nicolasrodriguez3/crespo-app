@@ -24,16 +24,19 @@ import { ChevronDownIcon } from "../assets/icons/ChevronDownIcon"
 import { useAuth } from "../hooks/useAuth"
 import { useEffect, useState, useMemo } from "react"
 import { useCallback } from "react"
+import axios from "axios"
+const API_URL = import.meta.env.VITE_API_URL
+
 
 export function MyTable() {
-  const { user } = useAuth()
+  const { token } = useAuth()
   const [filterValue, setFilterValue] = useState("");
   const [data, setData] = useState([])
   const [search, setSearch] = useState("")
   const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(2)
-  const [limit, setLimit] = useState(2)
-  const [loading, setLoading] = useState(false)
+  const [totalPages, setTotalPages] = useState(1)
+  const [limit, setLimit] = useState(10)
+  const [loading, setLoading] = useState(true)
 
   const hasSearchFilter = Boolean(filterValue);
   const filteredItems = useMemo(() => {
@@ -52,30 +55,17 @@ export function MyTable() {
   const pages = Math.ceil(filteredItems.length / limit);
 
   useEffect(() => {
-    setLoading(true)
-    setTimeout(() => {
-      setData([
-        {
-          id: 1,
-          name: "Juan",
-          lastName: "Perez",
-          phone: "12345",
-        },
-        {
-          id: 2,
-          name: "Anto",
-          lastName: "dsasda",
-          phone: "12345",
-        },
-        {
-          id: 3,
-          name: "Nico",
-          lastName: "asdasdasd",
-          phone: "12345",
-        },
-      ])
-      setLoading(false)
-    }, 1000)
+    const getData = async () => {
+      axios
+      .get(`${API_URL}/calle/buscar-todas`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        setData(res.data)
+        setLoading(false)
+      })
+    }
+    getData()
   }, [page, limit])
 
   const items = useMemo(() => {
@@ -144,17 +134,13 @@ export function MyTable() {
           <TableHeader>
             <TableColumn>ID</TableColumn>
             <TableColumn>Nombre</TableColumn>
-            <TableColumn>Apellido</TableColumn>
-            <TableColumn>Teléfono</TableColumn>
             <TableColumn align="center">Acciones</TableColumn>
           </TableHeader>
           <TableBody emptyContent={"No se encontraron resultados"}>
             {items.map((item) => (
               <TableRow key={item.id}>
                 <TableCell>{item.id}</TableCell>
-                <TableCell>{item.name}</TableCell>
-                <TableCell>{item.lastName}</TableCell>
-                <TableCell>{item.phone}</TableCell>
+                <TableCell>{item.calle}</TableCell>
                 <TableCell>
                   <Dropdown>
                     <DropdownTrigger>
