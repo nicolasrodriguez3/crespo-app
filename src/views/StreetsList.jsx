@@ -10,6 +10,7 @@ import {
   Modal,
   ModalContent,
   ModalHeader,
+  ModalBody,
   ModalFooter,
   useDisclosure,
 } from "@nextui-org/react"
@@ -18,9 +19,10 @@ import { VerticalDotsIcon } from "../assets/icons/VerticalDotsIcon"
 const API_URL = import.meta.env.VITE_API_URL
 
 export function StreetsList() {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure()
+  const { isOpen, onOpen, onOpenChange, getButtonProps } = useDisclosure()
   const { user, token } = useAuth()
   const [streets, setStreets] = useState([])
+  const [streetSelected, setStreetSelected] = useState(null)
 
   useEffect(() => {
     axios
@@ -33,6 +35,27 @@ export function StreetsList() {
       })
   }, [token])
 
+  const handleOpen = (street) => {
+    onOpen()
+    setStreetSelected(street)
+  }
+
+  const handleDelete = (onClose) => {
+    // axios
+    //   .delete(`${API_URL}/calle/eliminar/${streetSelected.id}`, {
+    //     headers: { Authorization: `Bearer ${token}` },
+    //   })
+    //   .then((res) => {
+    //     setStreets(streets.filter((s) => s.id !== streetSelected.id))
+    //     console.log(res)
+    //   })
+
+    onClose()
+    setStreets(streets.filter((s) => s.id !== streetSelected.id)) //! solo hasta llamar a la api
+    setStreetSelected(null)
+    alert("Calle eliminada correctamente")
+  }
+
   return (
     <>
       <h2 className="font-bold">Streets List</h2>
@@ -44,9 +67,13 @@ export function StreetsList() {
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">
-                ¿Esta segura/o que desea eliminar esta calle?
-              </ModalHeader>
+              <ModalHeader>Eliminar Calle</ModalHeader>
+              <ModalBody className="flex flex-col gap-1">
+                <div className="text-center">
+                  ¿Esta seguro/a que desea eliminar la calle{" "}
+                  <span className="font-bold">{streetSelected.calle}</span>?
+                </div>
+              </ModalBody>
               <ModalFooter>
                 <Button
                   color="default"
@@ -57,7 +84,9 @@ export function StreetsList() {
                 </Button>
                 <Button
                   color="danger"
-                  onPress={onClose}
+                  onPress={() => {
+                    handleDelete(onClose)
+                  }}
                 >
                   Eliminar
                 </Button>
@@ -68,7 +97,10 @@ export function StreetsList() {
       </Modal>
       <ul className="w-full px-2">
         {streets.map((street) => (
-          <li key={street.id} className="flex items-center justify-between">
+          <li
+            key={street.id}
+            className="flex items-center justify-between"
+          >
             <span>{street.calle}</span>
             {user?.roles.includes("JEFE") && (
               <Dropdown>
@@ -87,7 +119,7 @@ export function StreetsList() {
                     key="delete"
                     className="text-danger"
                     color="danger"
-                    onPress={onOpen} // abrir modal
+                    onPress={() => handleOpen(street)} // abrir modal
                   >
                     Delete
                   </DropdownItem>
