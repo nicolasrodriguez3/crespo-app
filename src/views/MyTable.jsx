@@ -11,94 +11,141 @@ import {
   Dropdown,
   DropdownMenu,
   DropdownItem,
-  Chip,
-  User,
+  CircularProgress,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
   Pagination,
 } from "@nextui-org/react"
 
 import { SearchIcon } from "../assets/icons/SearchIcon"
 import { PlusIcon } from "../assets/icons/PlusIcon"
 import { VerticalDotsIcon } from "../assets/icons/VerticalDotsIcon"
-import { ChevronDownIcon } from "../assets/icons/ChevronDownIcon"
 
 import { useAuth } from "../hooks/useAuth"
-import { useEffect, useState, useMemo } from "react"
-import { useCallback } from "react"
+import { useEffect, useState, useMemo, useCallback } from "react"
 import axios from "axios"
 const API_URL = import.meta.env.VITE_API_URL
 
-
 export function MyTable() {
-  const { token } = useAuth()
-  const [filterValue, setFilterValue] = useState("");
+  const { token, loading } = useAuth()
+  const [filterValue, setFilterValue] = useState("")
   const [data, setData] = useState([])
-  const [search, setSearch] = useState("")
   const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
   const [limit, setLimit] = useState(10)
-  const [loading, setLoading] = useState(true)
+  const [loadingData, setLoadingData] = useState(true)
 
-  const hasSearchFilter = Boolean(filterValue);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure()
+  const [streetSelected, setStreetSelected] = useState(null)
+
+  const hasSearchFilter = Boolean(filterValue)
   const filteredItems = useMemo(() => {
-    let filteredData = [...data];
+    let filteredData = [...data]
 
     if (hasSearchFilter) {
       filteredData = filteredData.filter((data) =>
-        data.name.toLowerCase().includes(filterValue.toLowerCase()),
-      );
+        data.calle.toLowerCase().includes(filterValue.toLowerCase()),
+      )
     }
-    
-    return filteredData;
-  }, [data, filterValue, hasSearchFilter ]);
 
-  
-  const pages = Math.ceil(filteredItems.length / limit);
+    return filteredData
+  }, [data, filterValue, hasSearchFilter])
+
+  const pages = Math.ceil(filteredItems.length / limit)
 
   useEffect(() => {
-    const getData = async () => {
-      axios
-      .get(`${API_URL}/calle/buscar-todas`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => {
-        setData(res.data)
-        setLoading(false)
-      })
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/calle/buscar-todas`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        setData(response.data)
+        setLoadingData(false)
+      } catch (error) {
+        // Manejar errores aquí
+      }
     }
-    getData()
-  }, [page, limit])
+    fetchData()
+  }, [page, limit, token])
 
   const items = useMemo(() => {
     const start = (page - 1) * limit
     const end = start + limit
 
     return filteredItems.slice(start, end)
-  }, [page, data, limit, filteredItems])
-
-  const handleSearch = (e) => {
-    setSearch(e.target.value)
-  }
+  }, [page, limit, filteredItems])
 
   const onSearchChange = useCallback((value) => {
     if (value) {
-      setFilterValue(value);
-      setPage(1);
+      setFilterValue(value)
+      setPage(1)
     } else {
-      setFilterValue("");
+      setFilterValue("")
     }
-  }, []);
+  }, [])
 
-  const onClear = useCallback(()=>{
+  const onClear = useCallback(() => {
     setFilterValue("")
     setPage(1)
-  },[])
+  }, [])
 
-  const handleLimitChange = (limit) => {
-    setLimit(limit)
+  const handleModalOpen = (street) => {
+    onOpen()
+    setStreetSelected(street)
+  }
+
+  if (loading) {
+    return (
+      <div className="flex w-full justify-center">
+        <CircularProgress
+          size="sm"
+          aria-label="Cargando..."
+        />
+      </div>
+    )
   }
 
   return (
     <>
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        placement="center"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader>Eliminar Calle</ModalHeader>
+              <ModalBody className="flex flex-col gap-1">
+                <div className="text-center">
+                  ¿Esta seguro/a que desea eliminar la calle{" "}
+                  <span className="font-bold">{streetSelected.calle}</span>?
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  color="default"
+                  variant="light"
+                  onPress={onClose}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  color="danger"
+                  onPress={() => {
+                    onClose
+                  }}
+                >
+                  Eliminar
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
           {/* BUSCADOR */}
@@ -114,14 +161,14 @@ export function MyTable() {
         </div>
         <Table
           aria-label="Tabla de datos"
-          loading={loading}
+          loading={loadingData}
           emptyText="No hay datos"
           data={data}
           bottomContent={
             <div className="flex w-full justify-center">
               <Pagination
                 isCompact
-                showControls
+                loop
                 showShadow
                 color="secondary"
                 page={page}
@@ -145,18 +192,22 @@ export function MyTable() {
                   <Dropdown>
                     <DropdownTrigger>
                       <Button
-                        auto
-                        iconRight={<ChevronDownIcon />}
-                        size="small"
-                        variant="text"
+                        isIconOnly
+                        size="sm"
+                        variant="light"
                       >
                         <VerticalDotsIcon />
                       </Button>
                     </DropdownTrigger>
-                    <DropdownMenu
-                      aria-label="Acciones"
+                    <DropdownMenu aria-label="Acciones">
+                      <DropdownItem
+                        key="delete"
+                        className="text-danger"
+                        color="danger"
+                        onPress={() => handleModalOpen(item)} // abrir modal
                       >
-                      <DropdownItem color="error">Eliminar</DropdownItem>
+                        Delete
+                      </DropdownItem>
                     </DropdownMenu>
                   </Dropdown>
                 </TableCell>
@@ -168,4 +219,3 @@ export function MyTable() {
     </>
   )
 }
-

@@ -19,7 +19,7 @@ import { VerticalDotsIcon } from "../assets/icons/VerticalDotsIcon"
 const API_URL = import.meta.env.VITE_API_URL
 
 export function StreetsList() {
-  const { isOpen, onOpen, onOpenChange, getButtonProps } = useDisclosure()
+  const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const { user, token } = useAuth()
   const [streets, setStreets] = useState([])
   const [streetSelected, setStreetSelected] = useState(null)
