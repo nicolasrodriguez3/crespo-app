@@ -1,20 +1,18 @@
-import { useEffect, useState } from "react"
 import { HomeHeader } from "../components/HomeHeader"
-import { CircularProgress, Button } from "@nextui-org/react"
-import Post from "../components/Post"
+import { Button } from "@nextui-org/react"
 import { useAuth } from "../hooks/useAuth"
 import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
 import { UsersList } from "./UsersList"
 import { StreetsList } from "./StreetsList"
-import { MyTable } from "./MyTable"
-
-
+import { NeighborhoodsList } from "./NeighborhoodsList"
+import { RolesList } from "./RolesList"
+import { AreasList } from "./AreasList"
+import { ClaimsTypes } from "./ClaimsTypes"
 
 export function Home() {
   const navigate = useNavigate()
   const { user } = useAuth()
-
 
   if (user?.roles.includes("JEFE")) {
     return (
@@ -26,8 +24,14 @@ export function Home() {
               Tu rol es de administrador, por lo que puedes acceder a la sección
               de administración.
             </p>
-            <UsersList />
-            <StreetsList />
+            <section className="max-w-sm">
+              <ClaimsTypes />
+              <AreasList />
+              <RolesList />
+              <UsersList />
+              <StreetsList />
+              <NeighborhoodsList />
+            </section>
           </div>
         </div>
       </>
@@ -93,7 +97,6 @@ export function Home() {
             Ver mis reclamos
           </Button>
         </div>
-        
       </div>
     </>
   )

@@ -24,8 +24,9 @@ import { SearchIcon } from "../assets/icons/SearchIcon"
 import { PlusIcon } from "../assets/icons/PlusIcon"
 import { VerticalDotsIcon } from "../assets/icons/VerticalDotsIcon"
 import { useState, useMemo, useCallback } from "react"
+import { capitalize } from "../helpers/capitalize"
 
-export function MyTable({ theme = "dato", data }) {
+export function MyTable({ title = "dato", titlePlural, data, handleDelete }) {
   const [filterValue, setFilterValue] = useState("")
   const [page, setPage] = useState(1)
   const [rowsPerPage, setRowsPerPage] = useState(10)
@@ -89,7 +90,7 @@ export function MyTable({ theme = "dato", data }) {
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader>Eliminar {theme}</ModalHeader>
+              <ModalHeader>Eliminar {title}</ModalHeader>
               <ModalBody className="flex flex-col gap-1">
                 <div className="text-center">
                   ¿Esta seguro/a que desea eliminar la entrada{" "}
@@ -107,7 +108,8 @@ export function MyTable({ theme = "dato", data }) {
                 <Button
                   color="danger"
                   onPress={() => {
-                    onClose
+                    handleDelete(dataSelected.id)
+                    onClose()
                   }}
                 >
                   Eliminar
@@ -129,19 +131,19 @@ export function MyTable({ theme = "dato", data }) {
             onClear={() => onClear()}
             onValueChange={onSearchChange}
           />
-          {/* BOTON AGREGAR */}
+          {/* BOTÓN AGREGAR */}
           <div>
             <Button
               color="secondary"
               endContent={<PlusIcon />}
             >
-              Agregar {theme}
+              Agregar {title}
             </Button>
           </div>
         </div>
         <div className="flex items-center justify-between">
           <span className="text-small text-default-400">
-            Total {data.length} {data.length > 1 ? `${theme}s` : theme}
+            Total {data.length} {data.length === 1 ? title : titlePlural}
           </span>
           {/* FILAS POR PAGINA */}
           {data.length > 10 && (
@@ -179,16 +181,16 @@ export function MyTable({ theme = "dato", data }) {
           }
         >
           <TableHeader>
-            <TableColumn>ID</TableColumn>
-            <TableColumn>Nombre</TableColumn>
-            <TableColumn align="center">Acciones</TableColumn>
+            {/* <TableColumn>ID</TableColumn> */}
+            <TableColumn>{capitalize(title)}</TableColumn>
+            <TableColumn className="text-center">Acciones</TableColumn>
           </TableHeader>
           <TableBody emptyContent={"No se encontraron resultados"}>
             {items.map((item) => (
               <TableRow key={item.id}>
-                <TableCell>{item.id}</TableCell>
+                {/* <TableCell>{item.id}</TableCell> */}
                 <TableCell>{item.data}</TableCell>
-                <TableCell>
+                <TableCell className="text-end">
                   <Dropdown>
                     <DropdownTrigger>
                       <Button
@@ -207,7 +209,7 @@ export function MyTable({ theme = "dato", data }) {
                         color="danger"
                         onPress={() => handleModalOpen(item)} // abrir modal
                       >
-                        Eliminar {theme}
+                        Eliminar {title}
                       </DropdownItem>
                     </DropdownMenu>
                   </Dropdown>
@@ -223,7 +225,7 @@ export function MyTable({ theme = "dato", data }) {
 
 // PropTypes
 MyTable.propTypes = {
-  theme: PropTypes.string,
+  title: PropTypes.string,
   endpoint: PropTypes.string,
   data: PropTypes.array,
 }

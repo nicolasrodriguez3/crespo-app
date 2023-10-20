@@ -1,7 +1,7 @@
 import axios from "axios"
 import { useState, useEffect } from "react"
 import { useAuth } from "../hooks/useAuth"
-import { MyTable } from "./MyTable"
+import { MyTable } from "../components/MyTable"
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -23,14 +23,17 @@ export function UsersList() {
           }
         })
         setUsers(dataParsed)
-				console.log(res)
+        console.log(res)
       })
   }, [token])
 
   return (
     <>
       <h2 className="font-bold">Users List</h2>
-      <MyTable data={users} theme="usuario"/>
+      <MyTable
+        data={users}
+        theme="usuario"
+      />
     </>
   )
 }

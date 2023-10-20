@@ -5,13 +5,13 @@ import { MyTable } from "../components/MyTable"
 
 const API_URL = import.meta.env.VITE_API_URL
 
-export function StreetsList() {
+export function AreasList() {
   const { token } = useAuth()
-  const [streets, setStreets] = useState([])
+  const [data, setData] = useState([])
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/calle/buscar-todas`, {
+      .get(`${API_URL}/area/buscar-todas`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -19,10 +19,10 @@ export function StreetsList() {
         const dataParsed = res.data.map((s) => {
           return {
             id: s.id,
-            data: s.calle,
+            data: s.area,
           }
         })
-        setStreets(dataParsed)
+        setData(dataParsed)
       })
   }, [token])
 
@@ -36,17 +36,17 @@ export function StreetsList() {
     //     console.log(res)
     //   })
 
-    setStreets(streets.filter((s) => s.id !== id))
-    alert("Calle eliminada correctamente")
+    setData(data.filter((s) => s.id !== id))
+    alert("Area eliminado correctamente")
   }
 
   return (
     <>
-      <h2 className="font-bold">Streets List</h2>
+      <h2 className="font-bold">Areas List</h2>
       <MyTable
-        data={streets}
-        title="calle"
-        titlePlural="calles"
+        data={data}
+        title="área"
+        titlePlural="áreas"
         handleDelete={handleDelete}
       />
     </>
