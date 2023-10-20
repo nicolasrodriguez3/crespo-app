@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
 import { UsersList } from "./UsersList"
 import { StreetsList } from "./StreetsList"
+import { MyTable } from "./MyTable"
 
 
 
@@ -19,7 +20,7 @@ export function Home() {
     return (
       <>
         <HomeHeader />
-        <div className="flex min-h-screen w-full flex-col items-center bg-gray-50">
+        <div className="flex min-h-screen w-full flex-col items-center bg-gray-50 pb-16">
           <div className="flex w-full flex-col items-center justify-center gap-4 pt-4">
             <p className="text-center">
               Tu rol es de administrador, por lo que puedes acceder a la sección

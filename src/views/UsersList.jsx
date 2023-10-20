@@ -1,6 +1,7 @@
 import axios from "axios"
 import { useState, useEffect } from "react"
 import { useAuth } from "../hooks/useAuth"
+import { MyTable } from "./MyTable"
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -14,19 +15,22 @@ export function UsersList() {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
-        setUsers(res.data)
+        //parsear data
+        const dataParsed = res.data.map((u) => {
+          return {
+            id: u.id,
+            data: u.nombre,
+          }
+        })
+        setUsers(dataParsed)
 				console.log(res)
       })
   }, [token])
 
   return (
-    <div>
-      <h1 className="font-bold">Users List</h1>
-      <ul>
-        {users.map((user) => (
-          <li key={user.id}>{user.nombre}</li>
-        ))}
-      </ul>
-    </div>
+    <>
+      <h2 className="font-bold">Users List</h2>
+      <MyTable data={users} theme="usuario"/>
+    </>
   )
 }

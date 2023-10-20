@@ -1,4 +1,4 @@
-export const PlusIcon = ({size = 24, width, height, ...props}) => (
+export const PlusIcon = ({ size = 24, width, height, ...props }) => (
   <svg
     aria-hidden="true"
     fill="none"
@@ -14,10 +14,10 @@ export const PlusIcon = ({size = 24, width, height, ...props}) => (
       stroke="currentColor"
       strokeLinecap="round"
       strokeLinejoin="round"
-      strokeWidth={1.5}
+      strokeWidth={2}
     >
       <path d="M6 12h12" />
       <path d="M12 18V6" />
     </g>
   </svg>
-);
+)

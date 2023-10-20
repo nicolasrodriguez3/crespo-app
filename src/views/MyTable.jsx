@@ -11,7 +11,6 @@ import {
   Dropdown,
   DropdownMenu,
   DropdownItem,
-  CircularProgress,
   Modal,
   ModalContent,
   ModalHeader,
@@ -20,63 +19,41 @@ import {
   useDisclosure,
   Pagination,
 } from "@nextui-org/react"
-
+import PropTypes from "prop-types"
 import { SearchIcon } from "../assets/icons/SearchIcon"
 import { PlusIcon } from "../assets/icons/PlusIcon"
 import { VerticalDotsIcon } from "../assets/icons/VerticalDotsIcon"
+import { useState, useMemo, useCallback } from "react"
 
-import { useAuth } from "../hooks/useAuth"
-import { useEffect, useState, useMemo, useCallback } from "react"
-import axios from "axios"
-const API_URL = import.meta.env.VITE_API_URL
-
-export function MyTable() {
-  const { token, loading } = useAuth()
+export function MyTable({ theme = "dato", data }) {
   const [filterValue, setFilterValue] = useState("")
-  const [data, setData] = useState([])
   const [page, setPage] = useState(1)
-  const [limit, setLimit] = useState(10)
-  const [loadingData, setLoadingData] = useState(true)
+  const [rowsPerPage, setRowsPerPage] = useState(10)
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
-  const [streetSelected, setStreetSelected] = useState(null)
+  const [dataSelected, setDataSelected] = useState(null)
 
   const hasSearchFilter = Boolean(filterValue)
   const filteredItems = useMemo(() => {
     let filteredData = [...data]
 
     if (hasSearchFilter) {
-      filteredData = filteredData.filter((data) =>
-        data.calle.toLowerCase().includes(filterValue.toLowerCase()),
+      filteredData = filteredData.filter(({ data }) =>
+        data.toLowerCase().includes(filterValue.toLowerCase()),
       )
     }
 
     return filteredData
   }, [data, filterValue, hasSearchFilter])
 
-  const pages = Math.ceil(filteredItems.length / limit)
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/calle/buscar-todas`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        setData(response.data)
-        setLoadingData(false)
-      } catch (error) {
-        // Manejar errores aquí
-      }
-    }
-    fetchData()
-  }, [page, limit, token])
+  const pages = Math.ceil(filteredItems.length / rowsPerPage)
 
   const items = useMemo(() => {
-    const start = (page - 1) * limit
-    const end = start + limit
+    const start = (page - 1) * rowsPerPage
+    const end = start + rowsPerPage
 
     return filteredItems.slice(start, end)
-  }, [page, limit, filteredItems])
+  }, [page, rowsPerPage, filteredItems])
 
   const onSearchChange = useCallback((value) => {
     if (value) {
@@ -87,6 +64,11 @@ export function MyTable() {
     }
   }, [])
 
+  const onRowsPerPageChange = useCallback((e) => {
+    setRowsPerPage(Number(e.target.value))
+    setPage(1)
+  }, [])
+
   const onClear = useCallback(() => {
     setFilterValue("")
     setPage(1)
@@ -94,18 +76,7 @@ export function MyTable() {
 
   const handleModalOpen = (street) => {
     onOpen()
-    setStreetSelected(street)
-  }
-
-  if (loading) {
-    return (
-      <div className="flex w-full justify-center">
-        <CircularProgress
-          size="sm"
-          aria-label="Cargando..."
-        />
-      </div>
-    )
+    setDataSelected(street)
   }
 
   return (
@@ -118,11 +89,11 @@ export function MyTable() {
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader>Eliminar Calle</ModalHeader>
+              <ModalHeader>Eliminar {theme}</ModalHeader>
               <ModalBody className="flex flex-col gap-1">
                 <div className="text-center">
-                  ¿Esta seguro/a que desea eliminar la calle{" "}
-                  <span className="font-bold">{streetSelected.calle}</span>?
+                  ¿Esta seguro/a que desea eliminar la entrada{" "}
+                  <span className="font-bold">{dataSelected.data}</span>?
                 </div>
               </ModalBody>
               <ModalFooter>
@@ -147,7 +118,7 @@ export function MyTable() {
         </ModalContent>
       </Modal>
       <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2">
+        <div className="flex justify-between gap-3">
           {/* BUSCADOR */}
           <Input
             isClearable
@@ -158,24 +129,53 @@ export function MyTable() {
             onClear={() => onClear()}
             onValueChange={onSearchChange}
           />
+          {/* BOTON AGREGAR */}
+          <div>
+            <Button
+              color="secondary"
+              endContent={<PlusIcon />}
+            >
+              Agregar {theme}
+            </Button>
+          </div>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-small text-default-400">
+            Total {data.length} {data.length > 1 ? `${theme}s` : theme}
+          </span>
+          {/* FILAS POR PAGINA */}
+          {data.length > 10 && (
+            <label className="flex items-center text-small text-default-400">
+              Filas por página
+              <select
+                className="bg-transparent text-small text-default-400 outline-none"
+                onChange={onRowsPerPageChange}
+              >
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+              </select>
+            </label>
+          )}
         </div>
         <Table
           aria-label="Tabla de datos"
-          loading={loadingData}
           emptyText="No hay datos"
           data={data}
           bottomContent={
-            <div className="flex w-full justify-center">
-              <Pagination
-                isCompact
-                loop
-                showShadow
-                color="secondary"
-                page={page}
-                total={pages}
-                onChange={(page) => setPage(page)}
-              />
-            </div>
+            pages > 1 && (
+              <div className="flex w-full justify-center">
+                <Pagination
+                  isCompact
+                  loop
+                  showShadow
+                  color="secondary"
+                  page={page}
+                  total={pages}
+                  onChange={(page) => setPage(page)}
+                />
+              </div>
+            )
           }
         >
           <TableHeader>
@@ -187,7 +187,7 @@ export function MyTable() {
             {items.map((item) => (
               <TableRow key={item.id}>
                 <TableCell>{item.id}</TableCell>
-                <TableCell>{item.calle}</TableCell>
+                <TableCell>{item.data}</TableCell>
                 <TableCell>
                   <Dropdown>
                     <DropdownTrigger>
@@ -203,10 +203,11 @@ export function MyTable() {
                       <DropdownItem
                         key="delete"
                         className="text-danger"
+                        textValue="Eliminar"
                         color="danger"
                         onPress={() => handleModalOpen(item)} // abrir modal
                       >
-                        Delete
+                        Eliminar {theme}
                       </DropdownItem>
                     </DropdownMenu>
                   </Dropdown>
@@ -218,4 +219,11 @@ export function MyTable() {
       </div>
     </>
   )
+}
+
+// PropTypes
+MyTable.propTypes = {
+  theme: PropTypes.string,
+  endpoint: PropTypes.string,
+  data: PropTypes.array,
 }
