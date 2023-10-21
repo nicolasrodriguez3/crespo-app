@@ -49,13 +49,14 @@ export function AddClaim() {
       persona_id: user?.id,
       descripcion: "",
       tipoReclamo_id: new Set([]),
-      calle_id: new Set([]),
+      calle_id: "",
       barrio_id: new Set([]),
       altura: "",
       imagen: null,
     },
     enableReinitialize: true,
     onSubmit: async (values, { setSubmitting }) => {
+      // subir la imagen, obtener su id y luego subir el reclamo
       const {
         persona_id,
         tipoReclamo_id,
@@ -63,7 +64,7 @@ export function AddClaim() {
         calle_id,
         altura,
         barrio_id,
-        imagen,
+        imagen
       } = values
 
       try {
@@ -74,23 +75,13 @@ export function AddClaim() {
           calle_id,
           altura,
           barrio_id,
-          imagen,
         }
         console.log(claimData)
 
-        const response = await axios.put(
-          `${API_URL}/reclamo`,
-          claimData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        )
-
-        // upload file
+        // upload image
         const formData = new FormData()
         formData.append("file", imagen)
+        console.log(formData)
 
         const responseFile = await axios.put(
           `${API_URL}/archivo/guardar`,
@@ -103,11 +94,25 @@ export function AddClaim() {
           },
         )
         console.log(responseFile)
-        if (response.status === 201) {
-          console.log("Reclamo cargado con éxito.")
-        } else {
-          console.log("Error cargando el reclamo.", response)
+        const { id: imagen_id } = responseFile.data
+        console.log(imagen_id)
+        const claimDataWithFile = {
+          ...claimData,
+          imagen_id,
         }
+        
+        // TODO: realizar validaciones de los datos
+        const response = await axios.put(
+          `${API_URL}/reclamo`,
+          claimDataWithFile,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        )
+        console.log(response)
+          // TODO: mostrar mensaje de éxito
       } catch (error) {
         console.error(error)
         throw new Error("Error cargando los datos del post.")
@@ -145,6 +150,13 @@ export function AddClaim() {
       //* ¿borrar la imagen del input?
       //setFieldValue("imagen", null)
     }
+  }
+  const handleStreetChange = (e) => {
+    const street = e.target.value
+    const streetId = streets.find((s) => s.calle === street)?.id
+    console.log(streetId)
+    if(!streetId) return
+    setFieldValue("calle_id", streetId)
   }
 
   return (
@@ -190,9 +202,7 @@ export function AddClaim() {
             <div className="grid grid-cols-[1fr_30%] gap-1">
             <Input list="calles" label="Calle"
                 placeholder="Seleccione la calle" isRequired
-                onSelectionChange={(val) =>
-                  setFieldValue("calle_id", Array.from(val)[0])
-                }
+                onChange={handleStreetChange}
                 isInvalid={touched.calle_id && errors.calle_id}
                 errorMessage={
                   touched.calle_id && errors.calle_id ? errors.calle_id : ""

@@ -17,6 +17,7 @@ import { NeighborhoodsList } from "../views/NeighborhoodsList"
 import { RolesList } from "../views/RolesList"
 import { AreasList } from "../views/AreasList"
 import { ClaimsTypes } from "../views/ClaimsTypes"
+import { ClaimStatusList } from '../views/ClaimStatusList'
 
 export const routes = createBrowserRouter([
   {
@@ -55,6 +56,10 @@ export const routes = createBrowserRouter([
       {
         path: "/tipos-de-reclamos",
         element: <ClaimsTypes />,
+      },
+      {
+        path: "/estados-de-reclamos",
+        element: <ClaimStatusList />,
       },
       {
         path: "/reclamos",
