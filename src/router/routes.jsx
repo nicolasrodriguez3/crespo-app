@@ -27,8 +27,8 @@ export const routes = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "/reclamos/:id",
-        element: <PostView />,
+        path: "/reclamos",
+        element: <PostView/>,
       },
       {
         path: "/add",

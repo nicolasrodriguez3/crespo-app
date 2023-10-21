@@ -1,8 +1,7 @@
-import { HomeHeader } from "../components/HomeHeader"
 import { Button } from "@nextui-org/react"
 import { useAuth } from "../hooks/useAuth"
-import { useNavigate } from "react-router-dom"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import { HomeHeader } from "../components/HomeHeader"
 import { UsersList } from "./UsersList"
 import { StreetsList } from "./StreetsList"
 import { NeighborhoodsList } from "./NeighborhoodsList"
@@ -90,7 +89,7 @@ export function Home() {
           </Button>
           <Button
             as={Link}
-            to="/"
+            to="/reclamos"
             variant="bordered"
             className="rounded-md border-gold"
           >
