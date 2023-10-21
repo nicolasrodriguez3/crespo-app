@@ -1,13 +1,19 @@
-import { Button } from "@nextui-org/react"
+import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react"
 import { useAuth } from "../hooks/useAuth"
 import { Link, useNavigate } from "react-router-dom"
 import { HomeHeader } from "../components/HomeHeader"
-import { UsersList } from "./UsersList"
-import { StreetsList } from "./StreetsList"
-import { NeighborhoodsList } from "./NeighborhoodsList"
-import { RolesList } from "./RolesList"
-import { AreasList } from "./AreasList"
-import { ClaimsTypes } from "./ClaimsTypes"
+import { Outlet } from "react-router-dom"
+import imgCalles from "../assets/imgs/img-calle.jpg"
+import imgUsuarios from "../assets/imgs/img-users.jpg"
+import imgBarrios from "../assets/imgs/img-barrio2.jpg"
+import imgAreas from "../assets/imgs/img-areas.jpg"
+
+const functionsButtons = [
+  { title: "Usuarios", img: imgUsuarios, to: "/usuarios" },
+  { title: "Calles", img: imgCalles, to: "/calles" },
+  { title: "Barrios", img: imgBarrios, to: "/barrios" },
+  { title: "Áreas", img: imgAreas, to: "/areas" },
+]
 
 export function Home() {
   const navigate = useNavigate()
@@ -23,13 +29,34 @@ export function Home() {
               Tu rol es de administrador, por lo que puedes acceder a la sección
               de administración.
             </p>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {functionsButtons.map(({ title, img, to }) => (
+                <Card
+                  key={title}
+                  shadow="sm"
+                  isPressable
+                  as={Link}
+                  to={to}
+                >
+                  <CardBody className="overflow-visible p-0">
+                    <Image
+                      shadow="sm"
+                      radius="lg"
+                      width="100%"
+                      alt=""
+                      className="h-[140px] w-full object-cover"
+                      src={img}
+                    />
+                  </CardBody>
+                  <CardFooter className="justify-between text-small">
+                    <b>{title}</b>
+                    <p className="text-default-500"></p>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
             <section className="max-w-sm">
-              <ClaimsTypes />
-              <AreasList />
-              <RolesList />
-              <UsersList />
-              <StreetsList />
-              <NeighborhoodsList />
+              <Outlet />
             </section>
           </div>
         </div>

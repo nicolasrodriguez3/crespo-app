@@ -11,6 +11,12 @@ import { Register } from "../views/Register"
 import { ForgotPassword } from "../views/ForgotPassword"
 import { PostView } from "../views/PostView"
 import ClaimsList from "../views/ClaimsList"
+import { UsersList } from "../views/UsersList"
+import { StreetsList } from "../views/StreetsList"
+import { NeighborhoodsList } from "../views/NeighborhoodsList"
+import { RolesList } from "../views/RolesList"
+import { AreasList } from "../views/AreasList"
+import { ClaimsTypes } from "../views/ClaimsTypes"
 
 export const routes = createBrowserRouter([
   {
@@ -27,8 +33,32 @@ export const routes = createBrowserRouter([
         element: <Home />,
       },
       {
+        path: "/usuarios",
+        element: <UsersList />,
+      },
+      {
+        path: "/calles",
+        element: <StreetsList />,
+      },
+      {
+        path: "/barrios",
+        element: <NeighborhoodsList />,
+      },
+      {
+        path: "/roles",
+        element: <RolesList />,
+      },
+      {
+        path: "/areas",
+        element: <AreasList />,
+      },
+      {
+        path: "/tipos-de-reclamos",
+        element: <ClaimsTypes />,
+      },
+      {
         path: "/reclamos",
-        element: <PostView/>,
+        element: <PostView />,
       },
       {
         path: "/add",
