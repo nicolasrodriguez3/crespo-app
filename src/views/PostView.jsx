@@ -23,8 +23,11 @@ export const PostView = () => {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
+        const imageUrl = `${API_URL}${res.imagen.path}/${res.imagen.nombre}`
+        //! parsear data
+
         setPosts(res.data)
-        console.log(res)
+        console.log(res.data)
       })
       .catch((error) => {
         setError(error)
@@ -33,6 +36,10 @@ export const PostView = () => {
         setLoading(false)
       })
   }, [token])
+
+  if (loading) {
+    return <p>Cargando...</p>
+  }
 
   return (
     <div>
@@ -49,10 +56,16 @@ export const PostView = () => {
               </p>
             </div>
           </CardHeader>
-          {post.image && (
+          {post.imagen && (
             <>
             <Divider />
-              <CardBody></CardBody>
+              <CardBody>
+                <img
+                  src={`${API_URL}${post.imagen.path}/${post.imagen.nombre}`}
+                  alt="Imagen de reclamo"
+                  className="w-full h-full"
+                />
+              </CardBody>
               <Divider />
             </>
           )}

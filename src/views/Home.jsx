@@ -7,6 +7,7 @@ import imgCalles from "../assets/imgs/img-calle.jpg"
 import imgUsuarios from "../assets/imgs/img-users.jpg"
 import imgBarrios from "../assets/imgs/img-barrio2.jpg"
 import imgAreas from "../assets/imgs/img-areas.jpg"
+import imgAgregar from "../assets/imgs/add-claim2.jpeg"
 
 const functionsButtons = [
   { title: "Usuarios", img: imgUsuarios, to: "/usuarios" },
@@ -107,13 +108,28 @@ export function Home() {
       <HomeHeader />
       <div className="mx-auto flex min-h-screen w-full max-w-sm flex-col gap-4 pb-16 pt-4">
         <div className="flex flex-col gap-4">
-          <Button
+          <Card
+            shadow="sm"
+            isPressable
             as={Link}
-            to="/add"
-            className="rounded-md bg-gold font-bold"
+            to={"/add"}
           >
-            Agregar reclamo
-          </Button>
+            <CardBody className="overflow-visible p-0">
+              <Image
+                shadow="sm"
+                radius="lg"
+                width="100%"
+                alt=""
+                className="h-[140px] w-full object-cover"
+                src={imgAgregar}
+              />
+            </CardBody>
+            <CardFooter className="justify-between text-small">
+              <b>Agregar reclamo</b>
+              <p className="text-default-500"></p>
+            </CardFooter>
+          </Card>
+
           <Button
             as={Link}
             to="/reclamos"
