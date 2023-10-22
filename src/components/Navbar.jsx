@@ -30,11 +30,12 @@ const sections = [
 export function Navbar() {
   return (
     <nav className="fixed bottom-0 left-0 z-50 w-full bg-gold">
-      <ul className="mx-auto flex max-w-sm justify-evenly">
+      <ul className="mx-auto flex max-w-sm justify-evenly select-none">
         {sections.map((section) => {
           return (
             <li key={section.name}>
               <NavbarIcons
+                name={section.name}
                 icon={section.icon}
                 iconActive={section.iconActive}
                 href={section.href}
