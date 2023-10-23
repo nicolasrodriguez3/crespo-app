@@ -17,18 +17,16 @@ export function AuthProvider({ children }) {
 
       getUserData(token)
         .then((res) => {
-          if (res.status) {
+          if (res.status === 403) {
             // si res.status es true, el token es inválido
-            console.warn("Token inválido")
+            console.warn("Token inválido: ", res.headers.mensaje)
 
             setToken(null)
             localStorage.removeItem("token")
-            localStorage.removeItem("user")
             return false
           }
 
           setUser(res)
-          localStorage.setItem("user", JSON.stringify(res))
         })
         .catch((error) => {
           console.log(error)

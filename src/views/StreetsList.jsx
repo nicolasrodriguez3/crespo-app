@@ -8,10 +8,13 @@ const API_URL = import.meta.env.VITE_API_URL
 export function StreetsList() {
   const { token } = useAuth()
   const [streets, setStreets] = useState([])
+  const [withDeleted, setWithDeleted] = useState(false)
 
   useEffect(() => {
+    const url = withDeleted ? `${API_URL}/calle/buscar-todas-con-eliminadas` : `${API_URL}/calle/buscar-todas`
+    
     axios
-      .get(`${API_URL}/calle/buscar-todas`, {
+      .get(url, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -24,7 +27,7 @@ export function StreetsList() {
         })
         setStreets(dataParsed)
       })
-  }, [token])
+  }, [token, withDeleted])
 
   const handleDelete = (id) => {
     // axios
@@ -40,6 +43,10 @@ export function StreetsList() {
     alert("Calle eliminada correctamente")
   }
 
+  const showDeletedStreets = () => {
+    setWithDeleted(!withDeleted)
+  }
+
   return (
     <>
       <h2 className="font-bold">Streets List</h2>
@@ -48,6 +55,7 @@ export function StreetsList() {
         title="calle"
         titlePlural="calles"
         handleDelete={handleDelete}
+        withDeleted={showDeletedStreets}
       />
     </>
   )

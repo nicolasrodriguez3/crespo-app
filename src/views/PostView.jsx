@@ -2,7 +2,6 @@ import {
   Card,
   CardHeader,
   CardBody,
-  CardFooter,
   Divider,
 } from "@nextui-org/react"
 import axios from "axios"

@@ -106,7 +106,7 @@ export function Home() {
   return (
     <>
       <HomeHeader />
-      <div className="mx-auto flex min-h-screen w-full max-w-sm flex-col gap-4 pb-16 pt-4">
+      <div className="mx-auto flex min-h-screen w-full max-w-sm flex-col gap-4 pb-16 pt-4 px-2">
         <div className="flex flex-col gap-4">
           <Card
             shadow="sm"

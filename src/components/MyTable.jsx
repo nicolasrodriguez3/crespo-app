@@ -18,6 +18,7 @@ import {
   ModalFooter,
   useDisclosure,
   Pagination,
+  Switch
 } from "@nextui-org/react"
 import PropTypes from "prop-types"
 import { SearchIcon } from "../assets/icons/SearchIcon"
@@ -26,7 +27,7 @@ import { VerticalDotsIcon } from "../assets/icons/VerticalDotsIcon"
 import { useState, useMemo, useCallback } from "react"
 import { capitalize } from "../helpers/capitalize"
 
-export function MyTable({ title = "dato", titlePlural, data, handleDelete }) {
+export function MyTable({ title = "dato", titlePlural, data, handleDelete, withDeleted }) {
   const [filterValue, setFilterValue] = useState("")
   const [page, setPage] = useState(1)
   const [rowsPerPage, setRowsPerPage] = useState(10)
@@ -160,6 +161,11 @@ export function MyTable({ title = "dato", titlePlural, data, handleDelete }) {
             </label>
           )}
         </div>
+          <div>
+          <Switch size="sm" onValueChange={withDeleted}>
+      ¿Incluir eliminadas?
+    </Switch>
+          </div>
         <Table
           aria-label="Tabla de datos"
           emptyText="No hay datos"
