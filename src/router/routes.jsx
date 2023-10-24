@@ -18,6 +18,7 @@ import { RolesList } from "../views/RolesList"
 import { AreasList } from "../views/AreasList"
 import { ClaimsTypes } from "../views/ClaimsTypes"
 import { ClaimStatusList } from '../views/ClaimStatusList'
+import { Test } from "../views/Test"
 
 export const routes = createBrowserRouter([
   {
@@ -32,6 +33,10 @@ export const routes = createBrowserRouter([
       {
         path: "/",
         element: <Home />,
+      },
+      {
+        path: "/test",
+        element: <Test />,
       },
       {
         path: "/usuarios",

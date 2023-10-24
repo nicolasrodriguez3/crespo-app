@@ -1,9 +1,4 @@
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  Divider,
-} from "@nextui-org/react"
+import { Card, CardHeader, CardBody, Divider } from "@nextui-org/react"
 import axios from "axios"
 import { useEffect, useState } from "react"
 
@@ -17,31 +12,44 @@ export const PostView = () => {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    axios
-      .get(`${API_URL}/reclamo/buscar-todos-mis-reclamos`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => {
-        const imageUrl = `${API_URL}${res.imagen.path}/${res.imagen.nombre}`
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `${API_URL}/reclamo/buscar-todos-mis-reclamos`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        )
+
         //! parsear data
 
-        setPosts(res.data)
-        console.log(res.data)
-      })
-      .catch((error) => {
+        setPosts(response.data)
+        console.log(response)
+      } catch (error) {
         setError(error)
-      })
-      .finally(() => {
+      } finally {
         setLoading(false)
-      })
+      }
+    }
+
+    fetchData()
   }, [token])
 
   if (loading) {
     return <p>Cargando...</p>
   }
 
+  if (error) {
+    return <p>Hubo un error</p>
+  }
+
+  if (posts.length === 0) {
+    return <p>No hay reclamos</p>
+  }
+
   return (
     <div>
+      Posts
       {posts.map((post) => (
         <Card
           className="mb-4 max-w-[400px]"
@@ -57,12 +65,12 @@ export const PostView = () => {
           </CardHeader>
           {post.imagen && (
             <>
-            <Divider />
+              <Divider />
               <CardBody>
                 <img
                   src={`${API_URL}${post.imagen.path}/${post.imagen.nombre}`}
                   alt="Imagen de reclamo"
-                  className="w-full h-full"
+                  className="h-full w-full"
                 />
               </CardBody>
               <Divider />
