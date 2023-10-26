@@ -11,23 +11,20 @@ const DEFAULT_CENTER = { lat: -32.031, lng: -60.307 }
 const DEFAULT_ZOOM = 15
 
 const render = (status) => {
-  if (status === Status.LOADING) return <h3>{status} ..</h3>
-  if (status === Status.FAILURE) return <h3>{status} ...</h3>
+  if (status === Status.LOADING) return <h4>Cargando mapa...</h4>
+  if (status === Status.FAILURE) return <h4>Ocurrio un error al cargar el mapa</h4>
   return null
 }
 
 
-export const Test = () => {
+export const GoogleMaps = ({setCenter}) => {
   // [START maps_react_map_component_app_state]
-  const [markerPosition, setMarkerPosition] = useState(DEFAULT_CENTER);
-
   const onCenterChanged = (m) => {
-    setMarkerPosition(m.getCenter().toJSON());
+    setCenter(m.getCenter().toJSON());
   }
 
   // [START maps_react_map_component_app_return]
   return (
-    <div style={{ display: "flex", height: "100%" }}>
       <Wrapper apiKey={API_KEY} render={render}>
         <Map
           center={DEFAULT_CENTER}
@@ -37,8 +34,6 @@ export const Test = () => {
         >
         </Map>
       </Wrapper>
-      <p>{JSON.stringify(markerPosition)}</p>
-    </div>
   );
   // [END maps_react_map_component_app_return]
 };
@@ -57,14 +52,13 @@ const Map = ({  onCenterChanged, ...options }) => {
 
   // [START maps_react_map_component_options_hook]
   // because React does not do deep comparisons, a custom hook is used
-  // see discussion in https://github.com/googlemaps/js-samples/issues/946
-
   useDeepCompareEffectForMaps(() => {
     if (map) {
       map.setOptions(options);
     }
   }, [map, options]);
   // [END maps_react_map_component_options_hook]
+  
   // [START maps_react_map_component_event_hooks]
   useEffect(() => {
     if (map) {
@@ -80,7 +74,7 @@ const Map = ({  onCenterChanged, ...options }) => {
   // [START maps_react_map_component_return]
   return (
     <section className="relative">
-      <div ref={ref} style={{ width: "500px", height: "300px" }} />
+      <div ref={ref} style={{ width: "100%", height: "250px" }} />
       <div className="absolute bottom-1/2 left-1/2 -translate-x-1/2 pointer-events-none">
         <img src={pin} alt="pin" />
       </div>  

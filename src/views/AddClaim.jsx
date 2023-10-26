@@ -12,6 +12,7 @@ import {
   getNeighborhoods,
 } from "../helpers/CallsAPI"
 import { validateFilename } from "../services/validateFilename"
+import { GoogleMaps } from "../components/GoogleMaps"
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -53,6 +54,7 @@ export function AddClaim() {
       barrio_id: new Set([]),
       altura: "",
       imagen: null,
+      coordenadas: { lat: -32.031, lng: -60.307 },
     },
     enableReinitialize: true,
     onSubmit: async (values, { setSubmitting }) => {
@@ -76,13 +78,13 @@ export function AddClaim() {
           altura,
           barrio_id,
         }
-        console.log(claimData)
+        console.log(claimData, values.coordenadas)
 
         // upload image
         const formData = new FormData()
         formData.append("file", imagen)
         console.log(formData)
-
+/*
         const responseFile = await axios.put(
           `${API_URL}/archivo/guardar`,
           formData,
@@ -112,11 +114,13 @@ export function AddClaim() {
           },
         )
         console.log(response)
+        */
           // TODO: mostrar mensaje de éxito
       } catch (error) {
         console.error(error)
         throw new Error("Error cargando los datos del post.")
       }
+      
       //resetForm()
       setSubmitting(false)
     },
@@ -242,6 +246,12 @@ export function AddClaim() {
                 </SelectItem>
               )}
             </Select>
+
+            <div>
+              <GoogleMaps setCenter={(e) => {
+                setFieldValue("coordenadas", e)
+              }} />
+            </div>
 
             <div>
               <Button
