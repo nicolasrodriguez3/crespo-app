@@ -1,4 +1,17 @@
-import { Button, Input, Textarea, Select, SelectItem } from "@nextui-org/react"
+import {
+  Button,
+  Input,
+  Textarea,
+  Select,
+  SelectItem,
+  Modal,
+  Listbox,
+  ListboxItem,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  useDisclosure,
+} from "@nextui-org/react"
 import { useFormik } from "formik"
 import * as Yup from "yup"
 import { Navbar } from "../components/Navbar"
@@ -17,10 +30,12 @@ import { GoogleMaps } from "../components/GoogleMaps"
 const API_URL = import.meta.env.VITE_API_URL
 
 export function AddClaim() {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [categories, setCategories] = useState([])
   const [streets, setStreets] = useState([])
   const [neighborhoods, setNeighborhoods] = useState([])
   const [fileError, setFileError] = useState(false)
+  const [filteredStreets, setFilteredStreets] = useState([...streets])
 
   const imgRef = useRef(null)
 
@@ -41,6 +56,7 @@ export function AddClaim() {
       })
 
       setStreets(res.data)
+      setFilteredStreets(res.data)
     })
     getNeighborhoods(token).then((res) => setNeighborhoods(res.data))
   }, [token])
@@ -66,7 +82,7 @@ export function AddClaim() {
         calle_id,
         altura,
         barrio_id,
-        imagen
+        imagen,
       } = values
 
       try {
@@ -83,8 +99,7 @@ export function AddClaim() {
         // upload image
         const formData = new FormData()
         formData.append("file", imagen)
-        console.log(formData)
-/*
+
         const responseFile = await axios.put(
           `${API_URL}/archivo/guardar`,
           formData,
@@ -102,7 +117,7 @@ export function AddClaim() {
           ...claimData,
           imagen_id,
         }
-        
+
         // TODO: realizar validaciones de los datos
         const response = await axios.put(
           `${API_URL}/reclamo`,
@@ -114,13 +129,12 @@ export function AddClaim() {
           },
         )
         console.log(response)
-        */
-          // TODO: mostrar mensaje de éxito
+        // TODO: mostrar mensaje de éxito
       } catch (error) {
         console.error(error)
         throw new Error("Error cargando los datos del post.")
       }
-      
+
       //resetForm()
       setSubmitting(false)
     },
@@ -141,11 +155,19 @@ export function AddClaim() {
     getFieldProps,
   } = formik
 
+  const handleFilterStreet = (e) => {
+    const street = e.target.value
+    const filteredStreets = streets.filter((s) =>
+      s.calle.toLowerCase().includes(street.toLowerCase()),
+    )
+    setFilteredStreets(filteredStreets)
+  }
+
   const handleFileChange = (e) => {
     const file = e.target.files[0]
     if (!file) return
 
-    if(validateFilename(file.name)) {
+    if (validateFilename(file.name)) {
       setFieldValue("imagen", file)
       setFileError(false)
     } else {
@@ -159,7 +181,7 @@ export function AddClaim() {
     const street = e.target.value
     const streetId = streets.find((s) => s.calle === street)?.id
     console.log(streetId)
-    if(!streetId) return
+    if (!streetId) return
     setFieldValue("calle_id", streetId)
   }
 
@@ -204,17 +226,75 @@ export function AddClaim() {
 
             {/* Calle */}
             <div className="grid grid-cols-[1fr_30%] gap-1">
-            <Input list="calles" label="Calle"
-                placeholder="Seleccione la calle" isRequired
+              <Modal
+                isOpen={isOpen}
+                onOpenChange={onOpenChange}
+                isDismissable={false}
+                scrollBehavior="inside"
+              >
+                <ModalContent>
+                  {(onClose) => (
+                    <>
+                      <ModalHeader className="flex flex-col gap-1">
+                        Calle
+                      </ModalHeader>
+                      <ModalBody>
+                        <div className="flex flex-col justify-between px-1 py-2">
+                          <Input
+                            type="search"
+                            placeholder="Buscar calle"
+                            onChange={handleFilterStreet}
+                          />
+                          <div>
+                            {filteredStreets &&
+                              filteredStreets.length === 0 && (
+                                <p className="text-sm text-gray-500">
+                                  No se encontraron resultados
+                                </p>
+                              )}
+                            <Listbox
+                              aria-label="Actions"
+                              onAction={(key) => {
+                                setFieldValue("calle_id", key)
+                                onClose()
+                              }}
+                            >
+                              {filteredStreets.map((street) => (
+                                <ListboxItem key={street.id}>
+                                  {street.calle}
+                                </ListboxItem>
+                              ))}
+                            </Listbox>
+                          </div>
+                        </div>
+                      </ModalBody>
+                    </>
+                  )}
+                </ModalContent>
+              </Modal>
+              <Button
+                onPress={onOpen}
+                color="default"
+              >
+                Calle
+              </Button>
+              <Input
+                list="calles"
+                label="Calle"
+                placeholder="Seleccione la calle"
+                isRequired
                 onChange={handleStreetChange}
                 isInvalid={touched.calle_id && errors.calle_id}
                 errorMessage={
                   touched.calle_id && errors.calle_id ? errors.calle_id : ""
                 }
-                />
+              />
               <datalist id="calles">
                 {streets.map((street) => (
-                  <option key={street.id} value={street.calle} />
+                  <option
+                    key={street.id}
+                    value={street.calle}
+                  />
                 ))}
               </datalist>
               <Input
@@ -248,14 +328,16 @@ export function AddClaim() {
             </Select>
 
             <div>
-              <GoogleMaps setCenter={(e) => {
-                setFieldValue("coordenadas", e)
-              }} />
+              <GoogleMaps
+                setCenter={(e) => {
+                  setFieldValue("coordenadas", e)
+                }}
+              />
             </div>
 
             <div>
               <Button
-                color={fileError? "danger" : "default"}
+                color={fileError ? "danger" : "default"}
                 variant="ghost"
                 endContent={<CameraIcon />}
                 onClick={() => imgRef.current.click()}
@@ -272,10 +354,8 @@ export function AddClaim() {
               accept="image/*"
               className="hidden"
             />
-            {fileError && (
-              <p className="text-red-500 text-sm">{fileError}</p>
-            )}
-            
+            {fileError && <p className="text-sm text-red-500">{fileError}</p>}
+
             {values.imagen ? (
               <div className="relative">
                 {/* Delete image button */}
