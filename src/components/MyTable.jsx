@@ -18,7 +18,8 @@ import {
   ModalFooter,
   useDisclosure,
   Pagination,
-  Switch
+  Switch,
+  Spinner,
 } from "@nextui-org/react"
 import PropTypes from "prop-types"
 import { SearchIcon } from "../assets/icons/SearchIcon"
@@ -27,7 +28,14 @@ import { VerticalDotsIcon } from "../assets/icons/VerticalDotsIcon"
 import { useState, useMemo, useCallback } from "react"
 import { capitalize } from "../helpers/capitalize"
 
-export function MyTable({ title = "dato", titlePlural, data, handleDelete, withDeleted }) {
+export function MyTable({
+  title = "dato",
+  titlePlural,
+  data,
+  handleDelete,
+  withDeleted,
+  loading,
+}) {
   const [filterValue, setFilterValue] = useState("")
   const [page, setPage] = useState(1)
   const [rowsPerPage, setRowsPerPage] = useState(10)
@@ -161,11 +169,14 @@ export function MyTable({ title = "dato", titlePlural, data, handleDelete, withD
             </label>
           )}
         </div>
-          <div>
-          <Switch size="sm" onValueChange={withDeleted}>
-      ¿Incluir eliminadas?
-    </Switch>
-          </div>
+        <div>
+          <Switch
+            size="sm"
+            onValueChange={withDeleted}
+          >
+            ¿Incluir eliminadas?
+          </Switch>
+        </div>
         <Table
           aria-label="Tabla de datos"
           emptyText="No hay datos"
@@ -191,7 +202,11 @@ export function MyTable({ title = "dato", titlePlural, data, handleDelete, withD
             <TableColumn>{capitalize(title)}</TableColumn>
             <TableColumn className="text-center">Acciones</TableColumn>
           </TableHeader>
-          <TableBody emptyContent={"No se encontraron resultados"}>
+          <TableBody
+            emptyContent={"No se encontraron resultados"}
+            loadingContent={<Spinner />}
+            isLoading={loading}
+          >
             {items.map((item) => (
               <TableRow key={item.id}>
                 {/* <TableCell>{item.id}</TableCell> */}
