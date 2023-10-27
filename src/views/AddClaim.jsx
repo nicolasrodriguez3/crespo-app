@@ -23,7 +23,9 @@ import {
   getCategories,
   getStreets,
   getNeighborhoods,
-} from "../helpers/CallsAPI"
+  uploadImage,
+  submitClaim,
+} from "../helpers/api"
 import { validateFilename } from "../services/validateFilename"
 import { GoogleMaps } from "../components/GoogleMaps"
 
@@ -71,6 +73,7 @@ export function AddClaim() {
       altura: "",
       imagen: null,
       coordenadas: { lat: -32.031, lng: -60.307 },
+      imagen_id: "",
     },
     enableReinitialize: true,
     onSubmit: async (values, { setSubmitting }) => {
@@ -82,7 +85,7 @@ export function AddClaim() {
         calle_id,
         altura,
         barrio_id,
-        imagen,
+        coordenadas,
       } = values
 
       try {
@@ -93,42 +96,30 @@ export function AddClaim() {
           calle_id,
           altura,
           barrio_id,
+          coordinadaX: coordenadas.lat,
+          coordinadaY: coordenadas.lng,
         }
-        console.log(claimData, values.coordenadas)
 
-        // upload image
-        const formData = new FormData()
-        formData.append("file", imagen)
-
-        const responseFile = await axios.put(
-          `${API_URL}/archivo/guardar`,
-          formData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "multipart/form-data",
-            },
-          },
-        )
-        console.log(responseFile)
-        const { id: imagen_id } = responseFile.data
-        console.log(imagen_id)
+        console.log(claimData)
+        if(!values.imagen_id){
+          const imagen = await uploadImage(imagen, token);
+          setFieldValue("imagen_id", imagen);
+        }
+      
         const claimDataWithFile = {
           ...claimData,
-          imagen_id,
+          imagen_id: values.imagen_id,
+        };
+      
+        const response = await submitClaim(claimDataWithFile, token);
+        console.log(response);
+      
+      
+        // validate response
+        if (response.status !== 200) {
+          throw new Error("Error cargando los datos del post.")
         }
 
-        // TODO: realizar validaciones de los datos
-        const response = await axios.put(
-          `${API_URL}/reclamo`,
-          claimDataWithFile,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        )
-        console.log(response)
         // TODO: mostrar mensaje de éxito
       } catch (error) {
         console.error(error)
@@ -230,6 +221,7 @@ export function AddClaim() {
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}
                 isDismissable={false}
+                hideCloseButton={true}
                 scrollBehavior="inside"
               >
                 <ModalContent>
@@ -272,14 +264,14 @@ export function AddClaim() {
                   )}
                 </ModalContent>
               </Modal>
-              <Button
-                onPress={onOpen}
-                color="default"
-              >
-                Calle
-              </Button>
               <Input
-                list="calles"
+                readOnly
+                onClick={onOpen}
+                value={
+                  values.calle_id
+                    ? streets.find((s) => s.id === values.calle_id)?.calle
+                    : ""
+                }
                 label="Calle"
                 placeholder="Seleccione la calle"
                 isRequired
@@ -289,14 +281,6 @@ export function AddClaim() {
                   touched.calle_id && errors.calle_id ? errors.calle_id : ""
                 }
               />
-              <datalist id="calles">
-                {streets.map((street) => (
-                  <option
-                    key={street.id}
-                    value={street.calle}
-                  />
-                ))}
-              </datalist>
               <Input
                 name="altura"
                 label="Altura"

@@ -1,4 +1,5 @@
 import axios from "axios"
+const API_URL = import.meta.env.VITE_API_URL
 
 function validateResponse(error) {
   if (error.response) {
@@ -18,7 +19,7 @@ function validateResponse(error) {
 }
 
 // obtener mis reclamos
-export const getMyClaims = async (token) => {
+export async function getMyClaims(token) {
   try {
     const response = await axios.get(
       "https://vps-3450851-x.dattaweb.com:9088/api/reclamo/buscar-todos-mis-reclamos",
@@ -26,9 +27,9 @@ export const getMyClaims = async (token) => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      },
+      }
     )
-  
+
     return response
   } catch (error) {
     validateResponse(error)
@@ -36,7 +37,7 @@ export const getMyClaims = async (token) => {
 }
 
 // obtener todos los reclamos
-export const getClaims = async (token) => {
+export async function getClaims(token) {
   try {
     const response = await axios.get(
       "https://vps-3450851-x.dattaweb.com:9088/api/reclamo/buscar-todos",
@@ -44,7 +45,7 @@ export const getClaims = async (token) => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      },
+      }
     )
     return response
   } catch (error) {
@@ -53,7 +54,7 @@ export const getClaims = async (token) => {
 }
 
 // obtener todos los reclamos por usuario
-export const getClaimsByUser = async (token) => {
+export async function getClaimsByUser(token) {
   try {
     const response = await axios.get(
       "https://vps-3450851-x.dattaweb.com:9088/api/reclamo/buscar-por-usuario",
@@ -61,7 +62,7 @@ export const getClaimsByUser = async (token) => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      },
+      }
     )
     return response
   } catch (error) {
@@ -70,7 +71,7 @@ export const getClaimsByUser = async (token) => {
 }
 
 // obtener todos los reclamos por estado
-export const getClaimsByStatus = async (token) => {
+export async function getClaimsByStatus(token) {
   try {
     const response = await axios.get(
       "https://vps-3450851-x.dattaweb.com:9088/api/reclamo/buscar-por-estado",
@@ -78,7 +79,7 @@ export const getClaimsByStatus = async (token) => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      },
+      }
     )
     return response
   } catch (error) {
@@ -87,20 +88,20 @@ export const getClaimsByStatus = async (token) => {
 }
 
 // obtener categorías
-export const getCategories = async (token) => {
+export async function getCategories(token) {
   const response = await axios(
     "https://vps-3450851-x.dattaweb.com:9088/api/tipo-reclamo/buscar-todas",
     {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    },
+    }
   )
   return response
 }
 
 // obtener las calles
-export const getStreets = async (token) => {
+export async function getStreets(token) {
   try {
     const response = await axios.get(
       "https://vps-3450851-x.dattaweb.com:9088/api/calle/buscar-todas",
@@ -108,7 +109,7 @@ export const getStreets = async (token) => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      },
+      }
     )
     return response
   } catch (error) {
@@ -117,7 +118,7 @@ export const getStreets = async (token) => {
 }
 
 // obtener los barrios
-export const getNeighborhoods = async (token) => {
+export async function getNeighborhoods(token) {
   try {
     const response = await axios.get(
       "https://vps-3450851-x.dattaweb.com:9088/api/barrio/buscar-todas",
@@ -125,10 +126,41 @@ export const getNeighborhoods = async (token) => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      },
+      }
     )
     return response
   } catch (error) {
     validateResponse(error)
   }
+}
+
+export async function uploadImage(imagen, token) {
+  const formData = new FormData();
+  formData.append("file", imagen);
+  const responseFile = await axios.put(`${API_URL}/archivo/guardar`, formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  if (responseFile.status !== 200) {
+    throw new Error("Error al subir la imagen.");
+  }
+
+  return responseFile.data.id;
+}
+
+export async function submitClaim(claimData, token) {
+  const response = await axios.put(`${API_URL}/reclamo`, claimData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (response.status !== 200) {
+    throw new Error("Error al presentar el reclamo.");
+  }
+
+  return response;
 }
