@@ -11,6 +11,7 @@ import {
   ModalHeader,
   ModalBody,
   useDisclosure,
+  ScrollShadow,
 } from "@nextui-org/react"
 import { useFormik } from "formik"
 import * as Yup from "yup"
@@ -46,7 +47,7 @@ export function AddClaim() {
   useEffect(() => {
     getCategories(token).then((res) => setCategories(res.data))
     getStreets(token).then((res) => {
-      //ordenar alfabeticamente los resultados
+      //ordenar alfabéticamente los resultados
       res.data.sort((a, b) => {
         if (a.calle < b.calle) {
           return -1
@@ -88,33 +89,34 @@ export function AddClaim() {
         coordenadas,
       } = values
 
+      const alturaValida = altura.padStart(3, "0")
+
       try {
         const claimData = {
           persona_id,
           tipoReclamo_id,
           descripcion,
           calle_id,
-          altura,
+          altura: alturaValida,
           barrio_id,
           coordinadaX: coordenadas.lat,
           coordinadaY: coordenadas.lng,
         }
 
         console.log(claimData)
-        if(!values.imagen_id){
-          const imagen = await uploadImage(imagen, token);
-          setFieldValue("imagen_id", imagen);
+        if (!values.imagen_id) {
+          const imagen = await uploadImage(imagen, token)
+          setFieldValue("imagen_id", imagen)
         }
-      
+
         const claimDataWithFile = {
           ...claimData,
           imagen_id: values.imagen_id,
-        };
-      
-        const response = await submitClaim(claimDataWithFile, token);
-        console.log(response);
-      
-      
+        }
+
+        const response = await submitClaim(claimDataWithFile, token)
+        console.log(response)
+
         // validate response
         if (response.status !== 200) {
           throw new Error("Error cargando los datos del post.")
@@ -224,20 +226,20 @@ export function AddClaim() {
                 hideCloseButton={true}
                 scrollBehavior="inside"
               >
-                <ModalContent>
+                <ModalContent className="max-w-sm">
                   {(onClose) => (
                     <>
                       <ModalHeader className="flex flex-col gap-1">
-                        Calle
+                        Seleccione la calle
                       </ModalHeader>
                       <ModalBody>
-                        <div className="flex flex-col justify-between px-1 py-2">
+                        <div className="flex flex-col justify-between">
                           <Input
                             type="search"
                             placeholder="Buscar calle"
                             onChange={handleFilterStreet}
                           />
-                          <div>
+                          <ScrollShadow className="max-h-[400px]">
                             {filteredStreets &&
                               filteredStreets.length === 0 && (
                                 <p className="text-sm text-gray-500">
@@ -248,6 +250,7 @@ export function AddClaim() {
                               aria-label="Actions"
                               onAction={(key) => {
                                 setFieldValue("calle_id", key)
+                                setFilteredStreets(streets)
                                 onClose()
                               }}
                             >
@@ -257,7 +260,7 @@ export function AddClaim() {
                                 </ListboxItem>
                               ))}
                             </Listbox>
-                          </div>
+                          </ScrollShadow>
                         </div>
                       </ModalBody>
                     </>
@@ -284,6 +287,7 @@ export function AddClaim() {
               <Input
                 name="altura"
                 label="Altura"
+                pattern="[0-9]{1,4}"
                 isRequired
                 {...getFieldProps("altura")}
                 isInvalid={touched.altura && errors.altura}
