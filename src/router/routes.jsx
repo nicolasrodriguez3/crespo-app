@@ -9,15 +9,14 @@ import { EditProfile } from "../views/EditProfile"
 import { Login } from "../views/Login"
 import { Register } from "../views/Register"
 import { ForgotPassword } from "../views/ForgotPassword"
-import { PostView } from "../views/PostView"
-import ClaimsList from "../views/ClaimsList"
+import { ClaimsList } from "../views/ClaimsList"
 import { UsersList } from "../views/UsersList"
 import { StreetsList } from "../views/StreetsList"
 import { NeighborhoodsList } from "../views/NeighborhoodsList"
 import { RolesList } from "../views/RolesList"
 import { AreasList } from "../views/AreasList"
 import { ClaimsTypes } from "../views/ClaimsTypes"
-import { ClaimStatusList } from '../views/ClaimStatusList'
+import { ClaimStatusList } from "../views/ClaimStatusList"
 
 export const routes = createBrowserRouter([
   {
@@ -52,6 +51,10 @@ export const routes = createBrowserRouter([
       {
         path: "/areas",
         element: <AreasList />,
+      },
+      {
+        path: "/lista-de-reclamos",
+        element: <ClaimsList all={true} />,
       },
       {
         path: "/tipos-de-reclamos",

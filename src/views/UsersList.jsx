@@ -2,6 +2,7 @@ import axios from "axios"
 import { useState, useEffect } from "react"
 import { useAuth } from "../hooks/useAuth"
 import { MyTable } from "../components/MyTable"
+import { WrapperUI } from "../components/WrapperUI"
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -53,7 +54,7 @@ export function UsersList() {
   }
 
   return (
-    <>
+    <WrapperUI title="Lista de usuarios">
       <h2 className="font-bold">Users List</h2>
       <MyTable
         data={users}
@@ -62,6 +63,6 @@ export function UsersList() {
         titlePlural="usuarios"
         withDeleted={showDeleted}
       />
-    </>
+    </WrapperUI>
   )
 }

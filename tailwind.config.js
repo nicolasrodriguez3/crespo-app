@@ -11,14 +11,13 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        'sans': ['Inter', ...defaultTheme.fontFamily.sans],
+        sans: ["Inter", ...defaultTheme.fontFamily.sans],
       },
       colors: {
-        'gold': '#FFD73A',
+        gold: "#ffcc00",
       },
     },
   },
   darkMode: "class",
-  plugins: [nextui(), 'prettier-plugin-tailwindcss'],
+  plugins: [nextui(), "prettier-plugin-tailwindcss"],
 }
-

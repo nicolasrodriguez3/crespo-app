@@ -29,6 +29,7 @@ import {
 } from "../helpers/api"
 import { validateFilename } from "../services/validateFilename"
 import { GoogleMaps } from "../components/GoogleMaps"
+import { WrapperUI } from "../components/WrapperUI"
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -133,7 +134,10 @@ export function AddClaim() {
     },
     validationSchema: Yup.object({
       tipoReclamo_id: Yup.string().required(
-        "Por favor seleccione una categoría.",
+        "Por favor seleccione el tipo de reclamo.",
+      ),
+      descripcion: Yup.string().required(
+        "Por favor agregue una descripción del reclamo.",
       ),
     }),
   })
@@ -180,250 +184,257 @@ export function AddClaim() {
 
   return (
     <>
-      <main className="flex min-h-screen w-full flex-col items-center">
-        <div className="flex min-h-[200px]  w-full items-end justify-center bg-gradient-to-t from-[#ffcc00] to-gold py-12 text-2xl">
-          Agregar reclamo
-        </div>
-
-        <section className="-mt-8 flex min-h-[40vh] w-full grow flex-col items-center gap-8 rounded-t-3xl bg-gray-50 py-4 pb-16">
-          <form
-            onSubmit={handleSubmit}
-            className="flex w-full max-w-xs flex-col gap-4 text-base"
+      <WrapperUI title="Agregar reclamo">
+        <form
+          onSubmit={handleSubmit}
+          className="flex w-full flex-col gap-4 text-base"
+        >
+          <Select
+            label="Tipo de reclamo"
+            placeholder="Seleccione el tipo de reclamo"
+            isRequired
+            name="tipoReclamo_id"
+            isInvalid={touched.tipoReclamo_id && errors.tipoReclamo_id}
+            errorMessage={
+              touched.tipoReclamo_id && errors.tipoReclamo_id
+                ? errors.tipoReclamo_id
+                : ""
+            }
+            items={categories}
+            onSelectionChange={(val) =>
+              setFieldValue("tipoReclamo_id", Array.from(val)[0])
+            }
           >
-            <Select
-              label="Tipo de reclamo"
-              placeholder="Seleccione el tipo de reclamo"
-              isRequired
-              items={categories}
-              onSelectionChange={(val) =>
-                setFieldValue("tipoReclamo_id", Array.from(val)[0])
-              }
-            >
-              {(category) => (
-                <SelectItem
-                  key={category.id}
-                  value={category.id}
-                >
-                  {category.tipo}
-                </SelectItem>
-              )}
-            </Select>
-
-            <Textarea
-              label="Descripción"
-              labelPlacement="inside"
-              isRequired
-              placeholder="Ingrese una descripción"
-              {...getFieldProps("descripcion")}
-            />
-
-            {/* Calle */}
-            <div className="grid grid-cols-[1fr_30%] gap-1">
-              <Modal
-                isOpen={isOpen}
-                onOpenChange={onOpenChange}
-                isDismissable={false}
-                hideCloseButton={true}
-                scrollBehavior="inside"
+            {(category) => (
+              <SelectItem
+                key={category.id}
+                value={category.id}
               >
-                <ModalContent className="max-w-sm">
-                  {(onClose) => (
-                    <>
-                      <ModalHeader className="flex flex-col gap-1">
-                        Seleccione la calle
-                      </ModalHeader>
-                      <ModalBody>
-                        <div className="flex flex-col justify-between">
-                          <Input
-                            type="search"
-                            placeholder="Buscar calle"
-                            onChange={handleFilterStreet}
-                          />
-                          <ScrollShadow className="max-h-[400px]">
-                            {filteredStreets &&
-                              filteredStreets.length === 0 && (
-                                <p className="text-sm text-gray-500">
-                                  No se encontraron resultados
-                                </p>
-                              )}
-                            <Listbox
-                              aria-label="Actions"
-                              onAction={(key) => {
-                                setFieldValue("calle_id", key)
-                                setFilteredStreets(streets)
-                                onClose()
-                              }}
-                            >
-                              {filteredStreets.map((street) => (
-                                <ListboxItem key={street.id}>
-                                  {street.calle}
-                                </ListboxItem>
-                              ))}
-                            </Listbox>
-                          </ScrollShadow>
-                        </div>
-                      </ModalBody>
-                    </>
-                  )}
-                </ModalContent>
-              </Modal>
-              <Input
-                readOnly
-                onClick={onOpen}
-                value={
-                  values.calle_id
-                    ? streets.find((s) => s.id === values.calle_id)?.calle
-                    : ""
-                }
-                label="Calle"
-                placeholder="Seleccione la calle"
-                isRequired
-                onChange={handleStreetChange}
-                isInvalid={touched.calle_id && errors.calle_id}
-                errorMessage={
-                  touched.calle_id && errors.calle_id ? errors.calle_id : ""
-                }
-              />
-              <Input
-                name="altura"
-                label="Altura"
-                pattern="[0-9]{1,4}"
-                isRequired
-                {...getFieldProps("altura")}
-                isInvalid={touched.altura && errors.altura}
-                errorMessage={
-                  touched.altura && errors.altura ? errors.altura : ""
-                }
-              />
-            </div>
-
-            <Select
-              label="Barrio"
-              placeholder="Seleccione el barrio"
-              items={neighborhoods}
-              onSelectionChange={(val) =>
-                setFieldValue("barrio_id", Array.from(val)[0])
-              }
-            >
-              {(neighborhood) => (
-                <SelectItem
-                  key={neighborhood.id}
-                  value={neighborhood.id}
-                >
-                  {neighborhood.barrio}
-                </SelectItem>
-              )}
-            </Select>
-
-            <div>
-              <GoogleMaps
-                setCenter={(e) => {
-                  setFieldValue("coordenadas", e)
-                }}
-              />
-            </div>
-
-            <div>
-              <Button
-                color={fileError ? "danger" : "default"}
-                variant="ghost"
-                endContent={<CameraIcon />}
-                onClick={() => imgRef.current.click()}
-              >
-                Adjuntar una foto
-              </Button>
-            </div>
-            <input
-              ref={imgRef}
-              type="file"
-              name="imagen"
-              id="imagen"
-              onChange={handleFileChange}
-              accept="image/*"
-              className="hidden"
-            />
-            {fileError && <p className="text-sm text-red-500">{fileError}</p>}
-
-            {values.imagen ? (
-              <div className="relative">
-                {/* Delete image button */}
-                <Button
-                  isIconOnly
-                  color="default"
-                  aria-label="Like"
-                  className="absolute right-1 top-1 rounded-full"
-                  onClick={() => setFieldValue("imagen", null)}
-                >
-                  <svg
-                    className="h-6 w-6"
-                    width="64px"
-                    height="64px"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <g
-                      id="SVGRepo_bgCarrier"
-                      strokeWidth="0"
-                    ></g>
-                    <g
-                      id="SVGRepo_tracerCarrier"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    ></g>
-                    <g id="SVGRepo_iconCarrier">
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M19.207 6.207a1 1 0 0 0-1.414-1.414L12 10.586 6.207 4.793a1 1 0 0 0-1.414 1.414L10.586 12l-5.793 5.793a1 1 0 1 0 1.414 1.414L12 13.414l5.793 5.793a1 1 0 0 0 1.414-1.414L13.414 12l5.793-5.793z"
-                        fill="currentColor"
-                      ></path>
-                    </g>
-                  </svg>
-                </Button>
-
-                {/* Image preview */}
-                <img
-                  className="block rounded-lg"
-                  src={URL.createObjectURL(values.imagen)}
-                />
-              </div>
-            ) : (
-              ""
+                {category.tipo}
+              </SelectItem>
             )}
+          </Select>
 
+          <Textarea
+            label="Descripción"
+            name="descripcion"
+            labelPlacement="inside"
+            isRequired
+            placeholder="Ingrese una descripción"
+            isInvalid={touched.descripcion && errors.descripcion}
+            errorMessage={
+              touched.descripcion && errors.descripcion
+                ? errors.descripcion
+                : ""
+            }
+            {...getFieldProps("descripcion")}
+          />
+
+          {/* Calle */}
+          <div className="grid grid-cols-[1fr_30%] gap-1">
+            <Modal
+              isOpen={isOpen}
+              onOpenChange={onOpenChange}
+              isDismissable={false}
+              hideCloseButton={true}
+              scrollBehavior="inside"
+            >
+              <ModalContent className="max-w-sm">
+                {(onClose) => (
+                  <>
+                    <ModalHeader className="flex flex-col gap-1">
+                      Seleccione la calle
+                    </ModalHeader>
+                    <ModalBody>
+                      <div className="flex flex-col justify-between">
+                        <Input
+                          type="search"
+                          placeholder="Buscar calle"
+                          onChange={handleFilterStreet}
+                        />
+                        <ScrollShadow className="max-h-[400px]">
+                          {filteredStreets && filteredStreets.length === 0 && (
+                            <p className="text-sm text-gray-500">
+                              No se encontraron resultados
+                            </p>
+                          )}
+                          <Listbox
+                            aria-label="Actions"
+                            onAction={(key) => {
+                              setFieldValue("calle_id", key)
+                              setFilteredStreets(streets)
+                              onClose()
+                            }}
+                          >
+                            {filteredStreets.map((street) => (
+                              <ListboxItem key={street.id}>
+                                {street.calle}
+                              </ListboxItem>
+                            ))}
+                          </Listbox>
+                        </ScrollShadow>
+                      </div>
+                    </ModalBody>
+                  </>
+                )}
+              </ModalContent>
+            </Modal>
+            <Input
+              label="Calle"
+              readOnly
+              onClick={onOpen}
+              value={
+                values.calle_id
+                  ? streets.find((s) => s.id === values.calle_id)?.calle
+                  : ""
+              }
+              placeholder="Seleccione la calle"
+              isRequired
+              onChange={handleStreetChange}
+              isInvalid={touched.calle_id && errors.calle_id}
+              errorMessage={
+                touched.calle_id && errors.calle_id ? errors.calle_id : ""
+              }
+            />
+            <Input
+              name="altura"
+              label="Altura"
+              pattern="[0-9]{1,4}"
+              isRequired
+              {...getFieldProps("altura")}
+              isInvalid={touched.altura && errors.altura}
+              errorMessage={
+                touched.altura && errors.altura ? errors.altura : ""
+              }
+            />
+          </div>
+
+          <Select
+            label="Barrio"
+            placeholder="Seleccione el barrio"
+            items={neighborhoods}
+            onSelectionChange={(val) =>
+              setFieldValue("barrio_id", Array.from(val)[0])
+            }
+          >
+            {(neighborhood) => (
+              <SelectItem
+                key={neighborhood.id}
+                value={neighborhood.id}
+              >
+                {neighborhood.barrio}
+              </SelectItem>
+            )}
+          </Select>
+
+          <div>
+            <GoogleMaps
+              setCenter={(e) => {
+                setFieldValue("coordenadas", e)
+              }}
+            />
+          </div>
+
+          <div>
             <Button
-              type="submit"
-              className="bg-gold"
-              isLoading={isSubmitting}
-              spinner={
+              color={fileError ? "danger" : "default"}
+              variant="ghost"
+              endContent={<CameraIcon />}
+              onClick={() => imgRef.current.click()}
+            >
+              Adjuntar una foto
+            </Button>
+          </div>
+          <input
+            ref={imgRef}
+            type="file"
+            name="imagen"
+            id="imagen"
+            onChange={handleFileChange}
+            accept="image/*"
+            className="hidden"
+          />
+          {fileError && <p className="text-sm text-red-500">{fileError}</p>}
+
+          {values.imagen ? (
+            <div className="relative">
+              {/* Delete image button */}
+              <Button
+                isIconOnly
+                color="default"
+                aria-label="Like"
+                className="absolute right-1 top-1 rounded-full"
+                onClick={() => setFieldValue("imagen", null)}
+              >
                 <svg
-                  className="h-5 w-5 animate-spin text-current"
-                  fill="none"
+                  className="h-6 w-6"
+                  width="64px"
+                  height="64px"
                   viewBox="0 0 24 24"
+                  fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                  />
-                  <path
-                    className="opacity-75"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    fill="currentColor"
-                  />
+                  <g
+                    id="SVGRepo_bgCarrier"
+                    strokeWidth="0"
+                  ></g>
+                  <g
+                    id="SVGRepo_tracerCarrier"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  ></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <path
+                      fillRule="evenodd"
+                      clipRule="evenodd"
+                      d="M19.207 6.207a1 1 0 0 0-1.414-1.414L12 10.586 6.207 4.793a1 1 0 0 0-1.414 1.414L10.586 12l-5.793 5.793a1 1 0 1 0 1.414 1.414L12 13.414l5.793 5.793a1 1 0 0 0 1.414-1.414L13.414 12l5.793-5.793z"
+                      fill="currentColor"
+                    ></path>
+                  </g>
                 </svg>
-              }
-            >
-              Cargar reclamo
-            </Button>
-          </form>
-        </section>
-      </main>
+              </Button>
+
+              {/* Image preview */}
+              <img
+                className="block rounded-lg"
+                src={URL.createObjectURL(values.imagen)}
+              />
+            </div>
+          ) : (
+            ""
+          )}
+
+          <Button
+            type="submit"
+            className="bg-gold"
+            isLoading={isSubmitting}
+            spinner={
+              <svg
+                className="h-5 w-5 animate-spin text-current"
+                fill="none"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                />
+                <path
+                  className="opacity-75"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  fill="currentColor"
+                />
+              </svg>
+            }
+          >
+            Cargar reclamo
+          </Button>
+        </form>
+      </WrapperUI>
       <Navbar />
     </>
   )

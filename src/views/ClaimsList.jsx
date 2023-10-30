@@ -1,19 +1,11 @@
 import { useState, useEffect } from "react"
 import { Post } from "../components/Post"
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  Divider,
-  CircularProgress,
-} from "@nextui-org/react"
-import { HomeHeader } from "../components/HomeHeader"
-import { getAllPosts } from "../services/getAllPosts"
-
+import { CircularProgress } from "@nextui-org/react"
 import { useAuth } from "../hooks/useAuth"
-import { getClaims } from "../helpers/api"
+import { getClaims, getMyClaims } from "../helpers/api"
+import { WrapperUI } from "../components/WrapperUI"
 
-export default function ClaimsList() {
+export function ClaimsList({ all }) {
   const { token } = useAuth()
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
@@ -23,10 +15,12 @@ export default function ClaimsList() {
     setError(null)
     setLoading(true)
 
+    const fetchClaims = all ? getClaims : getMyClaims
+
     // obtener los posts
     const fetchData = async () => {
       try {
-        const response = await getClaims(token)
+        const response = await fetchClaims(token)
         if (response.status === 200) {
           console.log(response.data)
           const mappedPosts = response.data.map((post) => ({
@@ -52,7 +46,7 @@ export default function ClaimsList() {
     }
 
     fetchData()
-  }, [token])
+  }, [token, all])
 
   if (loading) {
     return (
@@ -67,8 +61,7 @@ export default function ClaimsList() {
 
   if (error) {
     return (
-      <>
-        <HomeHeader />
+      <WrapperUI>
         <div className="flex min-h-screen w-full flex-col items-center bg-gray-50">
           <div className="flex w-full flex-col items-center justify-center gap-4 pt-4">
             <p className="text-center">
@@ -76,23 +69,28 @@ export default function ClaimsList() {
             </p>
           </div>
         </div>
-      </>
+      </WrapperUI>
     )
   }
 
   if (posts.length === 0) {
-    return <p className="py-4 text-center">No hay reclamos</p>
+    return (
+      <WrapperUI>
+        <p className="py-4 text-center">No hay reclamos</p>
+      </WrapperUI>
+    )
   }
 
   return (
-    <section className="flex flex-col gap-4">
-      Mis reclamos
-      {posts.map((post) => (
-        <Post
-          post={post}
-          key={post.id}
-        />
-      ))}
-    </section>
+    <WrapperUI title={all ? "Todos los reclamos" : "Mis reclamos"}>
+      <section className="flex flex-col gap-4">
+        {posts.map((post) => (
+          <Post
+            post={post}
+            key={post.id}
+          />
+        ))}
+      </section>
+    </WrapperUI>
   )
 }

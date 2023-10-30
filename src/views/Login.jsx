@@ -7,7 +7,6 @@ import { Link, useNavigate } from "react-router-dom"
 import { EyeFilledIcon } from "../assets/icons/EyeFilledIcon"
 import { EyeSlashFilledIcon } from "../assets/icons/EyeSlashFilledIcon"
 import wave from "../assets/imgs/wave-top.svg"
-import { getUserData } from "../services/getUserData"
 
 export function Login() {
   // si el usuario ya está autenticado, redirigirlo a la página de inicio
