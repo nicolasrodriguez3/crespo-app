@@ -4,24 +4,20 @@ const API_URL = import.meta.env.VITE_API_URL
 function validateResponse(error) {
   if (error.response) {
     // Si la respuesta contiene un estado HTTP no exitoso (por ejemplo, 404 o 500)
-    console.error(
-      "Error en la respuesta: ",
-      error.response.status,
-      error.response.statusText,
-    )
+    throw new Error( `Error en la respuesta: ${error.response.status}`)
+    
   } else if (error.request) {
     // Si la solicitud no pudo ser realizada (por ejemplo, el servidor no respondió)
-    console.error("Error en la solicitud: ", error.request)
+    throw new Error( `Error en la solicitud: ${error.request}`)
   } else {
     // Otros errores
-    console.error("Error: ", error.message)
+    throw new Error( `Error: ${error.message}`)
   }
 }
 
 // obtener mis reclamos
 export async function getMyClaims(token) {
-  try {
-    const response = await axios.get(
+    return await axios.get(
       "https://vps-3450851-x.dattaweb.com:9088/api/reclamo/buscar-todos-mis-reclamos",
       {
         headers: {
@@ -29,28 +25,18 @@ export async function getMyClaims(token) {
         },
       }
     )
-
-    return response
-  } catch (error) {
-    validateResponse(error)
-  }
 }
 
 // obtener todos los reclamos
 export async function getClaims(token) {
-  try {
-    const response = await axios.get(
-      "https://vps-3450851-x.dattaweb.com:9088/api/reclamo/buscar-todos",
+    return await axios.get(
+      "https://vps-3450851-x.dattaweb.com:9088/api/reclamo/buscar-todas",
       {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       }
     )
-    return response
-  } catch (error) {
-    validateResponse(error)
-  }
 }
 
 // obtener todos los reclamos por usuario
@@ -64,7 +50,7 @@ export async function getClaimsByUser(token) {
         },
       }
     )
-    return response
+    return { data: response.data, status: response.status }
   } catch (error) {
     validateResponse(error)
   }
@@ -72,8 +58,7 @@ export async function getClaimsByUser(token) {
 
 // obtener todos los reclamos por estado
 export async function getClaimsByStatus(token) {
-  try {
-    const response = await axios.get(
+  return await axios.get(
       "https://vps-3450851-x.dattaweb.com:9088/api/reclamo/buscar-por-estado",
       {
         headers: {
@@ -81,15 +66,11 @@ export async function getClaimsByStatus(token) {
         },
       }
     )
-    return response
-  } catch (error) {
-    validateResponse(error)
-  }
 }
 
 // obtener categorías
 export async function getCategories(token) {
-  const response = await axios(
+  return await axios(
     "https://vps-3450851-x.dattaweb.com:9088/api/tipo-reclamo/buscar-todas",
     {
       headers: {
@@ -97,13 +78,11 @@ export async function getCategories(token) {
       },
     }
   )
-  return response
 }
 
 // obtener las calles
 export async function getStreets(token) {
-  try {
-    const response = await axios.get(
+  return await axios.get(
       "https://vps-3450851-x.dattaweb.com:9088/api/calle/buscar-todas",
       {
         headers: {
@@ -111,16 +90,11 @@ export async function getStreets(token) {
         },
       }
     )
-    return response
-  } catch (error) {
-    validateResponse(error)
-  }
 }
 
 // obtener los barrios
 export async function getNeighborhoods(token) {
-  try {
-    const response = await axios.get(
+  return await axios.get(
       "https://vps-3450851-x.dattaweb.com:9088/api/barrio/buscar-todas",
       {
         headers: {
@@ -128,10 +102,6 @@ export async function getNeighborhoods(token) {
         },
       }
     )
-    return response
-  } catch (error) {
-    validateResponse(error)
-  }
 }
 
 export async function uploadImage(imagen, token) {

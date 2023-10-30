@@ -1,39 +1,57 @@
-import { useState } from "react"
-import Post from "../components/Post"
-import { useEffect } from "react"
-import { getAllPosts } from "../services/getAllPosts"
-import { useAuth } from "../hooks/useAuth"
-import { CircularProgress } from "@nextui-org/react"
+import { useState, useEffect } from "react"
+import { Post } from "../components/Post"
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  Divider,
+  CircularProgress,
+} from "@nextui-org/react"
 import { HomeHeader } from "../components/HomeHeader"
+import { getAllPosts } from "../services/getAllPosts"
 
+import { useAuth } from "../hooks/useAuth"
+import { getClaims } from "../helpers/api"
 
 export default function ClaimsList() {
-	const { token } = useAuth()
+  const { token } = useAuth()
   const [posts, setPosts] = useState([])
-	
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-	useEffect(() => {
+  useEffect(() => {
     setError(null)
     setLoading(true)
 
     // obtener los posts
-    try {
-      getAllPosts(token).then((response) => {
+    const fetchData = async () => {
+      try {
+        const response = await getClaims(token)
         if (response.status === 200) {
           console.log(response.data)
-          setPosts(response.data)
+          const mappedPosts = response.data.map((post) => ({
+            id: post.id,
+            descripcion: post.descripcion,
+            altura: post.altura,
+            calle: post.calle.calle,
+            tipoReclamo: post.tipoReclamo.tipo,
+            persona: post.persona,
+            imagen: post.imagen,
+            seguimiento: post.seguimiento.estados,
+          }))
+          setPosts(mappedPosts)
         } else {
-          setError("Error obteniendo los posts")
+          throw new Error("Error obteniendo los posts")
         }
-      })
-    } catch (error) {
-      setError(error)
-      console.log(error)
-      throw new Error("Error obteniendo los posts")
+      } catch (error) {
+        console.warn("Error:", error)
+        setError(error)
+      } finally {
+        setLoading(false)
+      }
     }
-    setLoading(false)
+
+    fetchData()
   }, [token])
 
   if (loading) {
@@ -62,19 +80,19 @@ export default function ClaimsList() {
     )
   }
 
+  if (posts.length === 0) {
+    return <p className="py-4 text-center">No hay reclamos</p>
+  }
+
   return (
     <section className="flex flex-col gap-4">
       Mis reclamos
-      {posts?.length === 0 ? (
-        <p className="py-4 text-center">No hay posts</p>
-      ) : (
-        posts?.map((post) => (
-          <Post
-            key={post.id}
-            data={post}
-          />
-        ))
-      )}
+      {posts.map((post) => (
+        <Post
+          post={post}
+          key={post.id}
+        />
+      ))}
     </section>
   )
 }

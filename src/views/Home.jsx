@@ -8,6 +8,7 @@ import imgUsuarios from "../assets/imgs/img-users.jpg"
 import imgBarrios from "../assets/imgs/img-barrio2.jpg"
 import imgAreas from "../assets/imgs/img-areas.jpg"
 import imgAgregar from "../assets/imgs/add-claim2.jpeg"
+import ClaimsList from "./ClaimsList"
 
 const functionsButtons = [
   { title: "Usuarios", img: imgUsuarios, to: "/usuarios" },
@@ -56,6 +57,7 @@ export function Home() {
                 </Card>
               ))}
             </div>
+            <ClaimsList />
             <section className="max-w-sm">
               <Outlet />
             </section>

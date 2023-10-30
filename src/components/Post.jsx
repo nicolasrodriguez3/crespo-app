@@ -1,38 +1,141 @@
 import PropTypes from "prop-types"
-import { Card, CardHeader, CardBody, Image } from "@nextui-org/react"
-import { useNavigate } from "react-router-dom"
-import { Link } from "react-router-dom"
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  Image,
+  Divider,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  useDisclosure,
+  Accordion, AccordionItem
+} from "@nextui-org/react"
+import { useParams } from "react-router-dom"
+import { useEffect } from "react"
 
-function Post({ data }) {
-  const { id, imagen, seguimiento, descripcion, tipoReclamo } = data
+const API_URL = import.meta.env.VITE_API_URL
+
+export function Post({ post }) {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure()
+  
+
+  const {
+    id,
+    imagen,
+    seguimiento,
+    descripcion,
+    altura,
+    calle,
+    persona,
+    tipoReclamo,
+  } = post
+
+  const handleOpen = () => {
+    if(!isOpen) onOpen()
+    }
+
 
   return (
-    <Card
-      className="w-full py-4"
-      isPressable
-      as={Link}
-      to={`/reclamos/${id}`}
-    >
-      <CardHeader className="flex-col items-start px-4 pb-0 pt-2">
-        <p className="text-tiny font-bold">Reclamo #{id}</p>
-        <small className="text-default-500">
-          Estado: {seguimiento.estados[0].estado}
-        </small>
-        <h4 className="text-large font-bold">{tipoReclamo.tipo}</h4>
-      </CardHeader>
-      <CardBody className="overflow-visible py-2">
-        {imagen ? (
-          <Image
-            alt="Card background"
-            className="rounded-xl object-cover"
-            src="/images/hero-card-complete.jpeg"
-            width="100%"
-          />
-        ) : (
-          <p className="text-default-500">{descripcion}</p>
-        )}
-      </CardBody>
-    </Card>
+    <>
+      <Card
+        className="w-full py-4"
+        isPressable
+        onClick={() => handleOpen()}
+      >
+        <CardHeader className="flex-col items-start px-4 pb-0 pt-2">
+          <p className="text-tiny font-bold">Reclamo #{id}</p>
+          <small className="text-default-500">
+            Estado: {seguimiento[0].estado}
+          </small>
+          <h4 className="text-large font-bold">{tipoReclamo}</h4>
+        </CardHeader>
+        <Divider />
+        <CardBody className="overflow-visible py-2">
+          {imagen !== null ? (
+            <Image
+              alt="Card background"
+              className="rounded-xl object-cover"
+              src={`${API_URL}${imagen.path}/${imagen.nombre}`}
+              width="100%"
+            />
+          ) : (
+            <div className="flex flex-col">
+              <h3>Reclamo de: {persona.nombre}</h3>
+              <p>{descripcion}</p>
+              <p className="text-sm text-gray-900">
+                {calle} {altura}
+              </p>
+            </div>
+          )}
+        </CardBody>
+      </Card>
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Reclamo #{id}: {descripcion}
+              </ModalHeader>
+              <ModalBody>
+                <p>Seguimiento</p>
+                <div>
+                <Accordion>
+      <AccordionItem key="1" aria-label="Accordion 1" subtitle={descripcion} title={`Estado: ${seguimiento[0].estado.replace("_", " ")}`}>
+      {seguimiento.map(({ estado, id, descripcion }) => (
+                    <div key={id}>
+                      <p className="font-bold">
+                        Estado: {estado.replace("_", " ")}
+                      </p>
+                      {descripcion && (
+                        <p className="">Descripción: {descripcion}</p>
+                      )}
+                    </div>
+                  ))}
+      </AccordionItem>
+      </Accordion>
+                  
+                </div>
+                <p>
+                  Reclamo presentado por:{" "}
+                  <span>
+                    {persona.nombre}
+                    {/* //todo agregar link al perfil de la persona */}
+                  </span>
+                </p>
+                <p>
+                  Tipo de reclamo: {tipoReclamo}
+                </p>
+                <p>
+                  Dirección: {calle} {altura}
+                </p>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  color="danger"
+                  variant="light"
+                  onPress={onClose}
+                >
+                  Close
+                </Button>
+                <Button
+                  color="primary"
+                  onPress={onClose}
+                >
+                  Action
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+    </>
   )
 }
 
@@ -65,5 +168,3 @@ Post.propTypes = {
     }),
   }),
 }
-
-export default Post
