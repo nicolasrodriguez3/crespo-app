@@ -62,15 +62,11 @@ export const routes = createBrowserRouter([
         element: <ClaimStatusList />,
       },
       {
-        path: "/reclamos",
-        element: <PostView />,
-      },
-      {
         path: "/add",
         element: <AddClaim />,
       },
       {
-        path: "/claims",
+        path: "/reclamos",
         element: <ClaimsList />,
       },
       {
