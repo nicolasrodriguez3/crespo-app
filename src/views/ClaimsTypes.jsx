@@ -2,6 +2,7 @@ import axios from "axios"
 import { useState, useEffect } from "react"
 import { useAuth } from "../hooks/useAuth"
 import { MyTable } from "../components/MyTable"
+import { WrapperUI } from "../components/WrapperUI"
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -41,14 +42,13 @@ export function ClaimsTypes() {
   }
 
   return (
-    <>
-      <h2 className="font-bold">Barrios List</h2>
+    <WrapperUI title="Tipos de reclamos" >
       <MyTable
         data={data}
         title="tipo de reclamo"
         titlePlural="tipos de reclamos"
         handleDelete={handleDelete}
       />
-    </>
+    </WrapperUI>
   )
 }
