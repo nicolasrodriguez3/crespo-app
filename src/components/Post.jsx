@@ -12,16 +12,16 @@ import {
   ModalFooter,
   Button,
   useDisclosure,
-  Accordion, AccordionItem
+  Accordion,
+  AccordionItem,
 } from "@nextui-org/react"
-import { useParams } from "react-router-dom"
+
 import { useEffect } from "react"
 
-const API_URL = import.meta.env.VITE_API_URL
+const API_IMAGES_URL = import.meta.env.VITE_API_IMAGES_URL
 
 export function Post({ post }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
-  
 
   const {
     id,
@@ -34,10 +34,11 @@ export function Post({ post }) {
     tipoReclamo,
   } = post
 
-  const handleOpen = () => {
-    if(!isOpen) onOpen()
-    }
+  console.log(post)
 
+  const handleOpen = () => {
+    if (!isOpen) onOpen()
+  }
 
   return (
     <>
@@ -59,7 +60,7 @@ export function Post({ post }) {
             <Image
               alt="Card background"
               className="rounded-xl object-cover"
-              src={`${API_URL}${imagen.path}/${imagen.nombre}`}
+              src={`${API_IMAGES_URL}${imagen.path}/${imagen.nombre}`}
               width="100%"
             />
           ) : (
@@ -81,26 +82,36 @@ export function Post({ post }) {
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Reclamo #{id}: {descripcion}
+                Seguimiento reclamo #{id}
               </ModalHeader>
               <ModalBody>
-                <p>Seguimiento</p>
+                <p>{descripcion}</p>
                 <div>
-                <Accordion>
-      <AccordionItem key="1" aria-label="Accordion 1" subtitle={descripcion} title={`Estado: ${seguimiento[0].estado.replace("_", " ")}`}>
-      {seguimiento.map(({ estado, id, descripcion }) => (
-                    <div key={id}>
-                      <p className="font-bold">
-                        Estado: {estado.replace("_", " ")}
-                      </p>
-                      {descripcion && (
-                        <p className="">Descripción: {descripcion}</p>
-                      )}
-                    </div>
-                  ))}
-      </AccordionItem>
-      </Accordion>
-                  
+                  <Accordion>
+                    <AccordionItem
+                      key="1"
+                      aria-label="Accordion 1"
+                      subtitle={seguimiento[0].descripcion}
+                      title={`Estado: ${seguimiento[0].estado.replace(
+                        "_",
+                        " ",
+                      )}`}
+                    >
+                      {seguimiento.map(({ estado, id, descripcion }, i) => {
+                        if (i === 0) return
+                        return (
+                          <div key={id}>
+                            <p className="font-bold">
+                              Estado: {estado.replace("_", " ")}
+                            </p>
+                            {descripcion && (
+                              <p className="">Descripción: {descripcion}</p>
+                            )}
+                          </div>
+                        )
+                      })}
+                    </AccordionItem>
+                  </Accordion>
                 </div>
                 <p>
                   Reclamo presentado por:{" "}
@@ -109,9 +120,7 @@ export function Post({ post }) {
                     {/* //todo agregar link al perfil de la persona */}
                   </span>
                 </p>
-                <p>
-                  Tipo de reclamo: {tipoReclamo}
-                </p>
+                <p>Tipo de reclamo: {tipoReclamo}</p>
                 <p>
                   Dirección: {calle} {altura}
                 </p>
