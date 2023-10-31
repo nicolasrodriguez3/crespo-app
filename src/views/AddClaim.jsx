@@ -30,6 +30,7 @@ import {
 import { validateFilename } from "../services/validateFilename"
 import { GoogleMaps } from "../components/GoogleMaps"
 import { WrapperUI } from "../components/WrapperUI"
+import toast from "react-hot-toast"
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -79,6 +80,7 @@ export function AddClaim() {
     },
     enableReinitialize: true,
     onSubmit: async (values, { setSubmitting }) => {
+      toast("Cargando...")
       // subir la imagen, obtener su id y luego subir el reclamo
       const {
         persona_id,
@@ -124,8 +126,12 @@ export function AddClaim() {
         }
 
         // TODO: mostrar mensaje de éxito
+        toast("Reclamo cargado con éxito", {
+          icon: "👏",
+        })
       } catch (error) {
         console.error(error)
+
         throw new Error("Error cargando los datos del post.")
       }
 
@@ -322,7 +328,7 @@ export function AddClaim() {
           )}
         </Select>
 
-        <div>
+        <div className="overflow-hidden rounded-medium">
           <GoogleMaps
             setCenter={(e) => {
               setFieldValue("coordenadas", e)
@@ -333,7 +339,7 @@ export function AddClaim() {
         <div>
           <Button
             color={fileError ? "danger" : "default"}
-            variant="ghost"
+            variant="flat"
             endContent={<CameraIcon />}
             onClick={() => imgRef.current.click()}
           >

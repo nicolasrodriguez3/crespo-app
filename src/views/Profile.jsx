@@ -16,14 +16,13 @@ export function Profile() {
 
   const handleLogout = async () => {
     setLoading(true)
-    try{
+    try {
       const userLoguot = await logout()
-      if(userLoguot){
+      if (userLoguot) {
         setLoading(false)
         navigate("/login")
       }
-    }
-    catch(error){
+    } catch (error) {
       console.error("Error durante el cierre de sesión:", error)
       setLoading(false)
     }
@@ -39,51 +38,48 @@ export function Profile() {
             src={user?.photoURL || "/chicken.svg"}
             name={user?.nombre}
           />
-          <p>{user?.nombre || "Usuario" }</p>
+          <p>{user?.nombre || "Usuario"}</p>
         </header>
-        <ul className="flex flex-col gap-2 p-4 max-w-xs mx-auto">
-          <li>
-            <Button
-              as={Link}
-              to="/profile/edit"
-              isLoading={loading}
-              variant="light"
-              className="w-full"
-              startContent={
-                <img
-                  src={penIcon}
-                  alt="Salir"
-                  width={24}
-                />
-              }
-              endContent={
-                <img
-                  src={arrowIcon}
-                  alt="Salir"
-                  width={24}
-                />
-              }
-            >
-              <span className="grow">Editar perfil</span>
-            </Button>
-          </li>
-          <li>
-            <Button
-              onClick={handleLogout}
-              isLoading={loading}
-              variant="light"
-              startContent={
-                <img
-                  src={logoutIcon}
-                  alt="Salir"
-                  width={24}
-                />
-              }
-            >
-              Cerrar sesión
-            </Button>
-          </li>
-        </ul>
+        <nav className="mx-auto flex flex-col gap-2">
+          <Button
+            as={Link}
+            to="/profile/edit"
+            isLoading={loading}
+            variant="light"
+            className="w-full"
+            startContent={
+              <img
+                src={penIcon}
+                alt="Salir"
+                width={24}
+              />
+            }
+            endContent={
+              <img
+                src={arrowIcon}
+                alt="Salir"
+                width={24}
+              />
+            }
+          >
+            <span className="grow">Editar perfil</span>
+          </Button>
+          <Button
+            onClick={handleLogout}
+            isLoading={loading}
+            variant="light"
+            className="justify-start"
+            startContent={
+              <img
+                src={logoutIcon}
+                alt="Salir"
+                width={24}
+              />
+            }
+          >
+            Cerrar sesión
+          </Button>
+        </nav>
       </div>
       <Navbar />
     </WrapperUI>
