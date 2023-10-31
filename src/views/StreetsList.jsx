@@ -2,6 +2,7 @@ import axios from "axios"
 import { useState, useEffect } from "react"
 import { useAuth } from "../hooks/useAuth"
 import { MyTable } from "../components/MyTable"
+import { WrapperUI } from "../components/WrapperUI"
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -48,8 +49,7 @@ export function StreetsList() {
   }
 
   return (
-    <>
-      <h2 className="font-bold">Streets List</h2>
+    <WrapperUI title="Lista de calles" >
       <MyTable
         data={streets}
         title="calle"
@@ -57,6 +57,6 @@ export function StreetsList() {
         handleDelete={handleDelete}
         withDeleted={showDeletedStreets}
       />
-    </>
+    </WrapperUI>
   )
 }

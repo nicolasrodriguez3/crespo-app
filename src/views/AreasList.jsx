@@ -2,6 +2,7 @@ import axios from "axios"
 import { useState, useEffect } from "react"
 import { useAuth } from "../hooks/useAuth"
 import { MyTable } from "../components/MyTable"
+import { WrapperUI } from "../components/WrapperUI"
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -41,14 +42,13 @@ export function AreasList() {
   }
 
   return (
-    <>
-      <h2 className="font-bold">Areas List</h2>
+    <WrapperUI title="Lista de áreas">
       <MyTable
         data={data}
         title="área"
         titlePlural="áreas"
         handleDelete={handleDelete}
       />
-    </>
+    </WrapperUI>
   )
 }

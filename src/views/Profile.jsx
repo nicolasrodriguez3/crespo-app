@@ -7,6 +7,7 @@ import logoutIcon from "../assets/icons/logout-2-linear.svg"
 import penIcon from "../assets/icons/pen-2-linear.svg"
 import claimsIcon from "../assets/icons/checklist-minimalistic-linear.svg"
 import arrowIcon from "../assets/icons/alt-arrow-right-linear.svg"
+import { WrapperUI } from "../components/WrapperUI"
 
 export function Profile() {
   const navigate = useNavigate()
@@ -29,7 +30,7 @@ export function Profile() {
   }
 
   return (
-    <>
+    <WrapperUI>
       <div className="">
         <header className="mb-4 flex flex-col items-center gap-2">
           <Avatar
@@ -85,6 +86,6 @@ export function Profile() {
         </ul>
       </div>
       <Navbar />
-    </>
+    </WrapperUI>
   )
 }

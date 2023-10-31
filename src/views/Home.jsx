@@ -4,11 +4,12 @@ import { Link, useNavigate } from "react-router-dom"
 import { WrapperUI } from "../components/WrapperUI"
 
 import imgCalles from "../assets/imgs/img-calle.jpg"
-import imgUsuarios from "../assets/imgs/img-users.jpg"
+import imgUsuarios from "../assets/imgs/img-users2.jpg"
 import imgBarrios from "../assets/imgs/img-barrio2.jpg"
 import imgAreas from "../assets/imgs/img-areas.jpg"
 import imgAgregar from "../assets/imgs/add-claim2.jpeg"
 import imgReclamos from "../assets/imgs/add-claim.jpeg"
+import imgTipoReclamos from "../assets/imgs/img-areas2.jpg"
 
 const functionsButtons = [
   { title: "Ver reclamos", img: imgReclamos, to: "/lista-de-reclamos" },
@@ -17,6 +18,7 @@ const functionsButtons = [
   { title: "Calles", img: imgCalles, to: "/calles" },
   { title: "Barrios", img: imgBarrios, to: "/barrios" },
   { title: "Áreas", img: imgAreas, to: "/areas" },
+  { title: "Tipos de reclamos", img: imgTipoReclamos, to: "/tipos-de-reclamos" },
 ]
 
 export function Home() {
