@@ -122,15 +122,9 @@ export async function uploadImage(imagen, token) {
 }
 
 export async function submitClaim(claimData, token) {
-  const response = await axios.put(`${API_URL}/reclamo`, claimData, {
+  return await axios.put(`${API_URL}/reclamo`, claimData, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   })
-
-  if (response.status !== 200) {
-    throw new Error("Error al presentar el reclamo.")
-  }
-
-  return response
 }

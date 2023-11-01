@@ -34,6 +34,18 @@ import toast from "react-hot-toast"
 
 const API_URL = import.meta.env.VITE_API_URL
 
+const uploadImageAndSubmitClaim = async ({imagen, token, data}) => {
+  const imagenId = await uploadImage(imagen, token)
+
+  const claimDataWithFile = {
+    ...data,
+    imagenId
+  }
+
+  const response = await submitClaim(claimDataWithFile, token)
+  return response
+}
+
 export function AddClaim() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [categories, setCategories] = useState([])
@@ -41,6 +53,7 @@ export function AddClaim() {
   const [neighborhoods, setNeighborhoods] = useState([])
   const [fileError, setFileError] = useState(false)
   const [filteredStreets, setFilteredStreets] = useState([...streets])
+  const [error, setError] = useState(false)
 
   const imgRef = useRef(null)
 
@@ -80,7 +93,7 @@ export function AddClaim() {
     },
     enableReinitialize: true,
     onSubmit: async (values, { setSubmitting }) => {
-      toast("Cargando...")
+      setError(false)
       // subir la imagen, obtener su id y luego subir el reclamo
       const {
         persona_id,
@@ -90,6 +103,7 @@ export function AddClaim() {
         altura,
         barrio_id,
         coordenadas,
+        imagen
       } = values
 
       const alturaValida = altura.padStart(3, "0")
@@ -107,22 +121,24 @@ export function AddClaim() {
         }
 
         console.log(claimData)
-        if (!values.imagen_id) {
-          const imagen = await uploadImage(imagen, token)
-          setFieldValue("imagen_id", imagen)
-        }
 
-        const claimDataWithFile = {
-          ...claimData,
-          imagen_id: values.imagen_id,
-        }
+        // const response = await uploadImageAndSubmitClaim({imagen, token, data: claimData})
+        const response = await toast.promise(uploadImageAndSubmitClaim({imagen, token, data: claimData}), {
+          loading: "Creando reclamo...",
+          success: ({data}) => `Reclamo creado con éxito. Número de reclamo: ${data.id}`,
+          error: "Error al crear el reclamo.",
+        },
+        {
+          style: {
+            minWidth: '250px',
+          }
+        })
 
-        const response = await submitClaim(claimDataWithFile, token)
         console.log(response)
 
         // validate response
-        if (response.status !== 200) {
-          throw new Error("Error cargando los datos del post.")
+        if (response.status !== 201) {
+          throw new Error("Error al crear el reclamo")
         }
 
         // TODO: mostrar mensaje de éxito
@@ -131,8 +147,7 @@ export function AddClaim() {
         })
       } catch (error) {
         console.error(error)
-
-        throw new Error("Error cargando los datos del post.")
+        setError("Error al crear el reclamo")
       }
 
       //resetForm()
@@ -404,6 +419,8 @@ export function AddClaim() {
         ) : (
           ""
         )}
+
+        {error && <p className="text-sm text-red-500">{error}</p>}
 
         <Button
           type="submit"
