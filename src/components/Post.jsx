@@ -28,9 +28,8 @@ export function Post({ post }) {
     imagen,
     seguimiento,
     descripcion,
-    altura,
-    calle,
-    persona,
+    direccion,
+    nombrePersona,
     tipoReclamo,
   } = post
 
@@ -65,11 +64,9 @@ export function Post({ post }) {
             />
           ) : (
             <div className="flex flex-col">
-              <h3>Reclamo de: {persona.nombre}</h3>
+              <h3>Reclamo de: {nombrePersona}</h3>
               <p>{descripcion}</p>
-              <p className="text-sm text-gray-900">
-                {calle} {altura}
-              </p>
+              <p className="text-sm text-gray-900">{direccion}</p>
             </div>
           )}
         </CardBody>
@@ -121,9 +118,7 @@ export function Post({ post }) {
                   </span>
                 </p>
                 <p>Tipo de reclamo: {tipoReclamo}</p>
-                <p>
-                  Dirección: {calle} {altura}
-                </p>
+                <p>Dirección: {direccion}</p>
               </ModalBody>
               <ModalFooter>
                 <Button

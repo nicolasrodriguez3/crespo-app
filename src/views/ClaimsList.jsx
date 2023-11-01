@@ -1,15 +1,43 @@
 import { useState, useEffect } from "react"
 import { Post } from "../components/Post"
-import { CircularProgress } from "@nextui-org/react"
+import { CircularProgress, Select, SelectItem, Input } from "@nextui-org/react"
 import { useAuth } from "../hooks/useAuth"
 import { getClaims, getMyClaims } from "../helpers/api"
 import { WrapperUI } from "../components/WrapperUI"
+import { useMemo } from "react"
 
 export function ClaimsList({ all }) {
   const { token } = useAuth()
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+
+  // filtrar reclamos
+  const [searchClaimBy, setSearchClaimBy] = useState("descripcion")
+  const [filterClaimBy, setFilterClaimBy] = useState(false)
+
+  const [filteredClaims, setFilteredClaims] = useState("")
+  const isSearchFilter = Boolean(filteredClaims)
+
+  const filteredItems = useMemo(() => {
+    let filteredData = [...posts]
+
+    if (filterClaimBy) {
+      filteredData = filteredData.filter((post) => {
+        return post.seguimiento[0].estado === filterClaimBy
+      })
+    }
+
+    if (isSearchFilter) {
+      filteredData = filteredData.filter((post) => {
+        return post[searchClaimBy]
+          ?.toLowerCase()
+          .includes(filteredClaims.toLowerCase())
+      })
+    }
+
+    return filteredData
+  }, [posts, filteredClaims, isSearchFilter, searchClaimBy, filterClaimBy])
 
   useEffect(() => {
     setError(null)
@@ -26,12 +54,12 @@ export function ClaimsList({ all }) {
           const mappedPosts = response.data.map((post) => ({
             id: post.id,
             descripcion: post.descripcion,
-            altura: post.altura,
-            calle: post.calle.calle,
+            direccion: `${post.calle.calle} ${post.altura}`,
             tipoReclamo: post.tipoReclamo.tipo,
-            persona: post.persona,
+            nombrePersona: post.persona.nombre,
             imagen: post.imagen,
             seguimiento: post.seguimiento.estados,
+            creado: post.creada,
           }))
           setPosts(mappedPosts)
         } else {
@@ -83,8 +111,94 @@ export function ClaimsList({ all }) {
 
   return (
     <WrapperUI title={all ? "Todos los reclamos" : "Mis reclamos"}>
+      <section>
+        <p>Buscar</p>
+        <div className="flex gap-2 ">
+          <Select
+            label="Buscar por..."
+            defaultSelectedKeys={["descripcion"]}
+            onChange={(e) => {
+              setSearchClaimBy(e.target.value)
+              setFilteredClaims("")
+            }}
+          >
+            <SelectItem
+              key="descripcion"
+              value="descripcion"
+            >
+              Descripción
+            </SelectItem>
+            <SelectItem
+              key="direccion"
+              value="direccion"
+            >
+              Dirección
+            </SelectItem>
+            <SelectItem
+              key="tipoReclamo"
+              value="tipoReclamo"
+            >
+              Tipo de reclamo
+            </SelectItem>
+            <SelectItem
+              key="nombrePersona"
+              value="nombrePersona"
+            >
+              Persona
+            </SelectItem>
+          </Select>
+          <Input
+            type="text"
+            placeholder="Buscar reclamo"
+            onChange={(e) => {
+              setFilteredClaims(e.target.value)
+            }}
+            value={filteredClaims}
+          />
+        </div>
+      </section>
+      <section>
+        <div className="flex gap-2">
+          {/* // todo: agregar filtro por estado */}
+          <Select
+            label="Estado de reclamo"
+            defaultSelectedKeys={[""]}
+            onChange={(e) => {
+              setFilterClaimBy(e.target.value)
+            }}
+          >
+            <SelectItem
+              key=""
+              value=""
+            >
+              Todos
+            </SelectItem>
+            <SelectItem
+              key="INICIADO"
+              value="INICIADO"
+            >
+              Iniciado
+            </SelectItem>
+            <SelectItem
+              key="EN_CURSO"
+              value="EN_CURSO"
+            >
+              En curso
+            </SelectItem>
+            <SelectItem
+              key="RESUELTO"
+              value="RESUELTO"
+            >
+              Resuelto
+            </SelectItem>
+          </Select>
+        </div>
+      </section>
       <section className="flex flex-col gap-4">
-        {posts.map((post) => (
+        {filteredItems.length === 0 && (
+          <p className="text-center">No hay reclamos</p>
+        )}
+        {filteredItems.map((post) => (
           <Post
             post={post}
             key={post.id}
