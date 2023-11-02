@@ -49,7 +49,7 @@ export function Post({ post }) {
         <CardHeader className="flex-col items-start px-4 pb-0 pt-2">
           <p className="text-tiny font-bold">Reclamo #{id}</p>
           <small className="text-default-500">
-            Estado: {seguimiento[0].estado}
+            Estado: {seguimiento[0].estado.replace("_", " ")}
           </small>
           <h4 className="text-large font-bold">{tipoReclamo}</h4>
         </CardHeader>
@@ -113,7 +113,7 @@ export function Post({ post }) {
                 <p>
                   Reclamo presentado por:{" "}
                   <span>
-                    {persona.nombre}
+                    {nombrePersona}
                     {/* //todo agregar link al perfil de la persona */}
                   </span>
                 </p>

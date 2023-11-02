@@ -7,7 +7,7 @@ import { WrapperUI } from "../components/WrapperUI"
 import { useMemo } from "react"
 
 export function ClaimsList({ all }) {
-  const { token } = useAuth()
+  const { token, user } = useAuth()
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -111,89 +111,93 @@ export function ClaimsList({ all }) {
 
   return (
     <WrapperUI title={all ? "Todos los reclamos" : "Mis reclamos"}>
-      <section>
-        <p>Buscar</p>
-        <div className="flex gap-2 ">
-          <Select
-            label="Buscar por..."
-            defaultSelectedKeys={["descripcion"]}
-            onChange={(e) => {
-              setSearchClaimBy(e.target.value)
-              setFilteredClaims("")
-            }}
-          >
-            <SelectItem
-              key="descripcion"
-              value="descripcion"
-            >
-              Descripción
-            </SelectItem>
-            <SelectItem
-              key="direccion"
-              value="direccion"
-            >
-              Dirección
-            </SelectItem>
-            <SelectItem
-              key="tipoReclamo"
-              value="tipoReclamo"
-            >
-              Tipo de reclamo
-            </SelectItem>
-            <SelectItem
-              key="nombrePersona"
-              value="nombrePersona"
-            >
-              Persona
-            </SelectItem>
-          </Select>
-          <Input
-            type="text"
-            placeholder="Buscar reclamo"
-            onChange={(e) => {
-              setFilteredClaims(e.target.value)
-            }}
-            value={filteredClaims}
-          />
-        </div>
-      </section>
-      <section>
-        <div className="flex gap-2">
-          {/* // todo: agregar filtro por estado */}
-          <Select
-            label="Estado de reclamo"
-            defaultSelectedKeys={[""]}
-            onChange={(e) => {
-              setFilterClaimBy(e.target.value)
-            }}
-          >
-            <SelectItem
-              key=""
-              value=""
-            >
-              Todos
-            </SelectItem>
-            <SelectItem
-              key="INICIADO"
-              value="INICIADO"
-            >
-              Iniciado
-            </SelectItem>
-            <SelectItem
-              key="EN_CURSO"
-              value="EN_CURSO"
-            >
-              En curso
-            </SelectItem>
-            <SelectItem
-              key="RESUELTO"
-              value="RESUELTO"
-            >
-              Resuelto
-            </SelectItem>
-          </Select>
-        </div>
-      </section>
+      {user.roles.includes("EMPLEADO") && (
+        <>
+          <section>
+            <p>Buscar</p>
+            <div className="flex gap-2 ">
+              <Select
+                label="Buscar por..."
+                defaultSelectedKeys={["descripcion"]}
+                onChange={(e) => {
+                  setSearchClaimBy(e.target.value)
+                  setFilteredClaims("")
+                }}
+              >
+                <SelectItem
+                  key="descripcion"
+                  value="descripcion"
+                >
+                  Descripción
+                </SelectItem>
+                <SelectItem
+                  key="direccion"
+                  value="direccion"
+                >
+                  Dirección
+                </SelectItem>
+                <SelectItem
+                  key="tipoReclamo"
+                  value="tipoReclamo"
+                >
+                  Tipo de reclamo
+                </SelectItem>
+                <SelectItem
+                  key="nombrePersona"
+                  value="nombrePersona"
+                >
+                  Persona
+                </SelectItem>
+              </Select>
+              <Input
+                type="text"
+                placeholder="Buscar reclamo"
+                onChange={(e) => {
+                  setFilteredClaims(e.target.value)
+                }}
+                value={filteredClaims}
+              />
+            </div>
+          </section>
+          <section>
+            <div className="flex gap-2">
+              {/* // todo: agregar filtro por estado */}
+              <Select
+                label="Estado de reclamo"
+                defaultSelectedKeys={[""]}
+                onChange={(e) => {
+                  setFilterClaimBy(e.target.value)
+                }}
+              >
+                <SelectItem
+                  key=""
+                  value=""
+                >
+                  Todos
+                </SelectItem>
+                <SelectItem
+                  key="INICIADO"
+                  value="INICIADO"
+                >
+                  Iniciado
+                </SelectItem>
+                <SelectItem
+                  key="EN_CURSO"
+                  value="EN_CURSO"
+                >
+                  En curso
+                </SelectItem>
+                <SelectItem
+                  key="RESUELTO"
+                  value="RESUELTO"
+                >
+                  Resuelto
+                </SelectItem>
+              </Select>
+            </div>
+          </section>
+        </>
+      )}
       <section className="flex flex-col gap-4">
         {filteredItems.length === 0 && (
           <p className="text-center">No hay reclamos</p>
