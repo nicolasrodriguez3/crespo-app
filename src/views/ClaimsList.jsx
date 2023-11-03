@@ -1,12 +1,20 @@
 import { useState, useEffect } from "react"
 import { Post } from "../components/Post"
-import { CircularProgress, Select, SelectItem, Input } from "@nextui-org/react"
+import {
+  CircularProgress,
+  Select,
+  SelectItem,
+  Input,
+  Button,
+} from "@nextui-org/react"
 import { useAuth } from "../hooks/useAuth"
 import { getClaims, getMyClaims } from "../helpers/api"
 import { WrapperUI } from "../components/WrapperUI"
 import { useMemo } from "react"
+import { SortAscIcon } from "../assets/icons/SortAscIcon"
+import { SortDescIcon } from "../assets/icons/SortDescIcon"
 
-export function ClaimsList({ all }) {
+export function ClaimsList({ getAllPosts }) {
   const { token, user } = useAuth()
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
@@ -18,6 +26,7 @@ export function ClaimsList({ all }) {
 
   const [filteredClaims, setFilteredClaims] = useState("")
   const isSearchFilter = Boolean(filteredClaims)
+  const [isSorted, setIsSorted] = useState(true)
 
   const filteredItems = useMemo(() => {
     let filteredData = [...posts]
@@ -39,11 +48,28 @@ export function ClaimsList({ all }) {
     return filteredData
   }, [posts, filteredClaims, isSearchFilter, searchClaimBy, filterClaimBy])
 
+  // ordenar reclamos
+  const sortedItems = useMemo(() => {
+    let sortedData = [...filteredItems]
+
+    if (isSorted) {
+      sortedData = sortedData.sort((a, b) => {
+        return a.creado < b.creado ? 1 : -1
+      })
+    } else {
+      sortedData = sortedData.sort((a, b) => {
+        return a.creado > b.creado ? 1 : -1
+      })
+    }
+
+    return sortedData
+  }, [filteredItems, isSorted])
+
   useEffect(() => {
     setError(null)
     setLoading(true)
 
-    const fetchClaims = all ? getClaims : getMyClaims
+    const fetchClaims = getAllPosts ? getClaims : getMyClaims
 
     // obtener los posts
     const fetchData = async () => {
@@ -61,7 +87,7 @@ export function ClaimsList({ all }) {
             seguimiento: post.seguimiento.estados,
             creado: post.creada,
           }))
-          setPosts(mappedPosts)
+          setPosts(mappedPosts.reverse())
         } else {
           throw new Error("Error obteniendo los posts")
         }
@@ -74,7 +100,7 @@ export function ClaimsList({ all }) {
     }
 
     fetchData()
-  }, [token, all])
+  }, [token, getAllPosts])
 
   if (loading) {
     return (
@@ -110,11 +136,11 @@ export function ClaimsList({ all }) {
   }
 
   return (
-    <WrapperUI title={all ? "Todos los reclamos" : "Mis reclamos"}>
+    <WrapperUI title={getAllPosts ? "Todos los reclamos" : "Mis reclamos"}>
       {user.roles.includes("EMPLEADO") && (
         <>
           <section>
-            <p>Buscar</p>
+            <div className="mb-2">Filtros</div>
             <div className="flex gap-2 ">
               <Select
                 label="Buscar por..."
@@ -152,6 +178,7 @@ export function ClaimsList({ all }) {
               <Input
                 type="text"
                 placeholder="Buscar reclamo"
+                classNames={{ mainWrapper: "flex-row", inputWrapper: "h-auto" }}
                 onChange={(e) => {
                   setFilteredClaims(e.target.value)
                 }}
@@ -194,15 +221,25 @@ export function ClaimsList({ all }) {
                   Resuelto
                 </SelectItem>
               </Select>
+
+              <Button
+                className="h-auto w-16"
+                isIconOnly
+                variant="flat"
+                title="Ordenar por fecha"
+                onClick={() => setIsSorted(!isSorted)}
+              >
+                {!isSorted ? <SortAscIcon /> : <SortDescIcon />}
+              </Button>
             </div>
           </section>
         </>
       )}
       <section className="flex flex-col gap-4">
-        {filteredItems.length === 0 && (
+        {sortedItems.length === 0 && (
           <p className="text-center">No hay reclamos</p>
         )}
-        {filteredItems.map((post) => (
+        {sortedItems.map((post) => (
           <Post
             post={post}
             key={post.id}

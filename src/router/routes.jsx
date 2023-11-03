@@ -53,7 +53,7 @@ export const routes = createBrowserRouter([
       },
       {
         path: "/lista-de-reclamos",
-        element: <ClaimsList all={true} />,
+        element: <ClaimsList getAllClaims={true} />,
       },
       {
         path: "/tipos-de-reclamos",

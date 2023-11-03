@@ -84,31 +84,24 @@ export function Post({ post }) {
               <ModalBody>
                 <p>{descripcion}</p>
                 <div>
-                  <Accordion>
-                    <AccordionItem
-                      key="1"
-                      aria-label="Accordion 1"
-                      subtitle={seguimiento[0].descripcion}
-                      title={`Estado: ${seguimiento[0].estado.replace(
-                        "_",
-                        " ",
-                      )}`}
-                    >
-                      {seguimiento.map(({ estado, id, descripcion }, i) => {
-                        if (i === 0) return
-                        return (
-                          <div key={id}>
-                            <p className="font-bold">
-                              Estado: {estado.replace("_", " ")}
-                            </p>
-                            {descripcion && (
-                              <p className="">Descripción: {descripcion}</p>
-                            )}
-                          </div>
-                        )
-                      })}
-                    </AccordionItem>
-                  </Accordion>
+                  <p>Seguimiento</p>
+                  {seguimiento.map(({ estado, id, descripcion, creada }) => {
+                    return (
+                      <div key={id}>
+                        <p className="font-bold">
+                          Estado: {estado.replace("_", " ")}
+                        </p>
+                        {descripcion && (
+                          <p className="">Descripción: {descripcion}</p>
+                        )}
+                        {creada && (
+                          <p className="text-sm text-gray-900">
+                            Fecha: {creada}
+                          </p>
+                        )}
+                      </div>
+                    )
+                  })}
                 </div>
                 <p>
                   Reclamo presentado por:{" "}
