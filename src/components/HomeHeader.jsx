@@ -3,13 +3,13 @@ import logo from "../assets/imgs/logo-full.png"
 import Wave from "../assets/imgs/Wave"
 import { GoBackIcon } from "../assets/icons/GoBackIcon"
 
-export function HomeHeader({ title }) {
+export function HomeHeader({ title, backTo }) {
   return (
     <header className="relative w-full">
       <div className="relative z-10 flex h-6 items-center justify-center gap-2 bg-gold px-4 pt-10">
         {title ? (
           <div className="flex w-full max-w-sm items-center gap-3 pt-4">
-            <Link to="/">
+            <Link to={backTo ? backTo : "/"}>
               <GoBackIcon />
             </Link>
             <h2 className="w-full max-w-sm text-xl font-bold  text-gray-900">

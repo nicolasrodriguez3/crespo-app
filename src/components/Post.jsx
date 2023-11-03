@@ -12,16 +12,17 @@ import {
   ModalFooter,
   Button,
   useDisclosure,
-  Accordion,
-  AccordionItem,
 } from "@nextui-org/react"
 
 import { useEffect } from "react"
+import { useAuth } from "../hooks/useAuth"
+import { Link } from "react-router-dom"
 
 const API_IMAGES_URL = import.meta.env.VITE_API_IMAGES_URL
 
 export function Post({ post }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
+  const { user } = useAuth()
 
   const {
     id,
@@ -44,7 +45,13 @@ export function Post({ post }) {
       <Card
         className="w-full py-4"
         isPressable
-        onClick={() => handleOpen()}
+        {...(user.roles.includes("EMPLEADO") && {
+          as: Link,
+          to: `/reclamos/${id}`,
+        })}
+        {...(!user.roles.includes("EMPLEADO") && {
+          onClick: () => handleOpen(),
+        })}
       >
         <CardHeader className="flex-col items-start px-4 pb-0 pt-2">
           <p className="text-tiny font-bold">Reclamo #{id}</p>

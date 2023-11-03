@@ -1,6 +1,7 @@
 import { Toaster } from "react-hot-toast"
 import { Navbar } from "./components/Navbar"
 import { Outlet } from "react-router-dom"
+import ClaimsContextProvider from "./context/ClaimsContext"
 
 function App() {
   return (
@@ -8,7 +9,9 @@ function App() {
       <div>
         <Toaster position="bottom-right" />
       </div>
-      <Outlet />
+      <ClaimsContextProvider>
+        <Outlet />
+      </ClaimsContextProvider>
       <Navbar />
     </>
   )

@@ -16,6 +16,7 @@ import { NeighborhoodsList } from "../views/NeighborhoodsList"
 import { RolesList } from "../views/RolesList"
 import { AreasList } from "../views/AreasList"
 import { ClaimsTypes } from "../views/ClaimsTypes"
+import Claim from "../views/Claim"
 
 export const routes = createBrowserRouter([
   {
@@ -66,6 +67,10 @@ export const routes = createBrowserRouter([
       {
         path: "/reclamos",
         element: <ClaimsList />,
+      },
+      {
+        path: "/reclamos/:id",
+        element: <Claim />,
       },
       {
         path: "/profile",
