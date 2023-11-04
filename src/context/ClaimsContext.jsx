@@ -116,6 +116,7 @@ const ClaimsContextProvider = ({ children }) => {
     handleSearchBy,
     handleSearch,
     filteredClaims,
+    getAllClaims,
     setGetAllClaims,
     fetchData,
   }
