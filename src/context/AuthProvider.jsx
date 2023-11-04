@@ -85,8 +85,12 @@ export function AuthProvider({ children }) {
       setLoading(false)
       if (error.response?.data?.error === "Bad credentials") {
         throw new Error("Usuario o contraseña incorrectos.")
-      } else if (error.message === "Network Error") {
+      } 
+      if (error.message === "Network Error") {
         throw new Error("Error de conexión. Verifique su conexión a internet.")
+      }
+      if(error.response.status === 404){
+        throw new Error(error.response.data.error)
       }
       throw new Error("Error en el servidor. Intente más tarde.")
     }
