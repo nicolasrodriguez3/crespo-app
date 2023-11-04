@@ -37,13 +37,13 @@ export function Login() {
         await login(values.email, values.password)
 
         // Si el inicio de sesión tiene éxito redirigir al usuario a la página de inicio
-        setSubmitting(false)
         navigate("/")
       } catch (error) {
         // En caso de error durante el inicio de sesión
         console.error("Error durante el inicio de sesión:", error)
-        setSubmitting(false)
         setError(error)
+      } finally {
+        setSubmitting(false)
       }
     },
   })

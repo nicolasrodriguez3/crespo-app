@@ -7,6 +7,8 @@ import { EyeFilledIcon } from "../assets/icons/EyeFilledIcon"
 import { EyeSlashFilledIcon } from "../assets/icons/EyeSlashFilledIcon"
 import wave from "../assets/imgs/wave-top.svg"
 import { useAuth } from "../hooks/useAuth"
+import toast from "react-hot-toast"
+import { Toaster } from "react-hot-toast"
 
 export function Register() {
   const { signup } = useAuth()
@@ -52,6 +54,8 @@ export function Register() {
       console.log(values)
       try {
         await signup({ values })
+        setError("¡Usuario registrado correctamente! Por favor verifique su correo electrónico.")
+        toast.success("Usuario registrado correctamente, por favor verifique su correo electrónico.")
       } catch (error) {
         console.log(error)
         setError(error.message)
@@ -72,6 +76,8 @@ export function Register() {
   } = formik
 
   return (
+    <>
+    <Toaster position="top-right" />
     <main className="flex min-h-screen w-full flex-col items-center bg-gray-50">
       <div className="flex min-h-[150px]  w-full items-center justify-center bg-gradient-to-t from-[#ffcc00] to-gold pt-8 ">
         <img
@@ -228,5 +234,6 @@ export function Register() {
         </p>
       </section>
     </main>
+    </>
   )
 }
