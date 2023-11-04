@@ -20,9 +20,10 @@ import { Link } from "react-router-dom"
 
 const API_IMAGES_URL = import.meta.env.VITE_API_IMAGES_URL
 
-export function Post({ post }) {
+export function Post({ post, handleOpen }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const { user } = useAuth()
+  const isEmployee = user.roles.includes("EMPLEADO")
 
   const {
     id,
@@ -34,23 +35,17 @@ export function Post({ post }) {
     tipoReclamo,
   } = post
 
-  console.log(post)
-
-  const handleOpen = () => {
-    if (!isOpen) onOpen()
-  }
-
   return (
     <>
       <Card
         className="w-full py-4"
         isPressable
-        {...(user.roles.includes("EMPLEADO") && {
+        {...(isEmployee && {
           as: Link,
           to: `/reclamos/${id}`,
         })}
-        {...(!user.roles.includes("EMPLEADO") && {
-          onClick: () => handleOpen(),
+        {...(!isEmployee && {
+          onClick: () => handleOpen(id),
         })}
       >
         <CardHeader className="flex-col items-start px-4 pb-0 pt-2">
@@ -64,81 +59,21 @@ export function Post({ post }) {
         <CardBody className="overflow-visible py-2">
           {imagen !== null ? (
             <Image
-              alt="Card background"
+              alt="Imagen del reclamo"
               className="rounded-xl object-cover"
               src={`${API_IMAGES_URL}${imagen.path}/${imagen.nombre}`}
               width="100%"
             />
           ) : (
             <div className="flex flex-col">
-              <h3>Reclamo de: {nombrePersona}</h3>
+              { isEmployee && <h3>Reclamo de: {nombrePersona}</h3>}
               <p>{descripcion}</p>
               <p className="text-sm text-gray-900">{direccion}</p>
             </div>
           )}
         </CardBody>
       </Card>
-      <Modal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                Seguimiento reclamo #{id}
-              </ModalHeader>
-              <ModalBody>
-                <p>{descripcion}</p>
-                <div>
-                  <p>Seguimiento</p>
-                  {seguimiento.map(({ estado, id, descripcion, creada }) => {
-                    return (
-                      <div key={id}>
-                        <p className="font-bold">
-                          Estado: {estado.replace("_", " ")}
-                        </p>
-                        {descripcion && (
-                          <p className="">Descripción: {descripcion}</p>
-                        )}
-                        {creada && (
-                          <p className="text-sm text-gray-900">
-                            Fecha: {creada}
-                          </p>
-                        )}
-                      </div>
-                    )
-                  })}
-                </div>
-                <p>
-                  Reclamo presentado por:{" "}
-                  <span>
-                    {nombrePersona}
-                    {/* //todo agregar link al perfil de la persona */}
-                  </span>
-                </p>
-                <p>Tipo de reclamo: {tipoReclamo}</p>
-                <p>Dirección: {direccion}</p>
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  color="danger"
-                  variant="light"
-                  onPress={onClose}
-                >
-                  Close
-                </Button>
-                <Button
-                  color="primary"
-                  onPress={onClose}
-                >
-                  Action
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+      
     </>
   )
 }

@@ -4,7 +4,13 @@ import {
   Select,
   SelectItem,
   Input,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
   Button,
+  useDisclosure,
 } from "@nextui-org/react"
 import { useAuth } from "../hooks/useAuth"
 import { WrapperUI } from "../components/WrapperUI"
@@ -12,8 +18,10 @@ import { SortAscIcon } from "../assets/icons/SortAscIcon"
 import { SortDescIcon } from "../assets/icons/SortDescIcon"
 import { useClaimContext } from "../hooks/useClaimsContext"
 import { useEffect } from "react"
+import { useState } from "react"
 
-export function ClaimsList({ getAllClaims }) {
+
+export function ClaimsList() {
   const { user } = useAuth()
   const {
     claims,
@@ -26,8 +34,25 @@ export function ClaimsList({ getAllClaims }) {
     handleSort,
     isSorted,
     sortedItems,
+    getAllClaims,
     fetchData,
   } = useClaimContext()
+
+  const { isOpen, onOpen, onOpenChange } = useDisclosure()
+  const [id, setId] = useState(null)
+
+  const {
+    descripcion,
+    seguimiento,
+    direccion,
+    nombrePersona,
+    tipoReclamo,
+  } = claims.find((claim) => claim.id === id) || {}
+
+  const handleOpen = (id) => {
+    setId(id)
+    if (!isOpen) onOpen()
+  }
 
   useEffect(() => {
     fetchData(getAllClaims)
@@ -61,7 +86,9 @@ export function ClaimsList({ getAllClaims }) {
   if (claims.length === 0) {
     return (
       <WrapperUI>
-        <p className="py-4 text-center">No hay reclamos</p>
+        <p className="py-4 text-center">
+          No tienes reclamos realizados.
+        </p>
       </WrapperUI>
     )
   }
@@ -168,15 +195,77 @@ export function ClaimsList({ getAllClaims }) {
 
       <section className="flex flex-col gap-4">
         {sortedItems.length === 0 && (
-          <p className="text-center">No hay reclamos</p>
+          <p className="text-center">No hay reclamos.</p>
         )}
         {sortedItems.map((post) => (
           <Post
-            post={post}
-            key={post.id}
+          post={post}
+          key={post.id}
+          handleOpen={handleOpen}
           />
-        ))}
+          ))}
       </section>
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Seguimiento reclamo #{id}
+              </ModalHeader>
+              <ModalBody>
+                <p>{descripcion}</p>
+                <div>
+                  <p>Seguimiento</p>
+                  {seguimiento.map(({ estado, id, descripcion, creada }) => {
+                    return (
+                      <div key={id}>
+                        <p className="font-bold">
+                          Estado: {estado.replace("_", " ")}
+                        </p>
+                        {descripcion && (
+                          <p className="">Descripción: {descripcion}</p>
+                        )}
+                        {creada && (
+                          <p className="text-sm text-gray-900">
+                            Fecha: {creada}
+                          </p>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+                <p>
+                  Reclamo presentado por:{" "}
+                  <span>
+                    {nombrePersona}
+                    {/* //todo agregar link al perfil de la persona */}
+                  </span>
+                </p>
+                <p>Tipo de reclamo: {tipoReclamo}</p>
+                <p>Dirección: {direccion}</p>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  color="danger"
+                  variant="light"
+                  onPress={onClose}
+                >
+                  Close
+                </Button>
+                <Button
+                  color="primary"
+                  onPress={onClose}
+                >
+                  Action
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </WrapperUI>
   )
 }
