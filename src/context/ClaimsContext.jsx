@@ -10,7 +10,6 @@ const ClaimsContextProvider = ({ children }) => {
   const [claims, setClaims] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [getAllClaims, setGetAllClaims] = useState(false)
 
   // filtrar reclamos
   const [searchClaimBy, setSearchClaimBy] = useState("descripcion")
@@ -117,8 +116,6 @@ const ClaimsContextProvider = ({ children }) => {
     handleSearchBy,
     handleSearch,
     filteredClaims,
-    getAllClaims,
-    setGetAllClaims,
     fetchData,
   }
 

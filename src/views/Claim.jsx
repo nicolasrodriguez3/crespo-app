@@ -88,7 +88,36 @@ function Claim() {
       descripcion: "",
     },
     onSubmit: (values) => {
+      //! no funciona correctamente: no se actualiza el estado del reclamo
       console.log(values)
+      axios
+        .post(
+          `${API_URL}/seguimiento/agregar-estado-reclamo/${id}`,
+          {
+            estado: values.estado,
+            descripcion: values.descripcion,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        )
+        .then((res) => {
+          console.log(res)
+          setClaim((prev) => ({
+            ...prev,
+            seguimiento: [
+              {
+                estado: values.estado,
+                descripcion: values.descripcion,
+                creada: new Date().toLocaleString(),
+              },
+              ...prev.seguimiento,
+            ],
+          }))
+        })
+        .catch((err) => console.log(err))
     },
   })
 

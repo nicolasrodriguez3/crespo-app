@@ -21,7 +21,7 @@ import { useEffect } from "react"
 import { useState } from "react"
 
 
-export function ClaimsList() {
+export function ClaimsList({ getAllClaims}) {
   const { user } = useAuth()
   const {
     claims,
@@ -34,7 +34,6 @@ export function ClaimsList() {
     handleSort,
     isSorted,
     sortedItems,
-    getAllClaims,
     fetchData,
   } = useClaimContext()
 
