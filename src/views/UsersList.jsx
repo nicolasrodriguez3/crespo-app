@@ -3,6 +3,7 @@ import { useState, useEffect } from "react"
 import { useAuth } from "../hooks/useAuth"
 import { MyTable } from "../components/MyTable"
 import { WrapperUI } from "../components/WrapperUI"
+import toast from "react-hot-toast"
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -29,8 +30,10 @@ export function UsersList() {
           return {
             id: u.id,
             data: u.nombre,
+            ...u
           }
         })
+
         setUsers(dataParsed)
         setLoadData(false)
         console.log(res)
@@ -49,19 +52,21 @@ export function UsersList() {
       .then((res) => {
         console.log(res)
         setUsers((prev) => prev.filter((u) => u.id !== id))
+        toast.success("Usuario eliminado")
       })
-      .catch((err) => console.log(err))
+      .catch((err) => {console.log(err)
+        toast.error("Error al eliminar usuario")})
   }
 
   return (
     <WrapperUI title="Lista de usuarios">
-      <h2 className="font-bold">Users List</h2>
       <MyTable
         data={users}
         loading={loadData}
         title="usuario"
         titlePlural="usuarios"
         withDeleted={showDeleted}
+        handleDelete={handleDelete}
       />
     </WrapperUI>
   )

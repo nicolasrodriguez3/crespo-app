@@ -210,7 +210,7 @@ export function MyTable({
             {items.map((item) => (
               <TableRow key={item.id}>
                 {/* <TableCell>{item.id}</TableCell> */}
-                <TableCell>{item.data}</TableCell>
+                <TableCell>{item.deleted && 'del:'}{item.data}</TableCell>
                 <TableCell className="text-end">
                   <Dropdown>
                     <DropdownTrigger>
