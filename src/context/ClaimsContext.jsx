@@ -43,14 +43,14 @@ const ClaimsContextProvider = ({ children }) => {
   // ordenar reclamos
   const sortedItems = useMemo(() => {
     let sortedData = [...filteredItems]
-
+    
     if (isSorted) {
       sortedData = sortedData.sort((a, b) => {
-        return a.creado < b.creado ? 1 : -1
+        return a.id - b.id
       })
     } else {
       sortedData = sortedData.sort((a, b) => {
-        return a.creado > b.creado ? 1 : -1
+        return b.id - a.id
       })
     }
 
@@ -71,9 +71,10 @@ const ClaimsContextProvider = ({ children }) => {
           nombrePersona: post.persona.nombre,
           imagen: post.imagen,
           seguimiento: post.seguimiento.estados,
-          creado: post.creada,
+          creado: new Date(post.creada).toLocaleDateString(),
         }))
-        setClaims(mappedPosts.reverse())
+        
+        setClaims(mappedPosts)
       } else {
         throw new Error("Error obteniendo los posts")
       }

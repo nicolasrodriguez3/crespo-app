@@ -49,31 +49,19 @@ export function Post({ post, handleOpen }) {
         })}
       >
         <CardHeader className="flex-col items-start px-4 pb-0 pt-2">
-          <p className="text-tiny font-bold">Reclamo #{id}</p>
-          <small className="text-default-500">
-            Estado: {seguimiento[0].estado.replace("_", " ")}
-          </small>
+          <p className="text-tiny font-bold">
+            Reclamo #{id} - {post.creado}
+          </p>
           <h4 className="text-large font-bold">{tipoReclamo}</h4>
         </CardHeader>
         <Divider />
         <CardBody className="overflow-visible py-2">
-          {imagen !== null ? (
-            <Image
-              alt="Imagen del reclamo"
-              className="rounded-xl object-cover"
-              src={`${API_IMAGES_URL}${imagen.path}/${imagen.nombre}`}
-              width="100%"
-            />
-          ) : (
-            <div className="flex flex-col">
-              { isEmployee && <h3>Reclamo de: {nombrePersona}</h3>}
-              <p>{descripcion}</p>
-              <p className="text-sm text-gray-900">{direccion}</p>
-            </div>
-          )}
+          <p className="text-default-500">
+            Estado: {seguimiento[0].estado.replace("_", " ")} - {seguimiento[0].creada}
+          </p>
+          
         </CardBody>
       </Card>
-      
     </>
   )
 }
