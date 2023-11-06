@@ -8,7 +8,6 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      manifestFilename: "manifest.webmanifest",
       includeAssets: [
         "favicon.ico",
         "robots.txt",
