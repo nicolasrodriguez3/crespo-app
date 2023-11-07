@@ -20,8 +20,7 @@ import { useClaimContext } from "../hooks/useClaimsContext"
 import { useEffect } from "react"
 import { useState } from "react"
 
-
-export function ClaimsList({ getAllClaims}) {
+export function ClaimsList({ getAllClaims }) {
   const { user } = useAuth()
   const {
     claims,
@@ -40,13 +39,8 @@ export function ClaimsList({ getAllClaims}) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [id, setId] = useState(null)
 
-  const {
-    descripcion,
-    seguimiento,
-    direccion,
-    nombrePersona,
-    tipoReclamo,
-  } = claims.find((claim) => claim.id === id) || {}
+  const { descripcion, seguimiento, direccion, nombrePersona, tipoReclamo } =
+    claims.find((claim) => claim.id === id) || {}
 
   const handleOpen = (id) => {
     setId(id)
@@ -85,9 +79,7 @@ export function ClaimsList({ getAllClaims}) {
   if (claims.length === 0) {
     return (
       <WrapperUI>
-        <p className="py-4 text-center">
-          No tienes reclamos realizados.
-        </p>
+        <p className="py-4 text-center">No tienes reclamos realizados.</p>
       </WrapperUI>
     )
   }
@@ -198,11 +190,11 @@ export function ClaimsList({ getAllClaims}) {
         )}
         {sortedItems.map((post) => (
           <Post
-          post={post}
-          key={post.id}
-          handleOpen={handleOpen}
+            post={post}
+            key={post.id}
+            handleOpen={handleOpen}
           />
-          ))}
+        ))}
       </section>
       <Modal
         isOpen={isOpen}
@@ -217,32 +209,33 @@ export function ClaimsList({ getAllClaims}) {
               <ModalBody>
                 <p>{descripcion}</p>
                 <div>
-                  <p>Seguimiento</p>
-                  {seguimiento.map(({ estado, id, descripcion, creada }) => {
-                    return (
-                      <div key={id}>
-                        <p className="font-bold">
-                          Estado: {estado.replace("_", " ")}
+                  <p className="mb-2 font-bold">Seguimiento</p>
+                  <ol className="relative flex flex-col gap-4 border-l border-gray-200 pb-2">
+                    {seguimiento.map((estado) => (
+                      <li
+                        key={estado.id}
+                        className="ml-4"
+                      >
+                        <div className="absolute -left-1.5 mt-1.5 h-3 w-3 rounded-full border border-white bg-gray-200"></div>
+
+                        <h4 className="text-sm font-semibold leading-none text-gray-900">
+                          {estado.estado.replace("_", " ")}
+                        </h4>
+                        <time
+                          title="Fecha de creación"
+                          className="text-xs font-normal leading-none text-gray-400"
+                        >
+                          {estado.creada
+                            ? new Date(estado.creada).toLocaleString()
+                            : ""}
+                        </time>
+                        <p className="text-xs font-normal text-gray-600">
+                          {estado.descripcion}
                         </p>
-                        {descripcion && (
-                          <p className="">Descripción: {descripcion}</p>
-                        )}
-                        {creada && (
-                          <p className="text-sm text-gray-900">
-                            Fecha: {creada}
-                          </p>
-                        )}
-                      </div>
-                    )
-                  })}
+                      </li>
+                    ))}
+                  </ol>
                 </div>
-                <p>
-                  Reclamo presentado por:{" "}
-                  <span>
-                    {nombrePersona}
-                    {/* //todo agregar link al perfil de la persona */}
-                  </span>
-                </p>
                 <p>Tipo de reclamo: {tipoReclamo}</p>
                 <p>Dirección: {direccion}</p>
               </ModalBody>

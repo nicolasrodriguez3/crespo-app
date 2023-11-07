@@ -11,27 +11,9 @@ import {
   Button,
 } from "@nextui-org/react"
 import { useFormik } from "formik"
+import { claimStatus } from "../constants/claimStatus"
 
 const API_URL = import.meta.env.VITE_API_URL
-
-const claimStatus = [
-  {
-    status: "EN_CURSO",
-    label: "En curso",
-  },
-  {
-    status: "RESUELTO",
-    label: "Resuelto",
-  },
-  {
-    status: "PASE_SECTOR",
-    label: "Pase de sector",
-  },
-  {
-    status: "RECHAZADO",
-    label: "Rechazado",
-  },
-]
 
 function Claim() {
   const { token, user } = useAuth()

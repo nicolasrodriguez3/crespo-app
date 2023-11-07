@@ -18,11 +18,14 @@ const functionsButtons = [
   { title: "Calles", img: imgCalles, to: "/calles" },
   { title: "Barrios", img: imgBarrios, to: "/barrios" },
   { title: "Áreas", img: imgAreas, to: "/areas" },
-  { title: "Tipos de reclamos", img: imgTipoReclamos, to: "/tipos-de-reclamos" },
+  {
+    title: "Tipos de reclamos",
+    img: imgTipoReclamos,
+    to: "/tipos-de-reclamos",
+  },
 ]
 
 export function Home() {
-  const navigate = useNavigate()
   const { user } = useAuth()
   const name = user?.nombre.split(" ")[0] || "usuario"
 
@@ -72,12 +75,6 @@ export function Home() {
               Tu rol es de capataz, por lo que puedes acceder a la sección de
               administración.
             </p>
-            <button
-              className="rounded-md bg-gold px-4 py-2 text-white"
-              onClick={() => navigate("/admin")}
-            >
-              Ir a la sección de administración
-            </button>
           </div>
         </div>
       </WrapperUI>
@@ -121,18 +118,20 @@ export function Home() {
           </CardBody>
           <CardFooter className="justify-between text-small">
             <b>Agregar reclamo</b>
-            <p className="text-default-500"></p>
           </CardFooter>
         </Card>
 
         <Button
           as={Link}
           to="/reclamos"
+          color="default"
           variant="bordered"
-          className="rounded-md border-gold"
+          className="rounded-md border-gold font-semibold"
         >
           Ver mis reclamos
         </Button>
+
+        {/* Agregar botón para instalar la app */}
       </div>
     </WrapperUI>
   )

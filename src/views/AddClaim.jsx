@@ -15,9 +15,7 @@ import {
 } from "@nextui-org/react"
 import { useFormik } from "formik"
 import * as Yup from "yup"
-import { Navbar } from "../components/Navbar"
 import { CameraIcon } from "../assets/icons/CameraIcon"
-import axios from "axios"
 import { useAuth } from "../hooks/useAuth"
 import { useState, useEffect, useRef } from "react"
 import {
@@ -32,14 +30,12 @@ import { GoogleMaps } from "../components/GoogleMaps"
 import { WrapperUI } from "../components/WrapperUI"
 import toast from "react-hot-toast"
 
-const API_URL = import.meta.env.VITE_API_URL
-
-const uploadImageAndSubmitClaim = async ({imagen, token, data}) => {
+const uploadImageAndSubmitClaim = async ({ imagen, token, data }) => {
   const imagenId = await uploadImage(imagen, token)
 
   const claimDataWithFile = {
     ...data,
-    imagenId
+    imagenId,
   }
 
   const response = await submitClaim(claimDataWithFile, token)
@@ -103,7 +99,7 @@ export function AddClaim() {
         altura,
         barrio_id,
         coordenadas,
-        imagen
+        imagen,
       } = values
 
       const alturaValida = altura.padStart(3, "0")
@@ -123,16 +119,20 @@ export function AddClaim() {
         console.log(claimData)
 
         // const response = await uploadImageAndSubmitClaim({imagen, token, data: claimData})
-        const response = await toast.promise(uploadImageAndSubmitClaim({imagen, token, data: claimData}), {
-          loading: "Creando reclamo...",
-          success: ({data}) => `Reclamo creado con éxito. Número de reclamo: ${data.id}`,
-          error: "Error al crear el reclamo.",
-        },
-        {
-          style: {
-            minWidth: '250px',
-          }
-        })
+        const response = await toast.promise(
+          uploadImageAndSubmitClaim({ imagen, token, data: claimData }),
+          {
+            loading: "Creando reclamo...",
+            success: ({ data }) =>
+              `Reclamo creado con éxito. Número de reclamo: ${data.id}`,
+            error: "Error al crear el reclamo.",
+          },
+          {
+            style: {
+              minWidth: "250px",
+            },
+          },
+        )
 
         console.log(response)
 
@@ -424,7 +424,7 @@ export function AddClaim() {
 
         <Button
           type="submit"
-          className="bg-gold"
+          className="bg-gold font-semibold"
           isLoading={isSubmitting}
           spinner={
             <svg

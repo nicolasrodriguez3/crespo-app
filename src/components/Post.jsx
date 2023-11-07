@@ -17,6 +17,7 @@ import {
 import { useEffect } from "react"
 import { useAuth } from "../hooks/useAuth"
 import { Link } from "react-router-dom"
+import { CardFooter } from "@nextui-org/react"
 
 const API_IMAGES_URL = import.meta.env.VITE_API_IMAGES_URL
 
@@ -38,7 +39,7 @@ export function Post({ post, handleOpen }) {
   return (
     <>
       <Card
-        className="w-full py-4"
+        className="w-full py-3"
         isPressable
         {...(isEmployee && {
           as: Link,
@@ -48,19 +49,27 @@ export function Post({ post, handleOpen }) {
           onClick: () => handleOpen(id),
         })}
       >
-        <CardHeader className="flex-col items-start px-4 pb-0 pt-2">
-          <p className="text-tiny font-bold">
+        <CardHeader className="flex-col items-start px-4 py-2">
+          <p className="text-sm font-bold">
             Reclamo #{id} - {post.creado}
           </p>
           <h4 className="text-large font-bold">{tipoReclamo}</h4>
         </CardHeader>
         <Divider />
-        <CardBody className="overflow-visible py-2">
-          <p className="text-default-500">
-            Estado: {seguimiento[0].estado.replace("_", " ")} - {seguimiento[0].creada}
+        <CardBody className="px-3 pt-2">
+          <p className="">
+            {descripcion.length > 100
+              ? `${descripcion.slice(0, 100)}...`
+              : descripcion}
           </p>
-          
         </CardBody>
+        <CardFooter className="flex justify-between">
+          <p className="text-default-500">
+            Estado: {seguimiento[0].estado.replace("_", " ")}
+            {seguimiento[0].creada && ` - ${seguimiento[0].creada}`}
+          </p>
+          <p className="text-sm">Ver mas info</p>
+        </CardFooter>
       </Card>
     </>
   )
