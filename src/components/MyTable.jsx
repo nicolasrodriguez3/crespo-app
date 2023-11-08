@@ -33,6 +33,7 @@ export function MyTable({
   titlePlural,
   data,
   handleDelete,
+  handleRestore,
   withDeleted,
   loading,
 }) {
@@ -208,9 +209,12 @@ export function MyTable({
             isLoading={loading}
           >
             {items.map((item) => (
-              <TableRow key={item.id}>
+              <TableRow
+                key={item.id}
+                className={item.deleted ? "text-red-500" : ""}
+              >
                 {/* <TableCell>{item.id}</TableCell> */}
-                <TableCell>{item.deleted && 'del:'}{item.data}</TableCell>
+                <TableCell>{item.data}</TableCell>
                 <TableCell className="text-end">
                   <Dropdown>
                     <DropdownTrigger>
@@ -223,15 +227,27 @@ export function MyTable({
                       </Button>
                     </DropdownTrigger>
                     <DropdownMenu aria-label="Acciones">
-                      <DropdownItem
-                        key="delete"
-                        className="text-danger"
-                        textValue="Eliminar"
-                        color="danger"
-                        onPress={() => handleModalOpen(item)} // abrir modal
-                      >
-                        Eliminar {title}
-                      </DropdownItem>
+                      {item.deleted ? (
+                        <DropdownItem
+                          key="restore"
+                          className="text-success"
+                          textValue="Restaurar"
+                          color="success"
+                          onPress={() => handleRestore(item.id)}
+                        >
+                          Restaurar {title}
+                        </DropdownItem>
+                      ) : (
+                        <DropdownItem
+                          key="delete"
+                          className="text-danger"
+                          textValue="Eliminar"
+                          color="danger"
+                          onPress={() => handleModalOpen(item)} // abrir modal
+                        >
+                          Eliminar {title}
+                        </DropdownItem>
+                      )}
                     </DropdownMenu>
                   </Dropdown>
                 </TableCell>

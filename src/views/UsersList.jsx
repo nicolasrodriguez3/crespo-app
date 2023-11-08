@@ -14,29 +14,50 @@ export function UsersList() {
   const [loadData, setLoadData] = useState(false)
 
   useEffect(() => {
-    const url = withDeleted
-      ? `${API_URL}/usuario/buscar-todas-con-eliminadas`
-      : `${API_URL}/usuario/buscar-todas`
-
+    if (withDeleted) return
     setLoadData(true)
 
     axios
-      .get(url, {
+      .get(`${API_URL}/usuario/buscar-todas`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
         //parsear data
-        const dataParsed = res.data.map((u) => {
+        const dataParsed = res.data.map((user) => {
           return {
-            id: u.id,
-            data: u.nombre,
-            ...u
+            id: user.id,
+            data: user.nombre,
+            ...user,
           }
         })
 
         setUsers(dataParsed)
         setLoadData(false)
         console.log(res)
+      })
+  }, [token, withDeleted])
+
+  useEffect(() => {
+    if (!withDeleted) return
+    setLoadData(true)
+
+    axios
+      .get(`${API_URL}/usuario/buscar-todas-con-eliminadas`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        const idsActive = users.map((user) => user.id)
+        const deletedUsers = res.data.map((user) => {
+          return {
+            deleted: !idsActive.includes(user.id),
+            id: user.id,
+            data: user.nombre,
+            ...user,
+          }
+        })
+
+        setUsers(deletedUsers)
+        setLoadData(false)
       })
   }, [token, withDeleted])
 
@@ -51,11 +72,51 @@ export function UsersList() {
       })
       .then((res) => {
         console.log(res)
-        setUsers((prev) => prev.filter((u) => u.id !== id))
+        if (!withDeleted) {
+          setUsers((prev) => prev.filter((u) => u.id !== id))
+        } else {
+          setUsers((prev) =>
+            prev.map((u) => {
+              if (u.id === id) {
+                return { ...u, deleted: true }
+              }
+              return u
+            }),
+          )
+        }
         toast.success("Usuario eliminado")
       })
-      .catch((err) => {console.log(err)
-        toast.error("Error al eliminar usuario")})
+      .catch((err) => {
+        console.log(err)
+        toast.error("Error al eliminar usuario")
+      })
+  }
+
+  const handleRestore = (id) => {
+    axios
+      .post(
+        `${API_URL}/usuario/reciclar/${id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      )
+      .then((res) => {
+        console.log(res)
+        setUsers((prev) =>
+          prev.map((u) => {
+            if (u.id === id) {
+              return { ...u, deleted: false }
+            }
+            return u
+          }),
+        )
+        toast.success("Usuario restaurado")
+      })
+      .catch((err) => {
+        console.log(err)
+        toast.error("Error al restaurar usuario")
+      })
   }
 
   return (
@@ -67,6 +128,7 @@ export function UsersList() {
         titlePlural="usuarios"
         withDeleted={showDeleted}
         handleDelete={handleDelete}
+        handleRestore={handleRestore}
       />
     </WrapperUI>
   )
