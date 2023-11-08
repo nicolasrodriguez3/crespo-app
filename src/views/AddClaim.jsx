@@ -22,27 +22,18 @@ import {
   getCategories,
   getStreets,
   getNeighborhoods,
-  uploadImage,
-  submitClaim,
+  uploadImageAndSubmitClaim
 } from "../helpers/api"
 import { validateFilename } from "../services/validateFilename"
 import { GoogleMaps } from "../components/GoogleMaps"
 import { WrapperUI } from "../components/WrapperUI"
 import toast from "react-hot-toast"
+import Loader from "../assets/icons/Loader"
+import { useNavigate } from "react-router-dom"
 
-const uploadImageAndSubmitClaim = async ({ imagen, token, data }) => {
-  const imagenId = await uploadImage(imagen, token)
-
-  const claimDataWithFile = {
-    ...data,
-    imagenId,
-  }
-
-  const response = await submitClaim(claimDataWithFile, token)
-  return response
-}
 
 export function AddClaim() {
+  const navigate = useNavigate()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [categories, setCategories] = useState([])
   const [streets, setStreets] = useState([])
@@ -111,14 +102,13 @@ export function AddClaim() {
           descripcion,
           calle_id,
           altura: alturaValida,
-          barrio_id,
+          barrio_id: barrio_id ? Array.from(barrio_id)[0] : null,
           coordinadaX: coordenadas.lat,
           coordinadaY: coordenadas.lng,
         }
 
         console.log(claimData)
 
-        // const response = await uploadImageAndSubmitClaim({imagen, token, data: claimData})
         const response = await toast.promise(
           uploadImageAndSubmitClaim({ imagen, token, data: claimData }),
           {
@@ -141,10 +131,7 @@ export function AddClaim() {
           throw new Error("Error al crear el reclamo")
         }
 
-        // TODO: mostrar mensaje de éxito
-        toast("Reclamo cargado con éxito", {
-          icon: "👏",
-        })
+        navigate("/reclamos")
       } catch (error) {
         console.error(error)
         setError("Error al crear el reclamo")
@@ -256,6 +243,7 @@ export function AddClaim() {
             isDismissable={false}
             hideCloseButton={true}
             scrollBehavior="inside"
+            size="full"
           >
             <ModalContent className="max-w-sm">
               {(onClose) => (
@@ -382,32 +370,7 @@ export function AddClaim() {
               className="absolute right-1 top-1 rounded-full"
               onClick={() => setFieldValue("imagen", null)}
             >
-              <svg
-                className="h-6 w-6"
-                width="64px"
-                height="64px"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <g
-                  id="SVGRepo_bgCarrier"
-                  strokeWidth="0"
-                ></g>
-                <g
-                  id="SVGRepo_tracerCarrier"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                ></g>
-                <g id="SVGRepo_iconCarrier">
-                  <path
-                    fillRule="evenodd"
-                    clipRule="evenodd"
-                    d="M19.207 6.207a1 1 0 0 0-1.414-1.414L12 10.586 6.207 4.793a1 1 0 0 0-1.414 1.414L10.586 12l-5.793 5.793a1 1 0 1 0 1.414 1.414L12 13.414l5.793 5.793a1 1 0 0 0 1.414-1.414L13.414 12l5.793-5.793z"
-                    fill="currentColor"
-                  ></path>
-                </g>
-              </svg>
+              <Loader />
             </Button>
 
             {/* Image preview */}

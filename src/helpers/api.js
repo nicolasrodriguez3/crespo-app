@@ -1,6 +1,5 @@
 import axios from "axios"
 const API_URL = import.meta.env.VITE_API_URL
-const API_IMAGES_URL = import.meta.env.VITE_API_IMAGES_URL
 
 function validateResponse(error) {
   if (error.response) {
@@ -127,4 +126,15 @@ export async function submitClaim(claimData, token) {
       Authorization: `Bearer ${token}`,
     },
   })
+}
+
+export const uploadImageAndSubmitClaim = async ({ imagen, token, data }) => {
+  const imagenId = await uploadImage(imagen, token)
+
+  const claimDataWithFile = {
+    ...data,
+    imagen_id: imagenId,
+  }
+  const response = await submitClaim(claimDataWithFile, token)
+  return response
 }

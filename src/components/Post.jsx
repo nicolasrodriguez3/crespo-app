@@ -3,26 +3,17 @@ import {
   Card,
   CardHeader,
   CardBody,
+  CardFooter,
   Image,
   Divider,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
-  useDisclosure,
 } from "@nextui-org/react"
-
-import { useEffect } from "react"
 import { useAuth } from "../hooks/useAuth"
 import { Link } from "react-router-dom"
-import { CardFooter } from "@nextui-org/react"
-
-const API_IMAGES_URL = import.meta.env.VITE_API_IMAGES_URL
+import UserIcon from "../assets/icons/UserIcon"
+import LocationIcon from "../assets/icons/LocationIcon"
+import AlertRhombusIcon from "../assets/icons/AlertRhombusIcon"
 
 export function Post({ post, handleOpen }) {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const { user } = useAuth()
   const isEmployee = user.roles.includes("EMPLEADO")
 
@@ -56,12 +47,39 @@ export function Post({ post, handleOpen }) {
           <h4 className="text-large font-bold">{tipoReclamo}</h4>
         </CardHeader>
         <Divider />
-        <CardBody className="px-3 pt-2">
-          <p className="">
+        <CardBody>
+          {imagen && (
+            <Image
+              src={`${imagen.path}/${imagen.nombre}`}
+              alt="Imagen del reclamo"
+              width={400}
+              height={200}
+              className="rounded-md mb-3"
+            />
+          )}
+          <p className="flex items-baseline gap-1">
+            <span>
+              <AlertRhombusIcon width="1rem" />
+            </span>
+
             {descripcion.length > 100
               ? `${descripcion.slice(0, 100)}...`
               : descripcion}
           </p>
+          <p className="flex items-baseline gap-1">
+            <span>
+              <LocationIcon />
+            </span>
+            {direccion}
+          </p>
+          {isEmployee && (
+            <p className="flex items-center gap-1 text-default-500">
+              <span>
+                <UserIcon />
+              </span>
+              {nombrePersona}
+            </p>
+          )}
         </CardBody>
         <CardFooter className="flex justify-between">
           <p className="text-default-500">

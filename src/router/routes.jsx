@@ -1,8 +1,6 @@
 import { createBrowserRouter } from "react-router-dom"
 import { ProtectedRoute } from "../components/ProtectedRoute"
-import App from "../App"
 import { NotFound } from "../views/NotFound"
-import { Home } from "../views/Home"
 import { AddClaim } from "../views/AddClaim"
 import { Profile } from "../views/Profile"
 import { EditProfile } from "../views/EditProfile"
@@ -16,14 +14,21 @@ import { NeighborhoodsList } from "../views/NeighborhoodsList"
 import { RolesList } from "../views/RolesList"
 import { AreasList } from "../views/AreasList"
 import { ClaimsTypes } from "../views/ClaimsTypes"
+import { Home } from "../views/Home"
 import Claim from "../views/Claim"
+import { Suspense } from "react"
+import { lazy } from "react"
+
+const App = lazy(() => import("../App"))
 
 export const routes = createBrowserRouter([
   {
     path: "/",
     element: (
       <ProtectedRoute>
-        <App />
+        <Suspense fallback={<div className="text-center">Cargando...</div>}>
+          <App />
+        </Suspense>
       </ProtectedRoute>
     ),
     errorElement: <NotFound />,
