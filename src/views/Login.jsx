@@ -92,7 +92,7 @@ export function Login() {
             label="Correo"
             autoComplete="true"
             classNames={{
-              input: "text-base",
+              input: "text-base bg-transparent",
             }}
             isInvalid={touched.email && errors.email}
             errorMessage={touched.email && errors.email ? errors.email : ""}
@@ -107,7 +107,7 @@ export function Login() {
             required
             labelPlacement="inside"
             classNames={{
-              input: "text-base",
+              input: "text-base bg-transparent",
             }}
             isInvalid={touched.password && errors.password}
             errorMessage={

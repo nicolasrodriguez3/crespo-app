@@ -17,8 +17,8 @@ export function Profile() {
   const handleLogout = async () => {
     setLoading(true)
     try {
-      const userLoguot = await logout()
-      if (userLoguot) {
+      const userLogout = await logout()
+      if (userLogout) {
         setLoading(false)
         navigate("/login")
       }
@@ -31,14 +31,9 @@ export function Profile() {
   return (
     <WrapperUI>
       <div className="">
-        <header className="mb-4 flex flex-col items-center gap-2">
-          <Avatar
-            radius="full"
-            className="h-24 w-24 rounded-full"
-            src={user?.photoURL || "/chicken.svg"}
-            name={user?.nombre}
-          />
-          <p>{user?.nombre || "Usuario"}</p>
+        <header className="mb-4 flex flex-col items-center gap-1">
+          <p>{user?.nombre}</p>
+          <p className="text-sm">{user.username}</p>
         </header>
         <nav className="mx-auto flex flex-col gap-2">
           <Button
@@ -62,7 +57,7 @@ export function Profile() {
               />
             }
           >
-            <span className="grow">Editar perfil</span>
+            <span className="grow">Ver mis datos</span>
           </Button>
           <Button
             onClick={handleLogout}

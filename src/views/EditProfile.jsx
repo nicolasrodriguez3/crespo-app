@@ -1,29 +1,12 @@
 import { useFormik } from "formik"
 import { useState } from "react"
 import * as Yup from "yup"
-import {
-  Button,
-  Input,
-  Badge,
-  Avatar,
-  Select
-} from "@nextui-org/react"
+import { Button, Input, Badge, Avatar, Select } from "@nextui-org/react"
 import { useAuth } from "../hooks/useAuth"
 import editIcon from "../assets/icons/pen-linear.svg"
 import arrowIcon from "../assets/icons/alt-arrow-right-linear.svg"
 import { useNavigate } from "react-router-dom"
 import { WrapperUI } from "../components/WrapperUI"
-
-const getSex = (sexSelected) => {
-  switch (sexSelected) {
-    case "male":
-      return "Masculino"
-    case "female":
-      return "Femenino"
-    default:
-      return "Otro"
-  }
-}
 
 export function EditProfile() {
   const navigate = useNavigate()
@@ -35,6 +18,8 @@ export function EditProfile() {
     initialValues: {
       nombre: user?.nombre,
       username: user?.username,
+      telefono: user?.telefono,
+      direccion: user?.direccion,
     },
     enableReinitialize: true,
     validationSchema: Yup.object({
@@ -65,9 +50,12 @@ export function EditProfile() {
   } = formik
 
   return (
-    <WrapperUI>
+    <WrapperUI
+      title="Mis datos"
+      backTo="/profile"
+    >
       <div className="flex w-full items-center justify-center p-4">
-        <Badge
+        {/* <Badge
           isOneChar
           role="button"
           className="h-10 w-10 text-large"
@@ -98,7 +86,7 @@ export function EditProfile() {
             src={user?.photoURL || "/chicken.svg"}
             name={user?.nombre}
           />
-        </Badge>
+        </Badge> */}
       </div>
       <section className="flex w-full flex-col items-center gap-8  py-4">
         <form
@@ -112,7 +100,7 @@ export function EditProfile() {
             onBlur={handleBlur}
             type="text"
             label="Nombre"
-            autoComplete="true"
+            isDisabled
             isInvalid={touched.nombre && errors.nombre}
             errorMessage={touched.nombre && errors.nombre ? errors.nombre : ""}
           />
@@ -126,8 +114,26 @@ export function EditProfile() {
             labelPlacement="inside"
           />
 
+          <Input
+            type="text"
+            label="Teléfono"
+            name="telefono"
+            value={values.telefono}
+            isDisabled
+            labelPlacement="inside"
+          />
+
+          <Input
+            type="text"
+            label="Dirección"
+            name="direccion"
+            value={values.direccion}
+            isDisabled
+            labelPlacement="inside"
+          />
+
           {error && <p className="text-red-400">{error}</p>}
-          <Button
+          {/* <Button
             type="submit"
             className="bg-gold"
             isLoading={isSubmitting}
@@ -155,7 +161,7 @@ export function EditProfile() {
             }
           >
             Guardar datos
-          </Button>
+          </Button> */}
         </form>
       </section>
     </WrapperUI>

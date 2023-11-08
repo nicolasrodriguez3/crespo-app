@@ -17,12 +17,12 @@ import { useFormik } from "formik"
 import * as Yup from "yup"
 import { CameraIcon } from "../assets/icons/CameraIcon"
 import { useAuth } from "../hooks/useAuth"
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo, useCallback } from "react"
 import {
   getCategories,
   getStreets,
   getNeighborhoods,
-  uploadImageAndSubmitClaim
+  uploadImageAndSubmitClaim,
 } from "../helpers/api"
 import { validateFilename } from "../services/validateFilename"
 import { GoogleMaps } from "../components/GoogleMaps"
@@ -31,14 +31,12 @@ import toast from "react-hot-toast"
 import Loader from "../assets/icons/Loader"
 import { useNavigate } from "react-router-dom"
 
-
 export function AddClaim() {
   const navigate = useNavigate()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [categories, setCategories] = useState([])
   const [streets, setStreets] = useState([])
   const [neighborhoods, setNeighborhoods] = useState([])
-  const [fileError, setFileError] = useState(false)
   const [filteredStreets, setFilteredStreets] = useState([...streets])
   const [error, setError] = useState(false)
 
@@ -93,15 +91,13 @@ export function AddClaim() {
         imagen,
       } = values
 
-      const alturaValida = altura.padStart(3, "0")
-
       try {
         const claimData = {
           persona_id,
           tipoReclamo_id,
           descripcion,
           calle_id,
-          altura: alturaValida,
+          altura: altura.toString().padStart(3, "0"),
           barrio_id: barrio_id ? Array.from(barrio_id)[0] : null,
           coordinadaX: coordenadas.lat,
           coordinadaY: coordenadas.lng,
@@ -137,7 +133,6 @@ export function AddClaim() {
         setError("Error al crear el reclamo")
       }
 
-      //resetForm()
       setSubmitting(false)
     },
     validationSchema: Yup.object({
@@ -160,13 +155,16 @@ export function AddClaim() {
     getFieldProps,
   } = formik
 
-  const handleFilterStreet = (e) => {
-    const street = e.target.value
-    const filteredStreets = streets.filter((s) =>
-      s.calle.toLowerCase().includes(street.toLowerCase()),
-    )
-    setFilteredStreets(filteredStreets)
-  }
+  const handleFilterStreet = useCallback(
+    (e) => {
+      const street = e.target.value
+      const filteredStreets = streets.filter((s) =>
+        s.calle.toLowerCase().includes(street.toLowerCase()),
+      )
+      setFilteredStreets(filteredStreets)
+    },
+    [streets],
+  )
 
   const handleFileChange = (e) => {
     const file = e.target.files[0]
@@ -174,21 +172,59 @@ export function AddClaim() {
 
     if (validateFilename(file.name)) {
       setFieldValue("imagen", file)
-      setFileError(false)
     } else {
-      setFileError("Extensión del archivo no permitida")
-
-      //* ¿borrar la imagen del input?
-      //setFieldValue("imagen", null)
+      toast.error("Extensión del archivo no permitida")
+      setFieldValue("imagen", null)
     }
   }
   const handleStreetChange = (e) => {
     const street = e.target.value
     const streetId = streets.find((s) => s.calle === street)?.id
     console.log(streetId)
-    if (!streetId) return
-    setFieldValue("calle_id", streetId)
+    if (streetId) setFieldValue("calle_id", streetId)
   }
+
+  const modalContent = useMemo(() => {
+    return (
+      <ModalContent className="max-w-sm">
+        {(onClose) => (
+          <>
+            <ModalHeader className="flex flex-col gap-1">
+              Seleccione la calle
+            </ModalHeader>
+            <ModalBody>
+              <div className="flex flex-col justify-between">
+                <Input
+                  type="search"
+                  placeholder="Buscar calle"
+                  onChange={handleFilterStreet}
+                />
+                <ScrollShadow className="max-h-[400px]">
+                  {filteredStreets && filteredStreets.length === 0 && (
+                    <p className="text-sm text-gray-500">
+                      No se encontraron resultados
+                    </p>
+                  )}
+                  <Listbox
+                    aria-label="Actions"
+                    onAction={(key) => {
+                      setFieldValue("calle_id", key)
+                      setFilteredStreets(streets)
+                      onClose()
+                    }}
+                  >
+                    {filteredStreets.map((street) => (
+                      <ListboxItem key={street.id}>{street.calle}</ListboxItem>
+                    ))}
+                  </Listbox>
+                </ScrollShadow>
+              </div>
+            </ModalBody>
+          </>
+        )}
+      </ModalContent>
+    )
+  }, [filteredStreets, streets, handleFilterStreet, setFieldValue])
 
   return (
     <WrapperUI title="Agregar reclamo">
@@ -245,45 +281,7 @@ export function AddClaim() {
             scrollBehavior="inside"
             size="full"
           >
-            <ModalContent className="max-w-sm">
-              {(onClose) => (
-                <>
-                  <ModalHeader className="flex flex-col gap-1">
-                    Seleccione la calle
-                  </ModalHeader>
-                  <ModalBody>
-                    <div className="flex flex-col justify-between">
-                      <Input
-                        type="search"
-                        placeholder="Buscar calle"
-                        onChange={handleFilterStreet}
-                      />
-                      <ScrollShadow className="max-h-[400px]">
-                        {filteredStreets && filteredStreets.length === 0 && (
-                          <p className="text-sm text-gray-500">
-                            No se encontraron resultados
-                          </p>
-                        )}
-                        <Listbox
-                          aria-label="Actions"
-                          onAction={(key) => {
-                            setFieldValue("calle_id", key)
-                            setFilteredStreets(streets)
-                            onClose()
-                          }}
-                        >
-                          {filteredStreets.map((street) => (
-                            <ListboxItem key={street.id}>
-                              {street.calle}
-                            </ListboxItem>
-                          ))}
-                        </Listbox>
-                      </ScrollShadow>
-                    </div>
-                  </ModalBody>
-                </>
-              )}
-            </ModalContent>
+            {modalContent}
           </Modal>
           <Input
             label="Calle"
@@ -341,7 +339,7 @@ export function AddClaim() {
 
         <div>
           <Button
-            color={fileError ? "danger" : "default"}
+            color="default"
             variant="flat"
             endContent={<CameraIcon />}
             onClick={() => imgRef.current.click()}
@@ -358,7 +356,6 @@ export function AddClaim() {
           accept="image/*"
           className="hidden"
         />
-        {fileError && <p className="text-sm text-red-500">{fileError}</p>}
 
         {values.imagen ? (
           <div className="relative">
