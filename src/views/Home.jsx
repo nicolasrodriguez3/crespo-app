@@ -1,6 +1,6 @@
 import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react"
 import { useAuth } from "../hooks/useAuth"
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { WrapperUI } from "../components/WrapperUI"
 
 import imgCalles from "../assets/imgs/img-calle.jpg"
@@ -12,16 +12,27 @@ import imgReclamos from "../assets/imgs/add-claim.jpeg"
 import imgTipoReclamos from "../assets/imgs/img-areas2.jpg"
 
 const functionsButtons = [
-  { title: "Ver reclamos", img: imgReclamos, to: "/lista-de-reclamos" },
-  { title: "Mis reclamos", img: imgAgregar, to: "/reclamos" },
-  { title: "Usuarios", img: imgUsuarios, to: "/usuarios" },
-  { title: "Calles", img: imgCalles, to: "/calles" },
-  { title: "Barrios", img: imgBarrios, to: "/barrios" },
-  { title: "Áreas", img: imgAreas, to: "/areas" },
+  {
+    title: "Ver reclamos",
+    img: imgReclamos,
+    to: "/lista-de-reclamos",
+    rol: "EMPLEADO",
+  },
+  {
+    title: "Mis reclamos",
+    img: imgAgregar,
+    to: "/reclamos",
+    rol: "CONTRIBUYENTE",
+  },
+  { title: "Usuarios", img: imgUsuarios, to: "/usuarios", rol: "CAPATAZ" },
+  { title: "Calles", img: imgCalles, to: "/calles", rol: "CAPATAZ" },
+  { title: "Barrios", img: imgBarrios, to: "/barrios", rol: "CAPATAZ" },
+  { title: "Áreas", img: imgAreas, to: "/areas", rol: "CAPATAZ" },
   {
     title: "Tipos de reclamos",
     img: imgTipoReclamos,
     to: "/tipos-de-reclamos",
+    rol: "CAPATAZ",
   },
 ]
 
@@ -29,109 +40,78 @@ export function Home() {
   const { user } = useAuth()
   const name = user?.nombre.split(" ")[0] || "usuario"
 
-  if (user?.roles.includes("JEFE")) {
-    return (
-      <WrapperUI>
-        <div className="flex w-full flex-col items-center justify-center gap-4 pt-4">
-          <h2 className="">¡Bienvenido{`, ${name}`}!</h2>
-          <div className="grid w-full grid-cols-2 gap-2">
-            {functionsButtons.map(({ title, img, to }) => (
-              <Card
-                key={title}
-                shadow="sm"
-                isPressable
-                as={Link}
-                to={to}
-                className="first:col-span-2"
-              >
-                <CardBody className="overflow-visible p-0">
-                  <Image
-                    shadow="sm"
-                    radius="lg"
-                    width="100%"
-                    alt=""
-                    className="h-[140px] w-full object-cover"
-                    src={img}
-                  />
-                </CardBody>
-                <CardFooter className="justify-between text-small">
-                  <b>{title}</b>
-                  <p className="text-default-500"></p>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </WrapperUI>
-    )
-  }
-
-  if (user?.roles.includes("CAPATAZ")) {
-    return (
-      <WrapperUI>
-        <div className="flex min-h-screen w-full flex-col items-center bg-gray-50">
-          <div className="flex w-full flex-col items-center justify-center gap-4 pt-4">
-            <p className="text-center">
-              Tu rol es de capataz, por lo que puedes acceder a la sección de
-              administración.
-            </p>
-          </div>
-        </div>
-      </WrapperUI>
-    )
-  }
-
-  if (user?.roles.includes("EMPLEADO")) {
-    return (
-      <WrapperUI>
-        <div className="flex min-h-screen w-full flex-col items-center bg-gray-50">
-          <div className="flex w-full flex-col items-center justify-center gap-4 pt-4">
-            <p className="text-center">
-              Tu rol es de empleado, por lo que puedes acceder a la sección de
-              administración.
-            </p>
-          </div>
-        </div>
-      </WrapperUI>
-    )
-  }
-
   return (
     <WrapperUI>
-      <h2 className="">¡Bienvenido{`, ${name}`}!</h2>
-      <div className="flex flex-col gap-4">
-        <Card
-          shadow="sm"
-          isPressable
-          as={Link}
-          to={"/add"}
-        >
-          <CardBody className="overflow-visible p-0">
-            <Image
+      <div className="flex w-full flex-col items-center justify-center gap-4 pt-4">
+        <h2 className="">¡Bienvenido{`, ${name}`}!</h2>
+        {/* Solo contribuyentes */}
+        {!user?.roles.includes("EMPLEADO") ? (
+          <div className="flex w-full flex-col gap-4">
+            <Card
               shadow="sm"
-              radius="lg"
-              width="100%"
-              alt=""
-              className="h-[140px] w-full object-cover"
-              src={imgAgregar}
-            />
-          </CardBody>
-          <CardFooter className="justify-between text-small">
-            <b>Agregar reclamo</b>
-          </CardFooter>
-        </Card>
+              isPressable
+              as={Link}
+              to={"/add"}
+            >
+              <CardBody className="overflow-visible p-0">
+                <Image
+                  shadow="sm"
+                  radius="lg"
+                  width="100%"
+                  alt=""
+                  className="h-[140px] w-full object-cover"
+                  src={imgAgregar}
+                />
+              </CardBody>
+              <CardFooter className="justify-between text-small">
+                <b>Agregar reclamo</b>
+              </CardFooter>
+            </Card>
 
-        <Button
-          as={Link}
-          to="/reclamos"
-          color="default"
-          variant="bordered"
-          className="rounded-md border-gold font-semibold"
-        >
-          Ver mis reclamos
-        </Button>
+            <Button
+              as={Link}
+              to="/reclamos"
+              color="default"
+              variant="bordered"
+              className="rounded-md border-gold font-semibold"
+            >
+              Ver mis reclamos
+            </Button>
 
-        {/* Agregar botón para instalar la app */}
+            {/* Agregar botón para instalar la app */}
+          </div>
+        ) : (
+          <div className="grid w-full grid-cols-2 gap-2">
+            {functionsButtons.map(({ title, img, to, rol }) => {
+              if (!user?.roles.includes(rol)) return null
+              return (
+                <Card
+                  key={title}
+                  shadow="sm"
+                  isPressable
+                  as={Link}
+                  to={to}
+                  className="first:col-span-2"
+                >
+                  <CardBody className="overflow-visible p-0">
+                    <Image
+                      shadow="sm"
+                      radius="lg"
+                      width="100%"
+                      alt=""
+                      className="h-[140px] w-full object-cover"
+                      src={img}
+                    />
+                  </CardBody>
+                  <CardFooter className="justify-between text-small">
+                    <b>{title}</b>
+                    <p className="text-default-500"></p>
+                  </CardFooter>
+                </Card>
+              )
+            })}
+          </div>
+        )}
       </div>
     </WrapperUI>
   )
