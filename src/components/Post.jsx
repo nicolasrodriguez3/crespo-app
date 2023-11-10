@@ -54,7 +54,7 @@ export function Post({ post, handleOpen }) {
               alt="Imagen del reclamo"
               width={400}
               height={200}
-              className="rounded-md mb-3"
+              className="mb-3 rounded-md"
             />
           )}
           <p className="flex items-baseline gap-1">
@@ -94,31 +94,6 @@ export function Post({ post, handleOpen }) {
 }
 
 Post.propTypes = {
-  data: PropTypes.shape({
-    altura: PropTypes.string,
-    barrio: PropTypes.shape({
-      barrio: PropTypes.string,
-      id: PropTypes.string,
-    }),
-    calle: PropTypes.shape({
-      calle: PropTypes.string,
-      id: PropTypes.string,
-    }),
-    descripcion: PropTypes.string,
-    id: PropTypes.string,
-    imagen: PropTypes.string,
-    seguimiento: PropTypes.shape({
-      estados: PropTypes.arrayOf(
-        PropTypes.shape({
-          estado: PropTypes.string,
-          descripcion: PropTypes.string,
-          id: PropTypes.string,
-        }),
-      ),
-    }),
-    tipoReclamo: PropTypes.shape({
-      id: PropTypes.string,
-      tipo: PropTypes.string,
-    }),
-  }),
+  post: PropTypes.object.isRequired,
+  handleOpen: PropTypes.func,
 }

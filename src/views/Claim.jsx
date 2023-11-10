@@ -45,6 +45,7 @@ function Claim() {
           tipoReclamo: post.tipoReclamo.tipo,
           nombrePersona: post.persona.nombre,
           imagen: post.imagen,
+          idSeguimiento: post.seguimiento.id,
           seguimiento: post.seguimiento.estados,
           creado: new Date(post.creada).toLocaleString(),
         }
@@ -69,12 +70,10 @@ function Claim() {
       estado: "EN_CURSO",
       descripcion: "",
     },
-    onSubmit: (values) => {
-      //! no funciona correctamente: no se actualiza el estado del reclamo
-      console.log(values)
+    onSubmit: (values, { setSubmitting }) => {
       axios
         .post(
-          `${API_URL}/seguimiento/agregar-estado-reclamo/${id}`,
+          `${API_URL}/seguimiento/agregar-estado-reclamo/${claim.idSeguimiento}`,
           {
             estado: values.estado,
             descripcion: values.descripcion,
@@ -93,13 +92,13 @@ function Claim() {
               {
                 estado: values.estado,
                 descripcion: values.descripcion,
-                creada: new Date().toLocaleString(),
               },
               ...prev.seguimiento,
             ],
           }))
         })
         .catch((err) => console.log(err))
+        .finally(() => setSubmitting(false))
     },
   })
 
@@ -139,7 +138,7 @@ function Claim() {
           <ol className="relative border-l border-gray-200">
             {claim.seguimiento.map((estado) => (
               <li
-                key={estado.id}
+                key={estado.id || estado.estado}
                 className="mb-10 ml-4"
               >
                 <div className="absolute -left-1.5 mt-1.5 h-3 w-3 rounded-full border border-white bg-gray-200"></div>
@@ -198,9 +197,32 @@ function Claim() {
                   value={formik.values.descripcion}
                 />
                 <Button
-                  color="secondary"
+                  className="bg-gold font-semibold"
                   variant="flat"
                   type="submit"
+                  isLoading={formik.isSubmitting}
+                  spinner={
+                    <svg
+                      className="h-5 w-5 animate-spin text-current"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="3"
+                      />
+                      <path
+                        className="opacity-75"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                  }
                 >
                   Guardar
                 </Button>
