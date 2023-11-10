@@ -1,8 +1,9 @@
 import axios from "axios"
-import { useState, useEffect } from "react"
+import { useState, useEffect, lazy, Suspense } from "react"
 import { useAuth } from "../hooks/useAuth"
-import { MyTable } from "../components/MyTable"
 import { WrapperUI } from "../components/WrapperUI"
+
+const MyTable = lazy(() => import("../components/MyTable"))
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -49,7 +50,8 @@ export function StreetsList() {
   }
 
   return (
-    <WrapperUI title="Lista de calles" >
+    <WrapperUI title="Calles" >
+      <Suspense fallback={<div>Cargando...</div>}>
       <MyTable
         data={streets}
         title="calle"
@@ -57,6 +59,8 @@ export function StreetsList() {
         handleDelete={handleDelete}
         withDeleted={showDeletedStreets}
       />
+      </Suspense>
     </WrapperUI>
+
   )
 }

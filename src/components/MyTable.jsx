@@ -30,13 +30,13 @@ import { capitalize } from "../helpers/capitalize"
 import { useAuth } from "../hooks/useAuth"
 import { hasPermission } from "../services/hasPermission"
 
-export function MyTable({
+export default function MyTable({
   title = "dato",
   titlePlural = "datos",
   data,
   handleDelete,
   handleRestore,
-  withDeleted,
+  showDeleted,
   loading,
 }) {
   const { user } = useAuth()
@@ -177,7 +177,7 @@ export function MyTable({
           {hasPermission({ section: title, roles: user.roles }) && (
             <Switch
               size="sm"
-              onValueChange={withDeleted}
+              onValueChange={showDeleted}
             >
               ¿Incluir eliminadas?
             </Switch>
@@ -273,6 +273,6 @@ MyTable.propTypes = {
   data: PropTypes.array,
   handleDelete: PropTypes.func,
   handleRestore: PropTypes.func,
-  withDeleted: PropTypes.bool,
+  showDeleted: PropTypes.func,
   loading: PropTypes.bool,
 }

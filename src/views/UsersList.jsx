@@ -1,9 +1,11 @@
 import axios from "axios"
-import { useState, useEffect } from "react"
+import { useState, useEffect, lazy, Suspense } from "react"
 import { useAuth } from "../hooks/useAuth"
-import { MyTable } from "../components/MyTable"
+// import { MyTable } from "../components/MyTable"
 import { WrapperUI } from "../components/WrapperUI"
 import toast from "react-hot-toast"
+
+const MyTable = lazy(() => import("../components/MyTable"))
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -128,15 +130,17 @@ export function UsersList() {
 
   return (
     <WrapperUI title="Lista de usuarios">
+      <Suspense fallback={<div>CARGANDO...</div>}>
       <MyTable
         data={users}
         loading={loadData}
         title="usuario"
         titlePlural="usuarios"
-        withDeleted={showDeleted}
+        showDeleted={showDeleted}
         handleDelete={handleDelete}
         handleRestore={handleRestore}
       />
+      </Suspense>
     </WrapperUI>
   )
 }

@@ -1,8 +1,9 @@
 import axios from "axios"
-import { useState, useEffect } from "react"
+import { useState, useEffect, lazy, Suspense } from "react"
 import { useAuth } from "../hooks/useAuth"
-import { MyTable } from "../components/MyTable"
 import { WrapperUI } from "../components/WrapperUI"
+
+const MyTable = lazy(() => import("../components/MyTable"))
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -43,12 +44,14 @@ export function ClaimsTypes() {
 
   return (
     <WrapperUI title="Tipos de reclamos" >
+      <Suspense fallback={<div>Cargando...</div>}>
       <MyTable
         data={data}
         title="tipo de reclamo"
         titlePlural="tipos de reclamos"
         handleDelete={handleDelete}
       />
+      </Suspense>
     </WrapperUI>
   )
 }
