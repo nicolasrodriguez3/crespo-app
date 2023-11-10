@@ -34,6 +34,9 @@ export function UsersList() {
         setUsers(dataParsed)
         setLoadData(false)
         console.log(res)
+      }).catch(err => {
+        console.log(err)
+        toast.error("Error al cargar usuarios")
       })
   }, [token, withDeleted])
 
@@ -58,8 +61,12 @@ export function UsersList() {
 
         setUsers(deletedUsers)
         setLoadData(false)
+      }).catch(err => {
+        console.log(err)
+        toast.error("Error al cargar usuarios")
+        setLoadData(false)
       })
-  }, [token, withDeleted])
+  }, [token, users, withDeleted])
 
   const showDeleted = () => {
     setWithDeleted(!withDeleted)

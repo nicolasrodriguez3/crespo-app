@@ -27,16 +27,19 @@ import { PlusIcon } from "../assets/icons/PlusIcon"
 import { VerticalDotsIcon } from "../assets/icons/VerticalDotsIcon"
 import { useState, useMemo, useCallback } from "react"
 import { capitalize } from "../helpers/capitalize"
+import { useAuth } from "../hooks/useAuth"
+import { hasPermission } from "../services/hasPermission"
 
 export function MyTable({
   title = "dato",
-  titlePlural,
+  titlePlural = "datos",
   data,
   handleDelete,
   handleRestore,
   withDeleted,
   loading,
 }) {
+  const { user } = useAuth()
   const [filterValue, setFilterValue] = useState("")
   const [page, setPage] = useState(1)
   const [rowsPerPage, setRowsPerPage] = useState(10)
@@ -171,12 +174,14 @@ export function MyTable({
           )}
         </div>
         <div>
-          <Switch
-            size="sm"
-            onValueChange={withDeleted}
-          >
-            ¿Incluir eliminadas?
-          </Switch>
+          {hasPermission({ section: title, roles: user.roles }) && (
+            <Switch
+              size="sm"
+              onValueChange={withDeleted}
+            >
+              ¿Incluir eliminadas?
+            </Switch>
+          )}
         </div>
         <Table
           aria-label="Tabla de datos"
@@ -263,6 +268,11 @@ export function MyTable({
 // PropTypes
 MyTable.propTypes = {
   title: PropTypes.string,
+  titlePlural: PropTypes.string,
   endpoint: PropTypes.string,
   data: PropTypes.array,
+  handleDelete: PropTypes.func,
+  handleRestore: PropTypes.func,
+  withDeleted: PropTypes.bool,
+  loading: PropTypes.bool,
 }
