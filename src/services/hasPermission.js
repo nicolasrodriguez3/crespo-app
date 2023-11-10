@@ -1,4 +1,4 @@
-import { PERMISSIONS } from "../constants/permissions"
+import { PERMISSIONS } from "../constants/PERMISSIONS"
 
-export const hasPermission = ({section, roles}) =>
+export const hasPermission = ({ section, roles }) =>
   roles.includes(PERMISSIONS[section])
