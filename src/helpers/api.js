@@ -16,7 +16,7 @@ function validateResponse(error) {
 
 // obtener mis reclamos
 export async function getMyClaims(token) {
-  return await axios.get(
+  return axios.get(
     "https://vps-3450851-x.dattaweb.com:9088/api/reclamo/buscar-todos-mis-reclamos",
     {
       headers: {
@@ -28,7 +28,7 @@ export async function getMyClaims(token) {
 
 // obtener todos los reclamos
 export async function getClaims(token) {
-  return await axios.get(
+  return axios.get(
     "https://vps-3450851-x.dattaweb.com:9088/api/reclamo/buscar-todas",
     {
       headers: {

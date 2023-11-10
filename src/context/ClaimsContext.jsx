@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react"
+import { createContext, useState } from "react"
 import { useAuth } from "../hooks/useAuth"
 import { useMemo } from "react"
 import { getClaims, getMyClaims } from "../helpers/api"
@@ -42,7 +42,7 @@ const ClaimsContextProvider = ({ children }) => {
   // ordenar reclamos
   const sortedItems = useMemo(() => {
     let sortedData = [...filteredItems]
-    
+
     if (isSorted) {
       sortedData = sortedData.sort((a, b) => {
         return a.id - b.id
@@ -72,14 +72,17 @@ const ClaimsContextProvider = ({ children }) => {
           seguimiento: post.seguimiento.estados,
           creado: new Date(post.creada).toLocaleDateString(),
         }))
-        
         setClaims(mappedPosts)
       } else {
         throw new Error("Error obteniendo los posts")
       }
     } catch (error) {
-      console.warn("Error:", error)
-      setError(error)
+      if (error.response.status === 404) {
+        setClaims([])
+      } else {
+        console.warn("Error:", error)
+        setError(error)
+      }
     } finally {
       setLoading(false)
     }

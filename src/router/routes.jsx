@@ -16,8 +16,7 @@ import { AreasList } from "../views/AreasList"
 import { ClaimsTypes } from "../views/ClaimsTypes"
 import { Home } from "../views/Home"
 import Claim from "../views/Claim"
-import { Suspense } from "react"
-import { lazy } from "react"
+import { Suspense, lazy } from "react"
 
 const App = lazy(() => import("../App"))
 

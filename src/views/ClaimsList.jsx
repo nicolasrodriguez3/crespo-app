@@ -39,7 +39,7 @@ export function ClaimsList({ getAllClaims }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [id, setId] = useState(null)
 
-  const { descripcion, seguimiento, direccion, nombrePersona, tipoReclamo } =
+  const { descripcion, seguimiento, direccion, tipoReclamo } =
     claims.find((claim) => claim.id === id) || {}
 
   const handleOpen = (id) => {
