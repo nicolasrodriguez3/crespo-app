@@ -51,7 +51,7 @@ export function Home() {
               shadow="sm"
               isPressable
               as={Link}
-              to={"/add"}
+              to={"/nuevo"}
             >
               <CardBody className="overflow-visible p-0">
                 <Image

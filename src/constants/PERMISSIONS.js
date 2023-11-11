@@ -6,4 +6,7 @@ export const PERMISSIONS = {
   reclamo: "CAPATAZ",
   barrio: "CAPATAZ",
   area: "CAPATAZ",
+
+  // agregar nuevo
+  "tipo de usuario": "CAPATAZ",
 }

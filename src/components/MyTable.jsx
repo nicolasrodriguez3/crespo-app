@@ -29,11 +29,13 @@ import { useState, useMemo, useCallback } from "react"
 import { capitalize } from "../helpers/capitalize"
 import { useAuth } from "../hooks/useAuth"
 import { hasPermission } from "../services/hasPermission"
+import { Link } from "react-router-dom"
 
 export default function MyTable({
   title = "dato",
   titlePlural = "datos",
   data,
+  handleAdd,
   handleDelete,
   handleRestore,
   showDeleted,
@@ -137,7 +139,7 @@ export default function MyTable({
           {/* BUSCADOR */}
           <Input
             isClearable
-            className="w-full sm:max-w-[44%]"
+            classNames={{ inputWrapper: "h-auto" }}
             placeholder={`Buscar ${title}...`}
             startContent={<SearchIcon />}
             value={filterValue}
@@ -146,12 +148,16 @@ export default function MyTable({
           />
           {/* BOTÓN AGREGAR */}
           <div>
-            <Button
-              color="secondary"
-              endContent={<PlusIcon />}
-            >
-              Agregar {title}
-            </Button>
+            {title !== "usuario" && (
+              <Button
+                color="secondary"
+                endContent={<PlusIcon />}
+                as={Link}
+                to={`/agregar/${title.replace(" ", "-")}`}
+              >
+                Agregar {title}
+              </Button>
+            )}
           </div>
         </div>
         <div className="flex items-center justify-between">

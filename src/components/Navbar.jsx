@@ -17,7 +17,7 @@ const sections = [
     name: "Nuevo",
     icon: addIcon,
     iconActive: addIconActive,
-    href: "/add",
+    href: "/nuevo",
   },
   {
     name: "Perfil",
@@ -30,7 +30,7 @@ const sections = [
 export function Navbar() {
   return (
     <nav className="fixed bottom-0 left-0 z-50 w-full bg-gold">
-      <ul className="mx-auto flex max-w-sm justify-evenly select-none">
+      <ul className="mx-auto flex max-w-sm select-none justify-evenly">
         {sections.map((section) => {
           return (
             <li key={section.name}>

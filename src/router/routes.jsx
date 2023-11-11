@@ -17,6 +17,7 @@ import { ClaimsTypes } from "../views/ClaimsTypes"
 import { Home } from "../views/Home"
 import Claim from "../views/Claim"
 import { Suspense, lazy } from "react"
+import AddNew from "../views/AddNew"
 
 const App = lazy(() => import("../App"))
 
@@ -65,7 +66,7 @@ export const routes = createBrowserRouter([
         element: <ClaimsTypes />,
       },
       {
-        path: "/add",
+        path: "/nuevo",
         element: <AddClaim />,
       },
       {
@@ -83,6 +84,10 @@ export const routes = createBrowserRouter([
       {
         path: "/profile/edit",
         element: <EditProfile />,
+      },
+      {
+        path: "/agregar/:instance",
+        element: <AddNew />,
       },
     ],
   },

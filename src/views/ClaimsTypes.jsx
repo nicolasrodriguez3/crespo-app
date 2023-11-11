@@ -2,6 +2,7 @@ import axios from "axios"
 import { useState, useEffect, lazy, Suspense } from "react"
 import { useAuth } from "../hooks/useAuth"
 import { WrapperUI } from "../components/WrapperUI"
+import toast from "react-hot-toast"
 
 const MyTable = lazy(() => import("../components/MyTable"))
 
@@ -28,6 +29,31 @@ export function ClaimsTypes() {
       })
   }, [token])
 
+  const handleAdd = (newData) => {
+    toast.promise(
+      new Promise((resolve, reject) => {
+        axios
+          .post(`${API_URL}/tipo-reclamo`, newData, {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+          .then((res) => {
+            console.log(res)
+            setData([...data, newData])
+            resolve("Tipo de reclamo agregado correctamente")
+          })
+          .catch((err) => {
+            console.log(err)
+            reject("Error al agregar tipo de reclamo")
+          })
+      }),
+      {
+        loading: "Agregando tipo de reclamo...",
+        success: (msg) => msg,
+        error: (msg) => msg,
+      },
+    )
+  }
+
   const handleDelete = (id) => {
     // axios
     //   .delete(`${API_URL}/calle/eliminar/${id}`, {
@@ -43,14 +69,15 @@ export function ClaimsTypes() {
   }
 
   return (
-    <WrapperUI title="Tipos de reclamos" >
+    <WrapperUI title="Tipos de reclamos">
       <Suspense fallback={<div>Cargando...</div>}>
-      <MyTable
-        data={data}
-        title="tipo de reclamo"
-        titlePlural="tipos de reclamos"
-        handleDelete={handleDelete}
-      />
+        <MyTable
+          data={data}
+          title="tipo de reclamo"
+          titlePlural="tipos de reclamos"
+          handleDelete={handleDelete}
+          handleAdd={handleAdd}
+        />
       </Suspense>
     </WrapperUI>
   )
