@@ -13,7 +13,7 @@ const ClaimsContextProvider = ({ children }) => {
 
   // filtrar reclamos
   const [searchClaimBy, setSearchClaimBy] = useState("descripcion")
-  const [filterClaimBy, setFilterClaimBy] = useState(false)
+  const [filterClaimBy, setFilterClaimBy] = useState(["INICIADO", "EN_CURSO"])
 
   const [filteredClaims, setFilteredClaims] = useState("")
   const isSearchFilter = Boolean(filteredClaims)
@@ -24,7 +24,7 @@ const ClaimsContextProvider = ({ children }) => {
 
     if (filterClaimBy) {
       filteredData = filteredData.filter((post) => {
-        return post.seguimiento[0].estado === filterClaimBy
+        return filterClaimBy.includes(post.seguimiento[0].estado)
       })
     }
 

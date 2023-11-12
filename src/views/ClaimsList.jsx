@@ -140,17 +140,12 @@ export function ClaimsList({ getAllClaims }) {
           <div className="flex gap-2">
             <Select
               label="Estado de reclamo"
-              defaultSelectedKeys={[""]}
+              defaultSelectedKeys={["INICIADO", "EN_CURSO"]}
+              selectionMode="multiple"
               onChange={(e) => {
                 handleFilter(e.target.value)
               }}
             >
-              <SelectItem
-                key=""
-                value=""
-              >
-                Todos
-              </SelectItem>
               <SelectItem
                 key="INICIADO"
                 value="INICIADO"
@@ -168,6 +163,12 @@ export function ClaimsList({ getAllClaims }) {
                 value="RESUELTO"
               >
                 Resuelto
+              </SelectItem>
+              <SelectItem
+                key="RECHAZADO"
+                value="RECHAZADO"
+              >
+                Rechazado
               </SelectItem>
             </Select>
 
