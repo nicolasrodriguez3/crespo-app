@@ -9,4 +9,7 @@ export const PERMISSIONS = {
 
   // agregar nuevo
   "tipo de usuario": "CAPATAZ",
+
+  //dar seguimiento
+  seguimiento: "CAPATAZ"
 }

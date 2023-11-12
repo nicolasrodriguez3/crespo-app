@@ -9,7 +9,7 @@ function App() {
   return (
     <>
       <div>
-        <Toaster position="bottom-right" />
+        <Toaster position="top-right" />
       </div>
       <ClaimsContextProvider>
         <Suspense fallback={<Loader />}>

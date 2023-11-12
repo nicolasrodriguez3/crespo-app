@@ -12,6 +12,10 @@ import {
 } from "@nextui-org/react"
 import { useFormik } from "formik"
 import { claimStatus } from "../constants/claimStatus"
+import { hasPermission } from "../services/hasPermission"
+import Loader from "../assets/icons/Loader"
+import toast from "react-hot-toast"
+import { sortArray } from "../helpers/sortArray"
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -20,6 +24,9 @@ function Claim() {
   const { id } = useParams()
   const [claim, setClaim] = useState(null)
   const [error, setError] = useState(null)
+
+  const claimClosed =
+    claim?.seguimiento.some(({estado}) => estado === "RECHAZADO" || estado === "RESUELTO") 
 
   useEffect(() => {
     // Fetch claim details from API
@@ -46,7 +53,7 @@ function Claim() {
           nombrePersona: post.persona.nombre,
           imagen: post.imagen,
           idSeguimiento: post.seguimiento.id,
-          seguimiento: post.seguimiento.estados,
+          seguimiento: sortArray(post.seguimiento.estados, "id", "desc"),
           creado: new Date(post.creada).toLocaleString(),
         }
 
@@ -71,7 +78,9 @@ function Claim() {
       descripcion: "",
     },
     onSubmit: (values, { setSubmitting }) => {
-      axios
+      toast.promise(
+        new Promise((resolve, reject) =>
+        axios
         .post(
           `${API_URL}/seguimiento/agregar-estado-reclamo/${claim.idSeguimiento}`,
           {
@@ -88,17 +97,23 @@ function Claim() {
           console.log(res)
           setClaim((prev) => ({
             ...prev,
-            seguimiento: [
-              {
-                estado: values.estado,
-                descripcion: values.descripcion,
-              },
-              ...prev.seguimiento,
-            ],
+            seguimiento: res.data.estados,
           }))
+          resolve("Estado agregado correctamente")
         })
-        .catch((err) => console.log(err))
-        .finally(() => setSubmitting(false))
+        .catch((err) => {
+          console.log(err)
+          setError("Error al agregar estado")
+          reject("Error al agregar estado")
+        })
+        .finally(() => setSubmitting(false)),
+        ),
+        {
+          loading: "Agregando estado...",
+          success: (msg) => msg,
+          error: (msg) => msg,
+        },
+      )
     },
   })
 
@@ -162,11 +177,21 @@ function Claim() {
           </ol>
 
           {/* Dar seguimiento al reclamo */}
-          {user.roles.includes("CAPATAZ") && (
+          {hasPermission({ section: "seguimiento", roles: user.roles }) && (
             <div className="mt-4">
               <h4 className="mb-2 font-semibold text-gray-900">
                 Dar seguimiento
               </h4>
+              {claimClosed ? (
+                <p className="mb-4 text-sm font-normal text-gray-600">
+                  El reclamo está cerrado, no se puede agregar más estados
+                </p>
+              ) : (
+                <p className="mb-4 text-sm font-normal text-gray-600">
+                  Agregue un nuevo estado al reclamo
+                </p>
+              )}
+
               <form onSubmit={formik.handleSubmit}>
                 <Select
                   label="Estado"
@@ -174,9 +199,11 @@ function Claim() {
                   className="mb-4"
                   name="estado"
                   isRequired
+                  isDisabled={claimClosed}
                   onChange={formik.handleChange}
                   value={formik.values.estado}
                   selectedKeys={[formik.values.estado]}
+                  disallowEmptySelection
                 >
                   {claimStatus.map(({ status, label }) => (
                     <SelectItem
@@ -193,6 +220,7 @@ function Claim() {
                   placeholder="Descripción"
                   className="mb-4"
                   name="descripcion"
+                  isDisabled={claimClosed}
                   onChange={formik.handleChange}
                   value={formik.values.descripcion}
                 />
@@ -200,29 +228,9 @@ function Claim() {
                   className="bg-gold font-semibold"
                   variant="flat"
                   type="submit"
+                  isDisabled={claimClosed}
                   isLoading={formik.isSubmitting}
-                  spinner={
-                    <svg
-                      className="h-5 w-5 animate-spin text-current"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="3"
-                      />
-                      <path
-                        className="opacity-75"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                  }
+                  spinner={<Loader />}
                 >
                   Guardar
                 </Button>

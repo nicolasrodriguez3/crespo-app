@@ -45,11 +45,11 @@ const ClaimsContextProvider = ({ children }) => {
 
     if (isSorted) {
       sortedData = sortedData.sort((a, b) => {
-        return a.id - b.id
+        return b.id - a.id
       })
     } else {
       sortedData = sortedData.sort((a, b) => {
-        return b.id - a.id
+        return a.id - b.id
       })
     }
 
@@ -73,9 +73,7 @@ const ClaimsContextProvider = ({ children }) => {
           creado: new Date(post.creada).toLocaleDateString(),
         }))
         setClaims(mappedPosts)
-      } else {
-        throw new Error("Error obteniendo los posts")
-      }
+      } 
     } catch (error) {
       if (error.response.status === 404) {
         setClaims([])

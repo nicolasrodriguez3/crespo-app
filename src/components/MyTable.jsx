@@ -140,7 +140,7 @@ export default function MyTable({
           <Input
             isClearable
             classNames={{ inputWrapper: "h-auto" }}
-            placeholder={`Buscar ${title}...`}
+            placeholder={`Buscar...`}
             startContent={<SearchIcon />}
             value={filterValue}
             onClear={() => onClear()}
