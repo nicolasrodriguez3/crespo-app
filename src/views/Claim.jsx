@@ -25,8 +25,9 @@ function Claim() {
   const [claim, setClaim] = useState(null)
   const [error, setError] = useState(null)
 
-  const claimClosed =
-    claim?.seguimiento.some(({estado}) => estado === "RECHAZADO" || estado === "RESUELTO") 
+  const claimClosed = claim?.seguimiento.some(
+    ({ estado }) => estado === "RECHAZADO" || estado === "RESUELTO",
+  )
 
   useEffect(() => {
     // Fetch claim details from API
@@ -80,33 +81,33 @@ function Claim() {
     onSubmit: (values, { setSubmitting }) => {
       toast.promise(
         new Promise((resolve, reject) =>
-        axios
-        .post(
-          `${API_URL}/seguimiento/agregar-estado-reclamo/${claim.idSeguimiento}`,
-          {
-            estado: values.estado,
-            descripcion: values.descripcion,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        )
-        .then((res) => {
-          console.log(res)
-          setClaim((prev) => ({
-            ...prev,
-            seguimiento: res.data.estados,
-          }))
-          resolve("Estado agregado correctamente")
-        })
-        .catch((err) => {
-          console.log(err)
-          setError("Error al agregar estado")
-          reject("Error al agregar estado")
-        })
-        .finally(() => setSubmitting(false)),
+          axios
+            .post(
+              `${API_URL}/seguimiento/agregar-estado-reclamo/${claim.idSeguimiento}`,
+              {
+                estado: values.estado,
+                descripcion: values.descripcion,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              },
+            )
+            .then((res) => {
+              console.log(res)
+              setClaim((prev) => ({
+                ...prev,
+                seguimiento: res.data.estados,
+              }))
+              resolve("Estado agregado correctamente")
+            })
+            .catch((err) => {
+              console.log(err)
+              setError("Error al agregar estado")
+              reject("Error al agregar estado")
+            })
+            .finally(() => setSubmitting(false)),
         ),
         {
           loading: "Agregando estado...",
@@ -136,45 +137,60 @@ function Claim() {
       backTo="/lista-de-reclamos"
     >
       {claim ? (
-        <div>
-          <h3 className="text-lg font-semibold leading-none text-gray-900">
-            {claim.tipoReclamo}
-          </h3>
-          <time
-            title="Fecha de creación"
-            className="text-sm font-normal leading-none text-gray-400"
-          >
-            {claim.creado}
-          </time>
-          <p className="mb-4 text-base font-normal text-gray-600">
-            {claim.descripcion}
-          </p>
-          {/* Seguimiento */}
-          <ol className="relative border-l border-gray-200">
-            {claim.seguimiento.map((estado) => (
-              <li
-                key={estado.id || estado.estado}
-                className="mb-10 ml-4"
-              >
-                <div className="absolute -left-1.5 mt-1.5 h-3 w-3 rounded-full border border-white bg-gray-200"></div>
-
-                <h4 className="text-sm font-semibold leading-none text-gray-900">
-                  {estado.estado.replace("_", " ")}
-                </h4>
-                <time
-                  title="Fecha de creación"
-                  className="text-xs font-normal leading-none text-gray-400"
+        <div className="flex flex-col gap-4">
+          <div>
+            <time
+              title="Fecha de creación"
+              className="font-normal leading-none text-gray-500"
+            >
+              {claim.creado}
+            </time>
+            <p>
+              <span className="font-semibold text-gray-900">
+                {claim.nombrePersona}
+              </span>{" "}
+              reportó un reclamo en{" "}
+              <span className="font-semibold text-gray-900">
+                {claim.direccion}
+              </span>
+            </p>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold leading-none text-gray-900">
+              Categoria: {claim.tipoReclamo}
+            </h3>
+            <p className="text-base font-normal text-gray-600">
+              {claim.descripcion}
+            </p>
+          </div>
+          <div className="mt-2">
+            {/* Seguimiento */}
+            <ol className="relative border-l border-gray-200">
+              {claim.seguimiento.map((estado) => (
+                <li
+                  key={estado.id || estado.estado}
+                  className="mb-10 ml-4"
                 >
-                  {estado.creada
-                    ? new Date(estado.creada).toLocaleString()
-                    : ""}
-                </time>
-                <p className="mb-4 text-xs font-normal text-gray-600">
-                  {estado.descripcion}
-                </p>
-              </li>
-            ))}
-          </ol>
+                  <div className="absolute -left-1.5 mt-1.5 h-3 w-3 rounded-full border border-white bg-gray-200"></div>
+
+                  <h4 className="font-semibold leading-none text-gray-900">
+                    {estado.estado.replace("_", " ")}
+                  </h4>
+                  <time
+                    title="Fecha de creación"
+                    className="text-sm font-normal leading-none text-gray-400"
+                  >
+                    {estado.creada
+                      ? new Date(estado.creada).toLocaleString()
+                      : ""}
+                  </time>
+                  <p className="mb-4 text-sm font-normal text-gray-600">
+                    {estado.descripcion}
+                  </p>
+                </li>
+              ))}
+            </ol>
+          </div>
 
           {/* Dar seguimiento al reclamo */}
           {hasPermission({ section: "seguimiento", roles: user.roles }) && (

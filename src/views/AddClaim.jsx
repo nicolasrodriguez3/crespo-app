@@ -96,7 +96,7 @@ export function AddClaim() {
         const claimData = {
           persona_id,
           tipoReclamo_id,
-          descripcion,
+          descripcion: descripcion.trim(),
           calle_id,
           altura: altura.toString().padStart(3, "0"),
           barrio_id: barrio_id ? Array.from(barrio_id)[0] : null,

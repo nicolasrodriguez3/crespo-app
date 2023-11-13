@@ -1,10 +1,8 @@
 import { useFormik } from "formik"
 import { useState } from "react"
 import * as Yup from "yup"
-import { Button, Input, Badge, Avatar, Select } from "@nextui-org/react"
+import { Button, Input } from "@nextui-org/react"
 import { useAuth } from "../hooks/useAuth"
-import editIcon from "../assets/icons/pen-linear.svg"
-import arrowIcon from "../assets/icons/alt-arrow-right-linear.svg"
 import { useNavigate } from "react-router-dom"
 import { WrapperUI } from "../components/WrapperUI"
 
@@ -54,40 +52,8 @@ export function EditProfile() {
       title="Mis datos"
       backTo="/profile"
     >
-      <div className="flex w-full items-center justify-center p-4">
-        {/* <Badge
-          isOneChar
-          role="button"
-          className="h-10 w-10 text-large"
-          content={
-            <label
-              role="button"
-              className="flex h-full w-full items-center justify-center"
-            >
-              <input
-                type="file"
-                name="avatar"
-                id="avatar"
-                className="hidden"
-              />
-              <img
-                src={editIcon}
-                width={24}
-              />
-            </label>
-          }
-          color="warning"
-          shape="circle"
-          placement="top-right"
-        >
-          <Avatar
-            radius="full"
-            className="h-20 w-20 rounded-full text-large"
-            src={user?.photoURL || "/chicken.svg"}
-            name={user?.nombre}
-          />
-        </Badge> */}
-      </div>
+      <div className="flex w-full items-center justify-center p-4"></div>
+      <p>Próximamente...</p>
       <section className="flex w-full flex-col items-center gap-8  py-4">
         <form
           onSubmit={handleSubmit}
@@ -133,10 +99,11 @@ export function EditProfile() {
           />
 
           {error && <p className="text-red-400">{error}</p>}
-          {/* <Button
+          <Button
             type="submit"
             className="bg-gold"
             isLoading={isSubmitting}
+            isDisabled
             spinner={
               <svg
                 className="h-5 w-5 animate-spin text-current"
@@ -161,7 +128,7 @@ export function EditProfile() {
             }
           >
             Guardar datos
-          </Button> */}
+          </Button>
         </form>
       </section>
     </WrapperUI>
