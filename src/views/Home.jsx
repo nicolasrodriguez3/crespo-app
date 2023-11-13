@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react"
+import { Card, CardBody, CardFooter, Image } from "@nextui-org/react"
 import { useAuth } from "../hooks/useAuth"
 import { Link } from "react-router-dom"
 import { WrapperUI } from "../components/WrapperUI"
@@ -7,8 +7,9 @@ import imgCalles from "../assets/imgs/img-calle.jpg"
 import imgUsuarios from "../assets/imgs/img-users2.jpg"
 import imgBarrios from "../assets/imgs/img-barrio2.jpg"
 import imgAreas from "../assets/imgs/img-areas.jpg"
-import imgAgregar from "../assets/imgs/add-claim2.jpeg"
-import imgReclamos from "../assets/imgs/add-claim.jpeg"
+import imgAgregar from "../assets/imgs/add-claim2.jpg"
+import imgReclamos from "../assets/imgs/add-claim4.jpg"
+import imgMisReclamos from "../assets/imgs/claim.jpg"
 import imgTipoReclamos from "../assets/imgs/img-areas2.jpg"
 
 const functionsButtons = [
@@ -67,18 +68,26 @@ export function Home() {
                 <b>Agregar reclamo</b>
               </CardFooter>
             </Card>
-
-            <Button
+            <Card
+              shadow="sm"
+              isPressable
               as={Link}
-              to="/reclamos"
-              color="default"
-              variant="bordered"
-              className="rounded-md border-gold font-semibold"
+              to={"/reclamos"}
             >
-              Ver mis reclamos
-            </Button>
-
-            {/* Agregar botón para instalar la app */}
+              <CardBody className="overflow-visible p-0">
+                <Image
+                  shadow="sm"
+                  radius="lg"
+                  width="100%"
+                  alt=""
+                  className="h-[140px] w-full object-cover"
+                  src={imgMisReclamos}
+                />
+              </CardBody>
+              <CardFooter className="justify-between text-small">
+                <b>Mis reclamos</b>
+              </CardFooter>
+            </Card>
           </div>
         ) : (
           <div className="grid w-full grid-cols-2 gap-2">

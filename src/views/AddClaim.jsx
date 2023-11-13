@@ -30,6 +30,7 @@ import { WrapperUI } from "../components/WrapperUI"
 import toast from "react-hot-toast"
 import Loader from "../assets/icons/Loader"
 import { useNavigate } from "react-router-dom"
+import { CloseIcon } from "../assets/icons/CloseIcon"
 
 export function AddClaim() {
   const navigate = useNavigate()
@@ -337,15 +338,22 @@ export function AddClaim() {
           />
         </div>
 
-        <div>
+        <div className="flex items-center justify-start gap-2 ">
           <Button
             color="default"
             variant="flat"
-            endContent={<CameraIcon />}
+            className="shrink-0"
+            endContent={<CameraIcon size="24px" />}
             onClick={() => imgRef.current.click()}
           >
             Adjuntar una foto
           </Button>
+          {/* imagen name */}
+          {values.imagen && (
+            <p className="overflow-hidden text-ellipsis whitespace-nowrap text-sm text-gray-500">
+              {values.imagen.name}
+            </p>
+          )}
         </div>
         <input
           ref={imgRef}
@@ -363,11 +371,14 @@ export function AddClaim() {
             <Button
               isIconOnly
               color="default"
-              aria-label="Like"
-              className="absolute right-1 top-1 rounded-full"
+              aria-label="Eliminar imagen"
+              className="absolute right-1 top-1 rounded-full bg-transparent"
               onClick={() => setFieldValue("imagen", null)}
             >
-              <Loader />
+              <CloseIcon
+                size="40px"
+                fill="#fff"
+              />
             </Button>
 
             {/* Image preview */}
@@ -386,28 +397,7 @@ export function AddClaim() {
           type="submit"
           className="bg-gold font-semibold"
           isLoading={isSubmitting}
-          spinner={
-            <svg
-              className="h-5 w-5 animate-spin text-current"
-              fill="none"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="3"
-              />
-              <path
-                className="opacity-75"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                fill="currentColor"
-              />
-            </svg>
-          }
+          spinner={<Loader />}
         >
           Cargar reclamo
         </Button>
