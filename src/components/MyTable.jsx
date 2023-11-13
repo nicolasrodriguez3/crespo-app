@@ -153,7 +153,7 @@ export default function MyTable({
                 color="secondary"
                 endContent={<PlusIcon />}
                 as={Link}
-                to={`/agregar/${title.replace(" ", "-")}`}
+                to={`/agregar/${title.replace(/ /g, "-")}`}
               >
                 Agregar {title}
               </Button>

@@ -36,7 +36,8 @@ export function UsersList() {
         setUsers(dataParsed)
         setLoadData(false)
         console.log(res)
-      }).catch(err => {
+      })
+      .catch((err) => {
         console.log(err)
         toast.error("Error al cargar usuarios")
       })
@@ -63,12 +64,13 @@ export function UsersList() {
 
         setUsers(deletedUsers)
         setLoadData(false)
-      }).catch(err => {
+      })
+      .catch((err) => {
         console.log(err)
         toast.error("Error al cargar usuarios")
         setLoadData(false)
       })
-  }, [token, users, withDeleted])
+  }, [token, withDeleted])
 
   const showDeleted = () => {
     setWithDeleted(!withDeleted)
@@ -79,8 +81,7 @@ export function UsersList() {
       .delete(`${API_URL}/usuario/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
-      .then((res) => {
-        console.log(res)
+      .then(() => {
         if (!withDeleted) {
           setUsers((prev) => prev.filter((u) => u.id !== id))
         } else {
@@ -110,8 +111,7 @@ export function UsersList() {
           headers: { Authorization: `Bearer ${token}` },
         },
       )
-      .then((res) => {
-        console.log(res)
+      .then(() => {
         setUsers((prev) =>
           prev.map((u) => {
             if (u.id === id) {
@@ -131,15 +131,15 @@ export function UsersList() {
   return (
     <WrapperUI title="Lista de usuarios">
       <Suspense fallback={<div>CARGANDO...</div>}>
-      <MyTable
-        data={users}
-        loading={loadData}
-        title="usuario"
-        titlePlural="usuarios"
-        showDeleted={showDeleted}
-        handleDelete={handleDelete}
-        handleRestore={handleRestore}
-      />
+        <MyTable
+          data={users}
+          loading={loadData}
+          title="usuario"
+          titlePlural="usuarios"
+          showDeleted={showDeleted}
+          handleDelete={handleDelete}
+          handleRestore={handleRestore}
+        />
       </Suspense>
     </WrapperUI>
   )
