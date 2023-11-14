@@ -35,7 +35,6 @@ export default function MyTable({
   title = "dato",
   titlePlural = "datos",
   data,
-  handleAdd,
   handleDelete,
   handleRestore,
   showDeleted,
@@ -90,9 +89,9 @@ export default function MyTable({
     setPage(1)
   }, [])
 
-  const handleModalOpen = (street) => {
+  const handleModalOpen = (data) => {
     onOpen()
-    setDataSelected(street)
+    setDataSelected(data)
   }
 
   return (

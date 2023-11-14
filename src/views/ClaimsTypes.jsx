@@ -77,7 +77,7 @@ export function ClaimsTypes() {
     toast.promise(
       new Promise((resolve, reject) => {
         axios
-          .post(`${API_URL}/tipo-reclamo`, newData, {
+          .put(`${API_URL}/tipo-reclamo`, newData, {
             headers: { Authorization: `Bearer ${token}` },
           })
           .then((res) => {
