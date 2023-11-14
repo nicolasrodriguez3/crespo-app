@@ -129,7 +129,10 @@ export async function submitClaim(claimData, token) {
 }
 
 export const uploadImageAndSubmitClaim = async ({ imagen, token, data }) => {
-  const imagenId = await uploadImage(imagen, token)
+  let imagenId = null
+  if (imagen) {
+    imagenId = await uploadImage(imagen, token)
+  }
 
   const claimDataWithFile = {
     ...data,
