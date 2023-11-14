@@ -193,7 +193,11 @@ function Claim() {
           </div>
 
           {/* Dar seguimiento al reclamo */}
-          {hasPermission({ section: "seguimiento", roles: user.roles }) && (
+          {hasPermission({
+            section: "seguimiento",
+            action: "agregar",
+            roles: user.roles,
+          }) && (
             <div className="mt-4">
               <h4 className="mb-2 font-semibold text-gray-900">
                 Dar seguimiento

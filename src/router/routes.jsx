@@ -8,16 +8,11 @@ import { Login } from "../views/Login"
 import { Register } from "../views/Register"
 import { ForgotPassword } from "../views/ForgotPassword"
 import { ClaimsList } from "../views/ClaimsList"
-import { UsersList } from "../views/UsersList"
-import { StreetsList } from "../views/StreetsList"
-import { NeighborhoodsList } from "../views/NeighborhoodsList"
-import { RolesList } from "../views/RolesList"
-import { AreasList } from "../views/AreasList"
-import { ClaimsTypes } from "../views/ClaimsTypes"
 import { Home } from "../views/Home"
 import Claim from "../views/Claim"
 import { Suspense, lazy } from "react"
 import AddNew from "../views/AddNew"
+import SectionList from "../views/SectionList"
 
 const App = lazy(() => import("../App"))
 
@@ -38,32 +33,12 @@ export const routes = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "/usuarios",
-        element: <UsersList />,
-      },
-      {
-        path: "/calles",
-        element: <StreetsList />,
-      },
-      {
-        path: "/barrios",
-        element: <NeighborhoodsList />,
-      },
-      {
-        path: "/roles",
-        element: <RolesList />,
-      },
-      {
-        path: "/areas",
-        element: <AreasList />,
+        path: "/:sectionName",
+        element: <SectionList />,
       },
       {
         path: "/lista-de-reclamos",
         element: <ClaimsList getAllClaims={true} />,
-      },
-      {
-        path: "/tipos-de-reclamos",
-        element: <ClaimsTypes />,
       },
       {
         path: "/nuevo",

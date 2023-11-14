@@ -10,36 +10,40 @@ export const PERMISSIONS = {
   // // agregar nuevo
   // "tipo de usuario": "CAPATAZ",
 
-  // //dar seguimiento
-  // seguimiento: "CAPATAZ",
+  //dar seguimiento
+  seguimiento: {
+    agregar: "CAPATAZ",
+    borrar: "CAPATAZ",
+    restaurar: "JEFE",
+  },
 
-  calle: {
-    verEliminado: "CAPATAZ",
+  calles: {
+    verEliminados: "CAPATAZ",
     restaurar: "JEFE",
     borrar: "JEFE",
   },
-  usuario: {
-    verEliminado: "JEFE",
+  usuarios: {
+    verEliminados: "JEFE",
     restaurar: "JEFE",
     borrar: "JEFE",
   },
-  "tipo de reclamo": {
-    verEliminado: "CAPATAZ",
+  "tipos-de-reclamos": {
+    verEliminados: "CAPATAZ",
     restaurar: "JEFE",
     borrar: "JEFE",
   },
-  reclamo: {
-    verEliminado: "CAPATAZ",
+  reclamos: {
+    verEliminados: "CAPATAZ",
     restaurar: "JEFE",
     borrar: "JEFE",
   },
-  barrio: {
-    verEliminado: "CAPATAZ",
+  barrios: {
+    verEliminados: "CAPATAZ",
     restaurar: "JEFE",
     borrar: "JEFE",
   },
-  area: {
-    verEliminado: "CAPATAZ",
+  areas: {
+    verEliminados: "CAPATAZ",
     restaurar: "JEFE",
     borrar: "JEFE",
   },

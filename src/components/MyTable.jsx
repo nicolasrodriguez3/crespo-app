@@ -32,6 +32,7 @@ import { hasPermission } from "../services/hasPermission"
 import { Link } from "react-router-dom"
 
 export default function MyTable({
+  section,
   title = "dato",
   titlePlural = "datos",
   data,
@@ -179,7 +180,11 @@ export default function MyTable({
           )}
         </div>
         <div>
-          {hasPermission({ section: title, roles: user.roles }) && (
+          {hasPermission({
+            section: section || title.replace(/ /g, "-"),
+            action: "verEliminados",
+            roles: user.roles,
+          }) && (
             <Switch
               size="sm"
               onValueChange={showDeleted}
@@ -272,6 +277,7 @@ export default function MyTable({
 
 // PropTypes
 MyTable.propTypes = {
+  section: PropTypes.string,
   title: PropTypes.string,
   titlePlural: PropTypes.string,
   endpoint: PropTypes.string,

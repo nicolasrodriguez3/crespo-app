@@ -156,6 +156,7 @@ export function ClaimsTypes() {
         <MyTable
           data={data}
           title="tipo de reclamo"
+          section="tipo-reclamo"
           titlePlural="tipos de reclamos"
           handleDelete={handleDelete}
           handleRestore={handleRestore}
