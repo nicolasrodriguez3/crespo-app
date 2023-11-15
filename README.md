@@ -1,8 +1,21 @@
-# React + Vite
+# Somos Crespo
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+La aplicación de reclamos de Crespo.
 
-Currently, two official plugins are available:
+## Instalación
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. Clonar el repositorio
+2. Instalar las dependencias con `pnpm install`
+3. Crear un archivo `.env` con las variables de entorno necesarias
+4. Correr el servidor con `pnpm dev`
+
+## Variables de entorno
+
+VITE_API_URL: URL de la API de Crespo
+VITE_GOOGLE_MAPS_API_KEY: API Key de Google Maps
+
+## Licencia
+
+Este proyecto está licenciado bajo la licencia GPL-3.0
+
+## Autor
