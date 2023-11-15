@@ -4,20 +4,14 @@ import {
   Textarea,
   Select,
   SelectItem,
-  Modal,
-  Listbox,
-  ListboxItem,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  useDisclosure,
-  ScrollShadow,
+  Autocomplete,
+  AutocompleteItem,
 } from "@nextui-org/react"
 import { useFormik } from "formik"
 import * as Yup from "yup"
 import { CameraIcon } from "../assets/icons/CameraIcon"
 import { useAuth } from "../hooks/useAuth"
-import { useState, useEffect, useRef, useMemo, useCallback } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import {
   getCategories,
   getStreets,
@@ -34,11 +28,9 @@ import { CloseIcon } from "../assets/icons/CloseIcon"
 
 export function AddClaim() {
   const navigate = useNavigate()
-  const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [categories, setCategories] = useState([])
   const [streets, setStreets] = useState([])
   const [neighborhoods, setNeighborhoods] = useState([])
-  const [filteredStreets, setFilteredStreets] = useState([...streets])
   const [error, setError] = useState(false)
 
   const imgRef = useRef(null)
@@ -60,7 +52,6 @@ export function AddClaim() {
       })
 
       setStreets(res.data)
-      setFilteredStreets(res.data)
     })
     getNeighborhoods(token).then((res) => setNeighborhoods(res.data))
   }, [token])
@@ -156,76 +147,27 @@ export function AddClaim() {
     getFieldProps,
   } = formik
 
-  const handleFilterStreet = useCallback(
+  const clearImage = () => {
+    setFieldValue("imagen", null)
+    setError(null) // Limpiar el error al eliminar la imagen
+  }
+
+  const handleFileChange = useCallback(
     (e) => {
-      const street = e.target.value
-      const filteredStreets = streets.filter((s) =>
-        s.calle.toLowerCase().includes(street.toLowerCase()),
-      )
-      setFilteredStreets(filteredStreets)
+      const file = e.target.files[0]
+      if (!file) return
+
+      if (validateFilename(file.name)) {
+        setFieldValue("imagen", file)
+        setError(null)
+      } else {
+        toast.error("Extensión del archivo no permitida")
+        setError("Extensión del archivo no permitida")
+        setFieldValue("imagen", null)
+      }
     },
-    [streets],
+    [setFieldValue],
   )
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0]
-    if (!file) return
-
-    if (validateFilename(file.name)) {
-      setFieldValue("imagen", file)
-    } else {
-      toast.error("Extensión del archivo no permitida")
-      setFieldValue("imagen", null)
-    }
-  }
-  const handleStreetChange = (e) => {
-    const street = e.target.value
-    const streetId = streets.find((s) => s.calle === street)?.id
-    console.log(streetId)
-    if (streetId) setFieldValue("calle_id", streetId)
-  }
-
-  const modalContent = useMemo(() => {
-    return (
-      <ModalContent className="max-w-sm">
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              Seleccione la calle
-            </ModalHeader>
-            <ModalBody>
-              <div className="flex flex-col justify-between">
-                <Input
-                  type="search"
-                  placeholder="Buscar calle"
-                  onChange={handleFilterStreet}
-                />
-                <ScrollShadow className="max-h-[400px]">
-                  {filteredStreets && filteredStreets.length === 0 && (
-                    <p className="text-sm text-gray-500">
-                      No se encontraron resultados
-                    </p>
-                  )}
-                  <Listbox
-                    aria-label="Actions"
-                    onAction={(key) => {
-                      setFieldValue("calle_id", key)
-                      setFilteredStreets(streets)
-                      onClose()
-                    }}
-                  >
-                    {filteredStreets.map((street) => (
-                      <ListboxItem key={street.id}>{street.calle}</ListboxItem>
-                    ))}
-                  </Listbox>
-                </ScrollShadow>
-              </div>
-            </ModalBody>
-          </>
-        )}
-      </ModalContent>
-    )
-  }, [filteredStreets, streets, handleFilterStreet, setFieldValue])
 
   return (
     <WrapperUI title="Agregar reclamo">
@@ -274,33 +216,21 @@ export function AddClaim() {
 
         {/* Calle */}
         <div className="grid grid-cols-[1fr_30%] gap-1">
-          <Modal
-            isOpen={isOpen}
-            onOpenChange={onOpenChange}
-            isDismissable={false}
-            hideCloseButton={true}
-            scrollBehavior="inside"
-            size="full"
-          >
-            {modalContent}
-          </Modal>
-          <Input
+          <Autocomplete
+            defaultItems={streets}
             label="Calle"
-            readOnly
-            onClick={onOpen}
-            value={
-              values.calle_id
-                ? streets.find((s) => s.id === values.calle_id)?.calle
-                : ""
-            }
-            placeholder="Seleccione la calle"
             isRequired
-            onChange={handleStreetChange}
-            isInvalid={touched.calle_id && errors.calle_id}
-            errorMessage={
-              touched.calle_id && errors.calle_id ? errors.calle_id : ""
-            }
-          />
+            selectedKey={values.calle_id}
+            onSelectionChange={(e) => {
+              setFieldValue("calle_id", e)
+            }}
+          >
+            {(street) => (
+              <AutocompleteItem key={street.id}>
+                {street.calle}
+              </AutocompleteItem>
+            )}
+          </Autocomplete>
           <Input
             name="altura"
             label="Altura"
@@ -311,7 +241,6 @@ export function AddClaim() {
             errorMessage={touched.altura && errors.altura ? errors.altura : ""}
           />
         </div>
-
         <Select
           label="Barrio"
           placeholder="Seleccione el barrio"
@@ -373,7 +302,7 @@ export function AddClaim() {
               color="default"
               aria-label="Eliminar imagen"
               className="absolute right-1 top-1 rounded-full bg-transparent"
-              onClick={() => setFieldValue("imagen", null)}
+              onClick={clearImage}
             >
               <CloseIcon
                 size="40px"
