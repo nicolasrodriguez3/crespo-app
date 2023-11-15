@@ -37,7 +37,7 @@ const functionsButtons = [
   },
 ]
 
-export function Home() {
+export default function Home() {
   const { user } = useAuth()
   const name = user?.nombre.split(" ")[0] || "usuario"
 

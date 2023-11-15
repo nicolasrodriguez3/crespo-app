@@ -1,15 +1,14 @@
 import { useState } from "react"
 import { useAuth } from "../hooks/useAuth"
-import { Button, Avatar } from "@nextui-org/react"
+import { Button } from "@nextui-org/react"
 import { useNavigate, Link } from "react-router-dom"
 import { Navbar } from "../components/Navbar"
 import logoutIcon from "../assets/icons/logout-2-linear.svg"
 import penIcon from "../assets/icons/pen-2-linear.svg"
-import claimsIcon from "../assets/icons/checklist-minimalistic-linear.svg"
 import arrowIcon from "../assets/icons/alt-arrow-right-linear.svg"
 import { WrapperUI } from "../components/WrapperUI"
 
-export function Profile() {
+export default function Profile() {
   const navigate = useNavigate()
   const { user, logout } = useAuth()
   const [loading, setLoading] = useState(false)

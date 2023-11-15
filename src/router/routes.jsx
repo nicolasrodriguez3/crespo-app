@@ -1,29 +1,27 @@
 import { createBrowserRouter } from "react-router-dom"
 import { ProtectedRoute } from "../components/ProtectedRoute"
 import { NotFound } from "../views/NotFound"
-import { AddClaim } from "../views/AddClaim"
-import { Profile } from "../views/Profile"
 import { EditProfile } from "../views/EditProfile"
-import { Login } from "../views/Login"
-import { Register } from "../views/Register"
-import { ForgotPassword } from "../views/ForgotPassword"
-import { ClaimsList } from "../views/ClaimsList"
-import { Home } from "../views/Home"
-import Claim from "../views/Claim"
-import { Suspense, lazy } from "react"
-import AddNew from "../views/AddNew"
-import SectionList from "../views/SectionList"
+import {  lazy } from "react"
 
 const App = lazy(() => import("../App"))
+const Claim = lazy(() => import("../views/Claim"))
+const SectionList = lazy(() => import("../views/SectionList"))
+const AddNew = lazy(() => import("../views/AddNew"))
+const AddClaim = lazy(() => import("../views/AddClaim"))
+const ClaimsList = lazy(() => import("../views/ClaimsList"))
+const Home = lazy(() => import("../views/Home"))
+const Login = lazy(() => import("../views/Login"))
+const Register = lazy(() => import("../views/Register"))
+const ForgotPassword = lazy(() => import("../views/ForgotPassword"))
+const Profile = lazy(() => import("../views/Profile"))
 
 export const routes = createBrowserRouter([
   {
     path: "/",
     element: (
       <ProtectedRoute>
-        <Suspense fallback={<div className="text-center">Cargando...</div>}>
           <App />
-        </Suspense>
       </ProtectedRoute>
     ),
     errorElement: <NotFound />,

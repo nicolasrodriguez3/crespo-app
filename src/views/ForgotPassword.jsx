@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 import wave from "../assets/imgs/wave-top.svg"
 
 
-export function ForgotPassword() {
+export default function ForgotPassword() {
 	const navigate = useNavigate()
 
 	const [error, setError] = useState(null)

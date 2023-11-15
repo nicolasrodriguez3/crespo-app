@@ -17,10 +17,9 @@ import { WrapperUI } from "../components/WrapperUI"
 import { SortAscIcon } from "../assets/icons/SortAscIcon"
 import { SortDescIcon } from "../assets/icons/SortDescIcon"
 import { useClaimContext } from "../hooks/useClaimsContext"
-import { useEffect } from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
-export function ClaimsList({ getAllClaims }) {
+export default function ClaimsList({ getAllClaims }) {
   const { user } = useAuth()
   const {
     claims,
@@ -53,12 +52,14 @@ export function ClaimsList({ getAllClaims }) {
 
   if (loading) {
     return (
-      <div className="flex w-full justify-center">
-        <CircularProgress
-          size="sm"
-          aria-label="Cargando..."
-        />
-      </div>
+      <WrapperUI>
+        <div className="flex w-full justify-center">
+          <CircularProgress
+            size="sm"
+            aria-label="Cargando..."
+          />
+        </div>
+      </WrapperUI>
     )
   }
 
@@ -89,7 +90,6 @@ export function ClaimsList({ getAllClaims }) {
       <>
         {user.roles.includes("EMPLEADO") && (
           <section>
-            <div className="mb-2">Filtros</div>
             <div className="flex gap-2 ">
               <Select
                 label="Buscar por..."
@@ -125,8 +125,7 @@ export function ClaimsList({ getAllClaims }) {
               </Select>
               <Input
                 type="text"
-                placeholder="Buscar reclamo"
-                classNames={{ mainWrapper: "flex-row", inputWrapper: "h-auto" }}
+                label="Buscar..."
                 onChange={(e) => {
                   handleSearch(e.target.value)
                 }}

@@ -8,7 +8,7 @@ import { EyeFilledIcon } from "../assets/icons/EyeFilledIcon"
 import { EyeSlashFilledIcon } from "../assets/icons/EyeSlashFilledIcon"
 import wave from "../assets/imgs/wave-top.svg"
 
-export function Login() {
+export default function Login() {
   // si el usuario ya está autenticado, redirigirlo a la página de inicio
   const { token, login } = useAuth()
   const navigate = useNavigate()

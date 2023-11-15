@@ -10,7 +10,7 @@ import { useAuth } from "../hooks/useAuth"
 import toast from "react-hot-toast"
 import { Toaster } from "react-hot-toast"
 
-export function Register() {
+export default function Register() {
   const { signup } = useAuth()
   const navigate = useNavigate()
 

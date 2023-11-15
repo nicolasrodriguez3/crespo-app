@@ -26,7 +26,7 @@ import Loader from "../assets/icons/Loader"
 import { useNavigate } from "react-router-dom"
 import { CloseIcon } from "../assets/icons/CloseIcon"
 
-export function AddClaim() {
+export default function AddClaim() {
   const navigate = useNavigate()
   const [categories, setCategories] = useState([])
   const [streets, setStreets] = useState([])
