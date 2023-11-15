@@ -19,7 +19,6 @@ import {
   useDisclosure,
   Pagination,
   Switch,
-  Spinner,
 } from "@nextui-org/react"
 import PropTypes from "prop-types"
 import { SearchIcon } from "../assets/icons/SearchIcon"
@@ -30,6 +29,8 @@ import { capitalize } from "../helpers/capitalize"
 import { useAuth } from "../hooks/useAuth"
 import { hasPermission } from "../services/hasPermission"
 import { Link } from "react-router-dom"
+import Loader from "../assets/icons/Loader"
+import { removeAccents } from "../helpers/removeAccents"
 
 export default function MyTable({
   section,
@@ -153,7 +154,7 @@ export default function MyTable({
                 color="secondary"
                 endContent={<PlusIcon />}
                 as={Link}
-                to={`/agregar/${title.replace(/ /g, "-")}`}
+                to={`/agregar/${removeAccents(title.replace(/ /g, "-"))}`}
               >
                 Agregar {title}
               </Button>
@@ -220,7 +221,7 @@ export default function MyTable({
           </TableHeader>
           <TableBody
             emptyContent={"No se encontraron resultados"}
-            loadingContent={<Spinner />}
+            loadingContent={<Loader />}
             isLoading={loading}
           >
             {items.map((item) => (
