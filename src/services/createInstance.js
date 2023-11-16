@@ -10,6 +10,6 @@ export const createInstance = async ({ token, newData, url }) => {
     return response.data
   } catch (error) {
     console.error(error)
-    throw new Error("Error al agregar el área")
+    throw new Error("Error al agregar el nuevo registro")
   }
 }

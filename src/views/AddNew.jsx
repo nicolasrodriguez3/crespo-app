@@ -54,7 +54,7 @@ const data = {
     apiUrl: `${API_URL}/tipo-reclamo`,
     fields: [
       {
-        name: "tipo-reclamo",
+        name: "tipo",
         label: "Nombre del tipo de reclamo",
         type: "text",
         placeholder: "Ej: Salud Animal",
@@ -77,14 +77,11 @@ function AddNew() {
     },
     onSubmit: (values) => {
       const instance = { token, newData: values, url: apiUrl }
-      toast.promise(
-        createInstance(instance),
-        {
-          loading: `Agregando ${dataName.toLowerCase()}...`,
-          success: `¡${dataName} agregado correctamente!`,
-          error: "Error al agregar",
-        }
-      )
+      toast.promise(createInstance(instance), {
+        loading: `Agregando ${dataName.toLowerCase()}...`,
+        success: `¡${dataName} agregado correctamente!`,
+        error: "Error al agregar",
+      })
       console.log(instance)
     },
   })
