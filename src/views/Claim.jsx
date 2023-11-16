@@ -9,6 +9,12 @@ import {
   SelectItem,
   Input,
   Button,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
 } from "@nextui-org/react"
 import { useFormik } from "formik"
 import { claimStatus } from "../constants/claimStatus"
@@ -16,14 +22,18 @@ import { hasPermission } from "../services/hasPermission"
 import Loader from "../assets/icons/Loader"
 import toast from "react-hot-toast"
 import { sortArray } from "../helpers/sortArray"
+import { useNavigate } from "react-router-dom"
 
 const API_URL = import.meta.env.VITE_API_URL
 
 function Claim() {
+  const navigate = useNavigate()
   const { token, user } = useAuth()
   const { id } = useParams()
   const [claim, setClaim] = useState(null)
   const [error, setError] = useState(null)
+
+  const { isOpen, onOpen, onOpenChange } = useDisclosure()
 
   const claimClosed = claim?.seguimiento.some(
     ({ estado }) => estado === "RECHAZADO" || estado === "RESUELTO",
@@ -117,6 +127,34 @@ function Claim() {
       )
     },
   })
+
+  const handleDelete = (id) => {
+    toast.promise(
+      new Promise((resolve, reject) =>
+        axios
+          .delete(`${API_URL}/reclamo/${id}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((res) => {
+            console.log(res)
+            resolve("Reclamo eliminado correctamente")
+            navigate("/lista-de-reclamos")
+          })
+          .catch((err) => {
+            console.log(err)
+            setError("Error al eliminar reclamo")
+            reject("Error al eliminar reclamo")
+          }),
+      ),
+      {
+        loading: "Eliminando reclamo...",
+        success: (msg) => msg,
+        error: (msg) => msg,
+      },
+    )
+  }
 
   if (error) {
     return (
@@ -255,6 +293,68 @@ function Claim() {
                   Guardar
                 </Button>
               </form>
+            </div>
+          )}
+          {hasPermission({
+            section: "reclamos",
+            action: "borrar",
+            roles: user.roles,
+          }) && (
+            <div className="mt-4">
+              <h4 className="mb-2 font-semibold text-gray-900">
+                Eliminar reclamo
+              </h4>
+              <Button
+                className="bg-red-400 font-semibold"
+                variant="flat"
+                type="button"
+                onPress={() => onOpen()} // abrir modal
+              >
+                Eliminar
+              </Button>
+              <Modal
+                isOpen={isOpen}
+                onOpenChange={onOpenChange}
+                placement="center"
+              >
+                <ModalContent>
+                  {(onClose) => (
+                    <>
+                      <ModalHeader>Eliminar reclamo #{claim.id}</ModalHeader>
+                      <ModalBody className="flex flex-col gap-1">
+                        <div className="text-center">
+                          ¿Esta seguro/a que desea eliminar el reclamo de{" "}
+                          <span className="font-semibold">
+                            {claim.nombrePersona}
+                          </span>
+                          ?
+                        </div>
+                        <div className="my-4">
+                          {claim.tipoReclamo}: {claim.descripcion}
+                        </div>
+                      </ModalBody>
+                      <ModalFooter>
+                        <Button
+                          color="default"
+                          variant="light"
+                          onPress={onClose}
+                        >
+                          Cancelar
+                        </Button>
+                        <Button
+                          color="danger"
+                          onPress={() => {
+                            handleDelete(claim.id)
+                            onClose()
+                          }}
+                        >
+                          Eliminar
+                        </Button>
+                      </ModalFooter>
+                    </>
+                  )}
+                </ModalContent>
+              </Modal>
             </div>
           )}
         </div>

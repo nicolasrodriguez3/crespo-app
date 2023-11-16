@@ -1,7 +1,7 @@
 import { createContext, useState } from "react"
 import { useAuth } from "../hooks/useAuth"
 import { useMemo } from "react"
-import { getClaims, getMyClaims } from "../helpers/api"
+import { getClaims, getClaimsWithDeleted, getMyClaims } from "../helpers/api"
 
 export const ClaimsContext = createContext()
 
@@ -57,8 +57,13 @@ const ClaimsContextProvider = ({ children }) => {
   }, [filteredItems, isSorted])
 
   // obtener los posts
-  const fetchData = async (getAllClaims) => {
-    const fetchClaims = getAllClaims ? getClaims : getMyClaims
+  const fetchData = async (getAllClaims, getDeleted) => {
+    const fetchClaims = getDeleted
+      ? getClaimsWithDeleted
+      : getAllClaims
+        ? getClaims
+        : getMyClaims
+
     try {
       const response = await fetchClaims(token)
       if (response.status === 200) {
@@ -73,7 +78,7 @@ const ClaimsContextProvider = ({ children }) => {
           creado: new Date(post.creada).toLocaleDateString(),
         }))
         setClaims(mappedPosts)
-      } 
+      }
     } catch (error) {
       if (error.response.status === 404) {
         setClaims([])

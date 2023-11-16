@@ -11,6 +11,7 @@ import {
   ModalFooter,
   Button,
   useDisclosure,
+  Switch,
 } from "@nextui-org/react"
 import { useAuth } from "../hooks/useAuth"
 import { WrapperUI } from "../components/WrapperUI"
@@ -18,6 +19,7 @@ import { SortAscIcon } from "../assets/icons/SortAscIcon"
 import { SortDescIcon } from "../assets/icons/SortDescIcon"
 import { useClaimContext } from "../hooks/useClaimsContext"
 import { useState, useEffect } from "react"
+import { hasPermission } from "../services/hasPermission"
 
 export default function ClaimsList({ getAllClaims }) {
   const { user } = useAuth()
@@ -37,6 +39,7 @@ export default function ClaimsList({ getAllClaims }) {
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [id, setId] = useState(null)
+  const [getDeletedClaims, setGetDeletedClaims] = useState(false)
 
   const { descripcion, seguimiento, direccion, tipoReclamo } =
     claims.find((claim) => claim.id === id) || {}
@@ -46,9 +49,13 @@ export default function ClaimsList({ getAllClaims }) {
     if (!isOpen) onOpen()
   }
 
+  const handleDeletedClaims = () => {
+    setGetDeletedClaims(!getDeletedClaims)
+  }
+
   useEffect(() => {
-    fetchData(getAllClaims)
-  }, [getAllClaims])
+    fetchData(getAllClaims, getDeletedClaims)
+  }, [getAllClaims, getDeletedClaims])
 
   if (loading) {
     return (
@@ -182,6 +189,22 @@ export default function ClaimsList({ getAllClaims }) {
             </Button>
           </div>
         </section>
+
+        <div>
+          {hasPermission({
+            section: "reclamos",
+            action: "verEliminados",
+            roles: user.roles,
+          }) &&
+            getAllClaims && (
+              <Switch
+                size="sm"
+                onValueChange={handleDeletedClaims}
+              >
+                ¿Incluir eliminadas?
+              </Switch>
+            )}
+        </div>
       </>
 
       <section className="flex flex-col gap-4">

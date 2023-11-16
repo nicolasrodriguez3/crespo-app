@@ -35,7 +35,7 @@ export const PERMISSIONS = {
   reclamos: {
     verEliminados: "CAPATAZ",
     restaurar: "JEFE",
-    borrar: "JEFE",
+    borrar: "CAPATAZ",
   },
   barrios: {
     verEliminados: "CAPATAZ",

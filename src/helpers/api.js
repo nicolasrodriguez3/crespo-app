@@ -1,19 +1,6 @@
 import axios from "axios"
 const API_URL = import.meta.env.VITE_API_URL
 
-function validateResponse(error) {
-  if (error.response) {
-    // Si la respuesta contiene un estado HTTP no exitoso (por ejemplo, 404 o 500)
-    throw new Error(`Error en la respuesta: ${error.response.status}`)
-  } else if (error.request) {
-    // Si la solicitud no pudo ser realizada (por ejemplo, el servidor no respondió)
-    throw new Error(`Error en la solicitud: ${error.request}`)
-  } else {
-    // Otros errores
-    throw new Error(`Error: ${error.message}`)
-  }
-}
-
 // obtener mis reclamos
 export async function getMyClaims(token) {
   return axios.get(
@@ -38,27 +25,9 @@ export async function getClaims(token) {
   )
 }
 
-// obtener todos los reclamos por usuario
-export async function getClaimsByUser(token) {
-  try {
-    const response = await axios.get(
-      "https://vps-3450851-x.dattaweb.com:9088/api/reclamo/buscar-por-usuario",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    )
-    return { data: response.data, status: response.status }
-  } catch (error) {
-    validateResponse(error)
-  }
-}
-
-// obtener todos los reclamos por estado
-export async function getClaimsByStatus(token) {
-  return await axios.get(
-    "https://vps-3450851-x.dattaweb.com:9088/api/reclamo/buscar-por-estado",
+export async function getClaimsWithDeleted(token) {
+  return axios.get(
+    "https://vps-3450851-x.dattaweb.com:9088/api/reclamo/buscar-todas-con-eliminadas",
     {
       headers: {
         Authorization: `Bearer ${token}`,
