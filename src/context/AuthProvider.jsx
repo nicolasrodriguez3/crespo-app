@@ -11,28 +11,25 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const token = JSON.parse(localStorage.getItem("token"))
-    if (token) {
+    try {
+      const token = JSON.parse(localStorage.getItem("token"))
       setToken(token)
 
       getUserData(token)
-        .then((res) => {
-          if (res.status === 403) {
-            // si res.status es true, el token es inválido
-            console.warn("Token inválido: ", res.headers.mensaje)
-
-            setToken(null)
-            localStorage.removeItem("token")
-            return false
-          }
-
-          setUser(res)
-        })
+        .then((res) => setUser(res))
         .catch((error) => {
-          console.log(error)
+          console.warn("Token inválido: ", error.response.headers.mensaje)
+
+          setToken(null)
+          localStorage.removeItem("token")
+          return false
         })
+
+      setLoading(false)
+    } catch (error) {
+      localStorage.removeItem("token")
+      return false
     }
-    setLoading(false)
   }, [token])
 
   const signup = async ({ values }) => {
@@ -52,7 +49,7 @@ export function AuthProvider({ children }) {
         throw new Error("Usuario o contraseña incorrectos.")
       } else if (error.message === "Network Error") {
         throw new Error("Error de conexión. Verifique su conexión a internet.")
-      }else if(error.response.status === 409){
+      } else if (error.response.status === 409) {
         throw new Error("El usuario ya existe.")
       }
       throw new Error(error.response?.data?.error)
@@ -85,11 +82,11 @@ export function AuthProvider({ children }) {
       setLoading(false)
       if (error.response?.data?.error === "Bad credentials") {
         throw new Error("Usuario o contraseña incorrectos.")
-      } 
+      }
       if (error.message === "Network Error") {
         throw new Error("Error de conexión. Verifique su conexión a internet.")
       }
-      if(error.response.status === 404){
+      if (error.response.status === 404) {
         throw new Error(error.response.data.error)
       }
       throw new Error("Error en el servidor. Intente más tarde.")
@@ -102,14 +99,11 @@ export function AuthProvider({ children }) {
     localStorage.removeItem("token")
     localStorage.removeItem("user")
     try {
-      const response = await axios.get(
-        `${API_URL}/autenticacion/salir`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const response = await axios.get(`${API_URL}/autenticacion/salir`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      )
+      })
       if (response.status === 200) {
         return true
       }
