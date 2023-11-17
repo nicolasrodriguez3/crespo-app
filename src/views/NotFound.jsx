@@ -22,7 +22,7 @@ export function NotFound() {
             href="/"
             className="underline underline-offset-2 "
           >
-            ir a la pagina de inicio
+            ir a la página de inicio
           </a>
         </p>
       </section>
