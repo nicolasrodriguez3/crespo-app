@@ -2,6 +2,7 @@ import { createContext, useState } from "react"
 import { useAuth } from "../hooks/useAuth"
 import { useMemo } from "react"
 import { getClaims, getClaimsWithDeleted, getMyClaims } from "../helpers/api"
+import { sortArray } from "../helpers/sortArray"
 
 export const ClaimsContext = createContext()
 
@@ -74,7 +75,7 @@ const ClaimsContextProvider = ({ children }) => {
           tipoReclamo: post.tipoReclamo.tipo,
           nombrePersona: post.persona.nombre,
           imagen: post.imagen,
-          seguimiento: post.seguimiento.estados,
+          seguimiento: sortArray(post.seguimiento.estados, "id"),
           creado: new Date(post.creada).toLocaleDateString(),
         }))
         setClaims(mappedPosts)
