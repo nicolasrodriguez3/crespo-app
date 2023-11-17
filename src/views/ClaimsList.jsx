@@ -20,6 +20,7 @@ import { SortDescIcon } from "../assets/icons/SortDescIcon"
 import { useClaimContext } from "../hooks/useClaimsContext"
 import { useState, useEffect } from "react"
 import { hasPermission } from "../services/hasPermission"
+import PropTypes from "prop-types"
 
 export default function ClaimsList({ getAllClaims }) {
   const { user } = useAuth()
@@ -222,6 +223,7 @@ export default function ClaimsList({ getAllClaims }) {
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
+        backdrop="blur"
       >
         <ModalContent>
           {(onClose) => (
@@ -276,4 +278,8 @@ export default function ClaimsList({ getAllClaims }) {
       </Modal>
     </WrapperUI>
   )
+}
+
+ClaimsList.propTypes = {
+  getAllClaims: PropTypes.bool,
 }

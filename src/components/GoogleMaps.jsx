@@ -73,8 +73,8 @@ const Map = ({  onCenterChanged, ...options }) => {
   // [END maps_react_map_component_event_hooks]
   // [START maps_react_map_component_return]
   return (
-    <section className="relative">
-      <div ref={ref} style={{ width: "100%", height: "250px" }} />
+    <section className="relative select-none">
+      <div ref={ref} style={{ width: "100%", height: "250px"}} />
       <div className="absolute bottom-1/2 left-1/2 -translate-x-1/2 pointer-events-none">
         <img src={pin} alt="pin" />
       </div>  

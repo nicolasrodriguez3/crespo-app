@@ -140,7 +140,7 @@ export default function MyTable({
           {/* BUSCADOR */}
           <Input
             isClearable
-            classNames={{ inputWrapper: "h-auto" }}
+            classNames={{ inputWrapper: "h-auto", innerWrapper: "pb-0" }}
             placeholder={`Buscar...`}
             startContent={<SearchIcon />}
             value={filterValue}
