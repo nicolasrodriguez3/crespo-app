@@ -6,6 +6,7 @@ import { sections } from "../constants/homeSections"
 
 import imgAgregar from "../assets/imgs/add-claim2.jpg"
 import imgMisReclamos from "../assets/imgs/claim.jpg"
+import GuiaTramites from "./GuiaTramites"
 
 export default function Home() {
   const { user } = useAuth()
@@ -58,6 +59,28 @@ export default function Home() {
               <b>Mis reclamos</b>
             </CardFooter>
           </Card>
+          <div className="grid grid-cols-2 gap-4">
+            <Card
+              shadow="sm"
+              isPressable
+              as={Link}
+              to={"/telefonos"}
+            >
+              <CardFooter className="text-small">
+                <b>Teléfonos utiles</b>
+              </CardFooter>
+            </Card>
+            <Card
+              shadow="sm"
+              isPressable
+              as={Link}
+              to={"/tramites"}
+            >
+              <CardFooter className="text-small">
+                <b>Guía de trámites</b>
+              </CardFooter>
+            </Card>
+          </div>
         </div>
       ) : (
         <div className="grid w-full grid-cols-2 gap-2">

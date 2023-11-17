@@ -2,9 +2,11 @@ import { createBrowserRouter } from "react-router-dom"
 import { ProtectedRoute } from "../components/ProtectedRoute"
 import { NotFound } from "../views/NotFound"
 import { EditProfile } from "../views/EditProfile"
+import Phones from "../views/Phones"
+import App from "../App"
 import {  lazy } from "react"
+import GuiaTramites from "../views/GuiaTramites"
 
-const App = lazy(() => import("../App"))
 const Claim = lazy(() => import("../views/Claim"))
 const SectionList = lazy(() => import("../views/SectionList"))
 const AddNew = lazy(() => import("../views/AddNew"))
@@ -15,6 +17,7 @@ const Login = lazy(() => import("../views/Login"))
 const Register = lazy(() => import("../views/Register"))
 const ForgotPassword = lazy(() => import("../views/ForgotPassword"))
 const Profile = lazy(() => import("../views/Profile"))
+
 
 export const routes = createBrowserRouter([
   {
@@ -75,5 +78,13 @@ export const routes = createBrowserRouter([
   {
     path: "/forgot-password",
     element: <ForgotPassword />,
+  },
+  {
+    path: "/telefonos",
+    element: <Phones />,
+  },
+  {
+    path: "/tramites",
+    element: <GuiaTramites />,
   },
 ])
