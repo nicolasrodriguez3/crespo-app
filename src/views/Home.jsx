@@ -6,7 +6,6 @@ import { sections } from "../constants/homeSections"
 
 import imgAgregar from "../assets/imgs/add-claim2.jpg"
 import imgMisReclamos from "../assets/imgs/claim.jpg"
-import GuiaTramites from "./GuiaTramites"
 
 export default function Home() {
   const { user } = useAuth()

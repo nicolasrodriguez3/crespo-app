@@ -229,7 +229,6 @@ function Claim() {
               ))}
             </ol>
           </div>
-
           {/* Dar seguimiento al reclamo */}
           {hasPermission({
             section: "seguimiento",

@@ -2,9 +2,9 @@ import imgCalles from "../assets/imgs/img-calle.jpg"
 import imgUsuarios from "../assets/imgs/img-users2.jpg"
 import imgBarrios from "../assets/imgs/img-barrio2.jpg"
 import imgAreas from "../assets/imgs/img-areas.jpg"
-import imgAgregar from "../assets/imgs/add-claim2.jpg"
 import imgReclamos from "../assets/imgs/add-claim4.jpg"
 import imgTipoReclamos from "../assets/imgs/img-areas2.jpg"
+import imgMisReclamosBig from "../assets/imgs/claimbig.jpg"
 
 export const sections = [
   {
@@ -15,7 +15,7 @@ export const sections = [
   },
   {
     title: "Mis reclamos",
-    img: imgAgregar,
+    img: imgMisReclamosBig,
     to: "/reclamos",
     rol: "CONTRIBUYENTE",
   },
